@@ -268,19 +268,29 @@ export const MountainRevealSection: React.FC = () => {
   );
 };
 
+// Define the feature card type
+type FeatureCard = {
+  title: string;
+  description: string;
+  mobileDescription?: string;
+};
+
 // Sample feature cards data
-const featureCards = [
+const featureCards: FeatureCard[] = [
   {
     title: "Multi-turn Context",
     description: "Our AI maintains context across complex conversations, remembering details and adjusting responses accordingly.",
+    mobileDescription: "AI remembers conversation context and responds naturally."
   },
   {
     title: "Emotional Intelligence",
     description: "Voice agents detect and respond to emotional cues in speech, creating truly empathetic interactions.",
+    mobileDescription: "Detects emotions in speech for empathetic responses."
   },
   {
     title: "Unmatched Fluency",
     description: "Natural speech patterns with dynamic pacing, tonal variation, and contextually appropriate pauses.",
+    mobileDescription: "Natural speech with human-like pacing and tones."
   },
 ];
 

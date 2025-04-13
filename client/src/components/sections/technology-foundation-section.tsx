@@ -58,7 +58,18 @@ export const TechnologyFoundationSection: React.FC = () => {
     }));
   };
   
-  const nodes = React.useMemo(() => generateNodes(100), []);
+  // Add mobile detection for optimized rendering
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile(); // Check on initial load
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  // Reduce nodes for mobile devices
+  const nodes = React.useMemo(() => generateNodes(isMobile ? 40 : 100), [isMobile]);
 
   return (
     <section 
@@ -109,17 +120,17 @@ export const TechnologyFoundationSection: React.FC = () => {
             
             {/* Neural connections - dynamic lines */}
             <svg className="absolute inset-0 w-full h-full">
-              {nodes.slice(0, 30).map((node, i) => {
+              {nodes.slice(0, isMobile ? 15 : 30).map((node, i) => {
                 // Create connections between nearby nodes
                 const connections = nodes
-                  .slice(0, 50)
+                  .slice(0, isMobile ? 20 : 50)
                   .filter((other) => {
                     const dx = Math.abs(node.x - other.x);
                     const dy = Math.abs(node.y - other.y);
                     const distance = Math.sqrt(dx * dx + dy * dy);
-                    return distance < 20 && node.id !== other.id;
+                    return distance < (isMobile ? 25 : 20) && node.id !== other.id;
                   })
-                  .slice(0, 3); // Limit connections per node
+                  .slice(0, isMobile ? 2 : 3); // Limit connections per node for mobile
                 
                 return connections.map((other, j) => (
                   <motion.line
@@ -209,8 +220,8 @@ export const TechnologyFoundationSection: React.FC = () => {
                     intensity={10}
                     glare={true}
                   >
-                    <h3 className="text-xl font-bold mb-3 text-blue-800">{feature.title}</h3>
-                    <p className="text-blue-700">{feature.description}</p>
+                    <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3 text-blue-800">{feature.title}</h3>
+                    <p className="text-sm md:text-base text-blue-700">{isMobile ? feature.mobileDescription || feature.description : feature.description}</p>
                   </FloatingCard>
                 </motion.div>
               ))}
@@ -224,17 +235,27 @@ export const TechnologyFoundationSection: React.FC = () => {
 
 // Floating tech orbs effect component
 const TechOrbs: React.FC = () => {
+  // Access isMobile from parent component context
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile(); // Check on initial load
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
   const orbsData = React.useMemo(() => {
-    return Array.from({ length: 10 }).map((_, i) => ({
+    return Array.from({ length: isMobile ? 5 : 10 }).map((_, i) => ({
       id: i,
-      size: 30 + Math.random() * 120,
+      size: isMobile ? (20 + Math.random() * 80) : (30 + Math.random() * 120),
       x: Math.random() * 100,
       y: Math.random() * 100,
-      duration: 20 + Math.random() * 40,
+      duration: isMobile ? (15 + Math.random() * 20) : (20 + Math.random() * 40),
       delay: Math.random() * 10,
       color: orbColors[Math.floor(Math.random() * orbColors.length)],
     }));
-  }, []);
+  }, [isMobile]);
 
   return (
     <div className="absolute inset-0 overflow-hidden">
@@ -289,19 +310,29 @@ const orbColors = [
   '#C4B5FD', // Lavender
 ];
 
+// Define feature data type
+type TechFeature = {
+  title: string;
+  description: string;
+  mobileDescription?: string;
+};
+
 // Tech features data
-const techFeatures = [
+const techFeatures: TechFeature[] = [
   {
     title: "Quantum Neural Processing",
     description: "Our revolutionary architecture processes context across billions of parameters simultaneously for unprecedented understanding and response generation.",
+    mobileDescription: "Advanced AI processes context across billions of parameters simultaneously."
   },
   {
     title: "Multi-modal Integration",
     description: "Seamlessly combines voice recognition, contextual memory, and emotional intelligence for conversations that feel truly human.",
+    mobileDescription: "Combines voice recognition with emotional intelligence for human-like interaction."
   },
   {
     title: "Adaptive Voice Synthesis",
     description: "Dynamically adjusts speech patterns, pacing, and vocal characteristics to match conversation context and emotional tone.",
+    mobileDescription: "Adjusts speech patterns to match conversation context and emotion."
   },
 ];
 
