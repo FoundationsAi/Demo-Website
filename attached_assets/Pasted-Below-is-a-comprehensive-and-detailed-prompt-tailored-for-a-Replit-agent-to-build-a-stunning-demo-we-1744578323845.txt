@@ -1,0 +1,183 @@
+Below is a comprehensive and detailed prompt tailored for a Replit agent to build a stunning demo website for Foundations AI, based on the user's query and incorporating elements from the second prompt as well as insights from the provided thinking trace. This prompt ensures clarity, specificity, and completeness, aligning with the goal of creating an award-worthy website that showcases voice AI agents with a 'wow' factor for client demos.
+
+---
+
+### Project Overview
+
+You are tasked with developing a **stunning demo website for Foundations AI**, a company specializing in cutting-edge voice AI agents. The website must serve as an interactive showcase, highlighting the advanced capabilities of these AI agents through a visually impressive and user-friendly interface. The primary objective is to engage visitors immediately without requiring authentication, delivering a seamless and captivating experience that leaves a lasting impression on potential clients. The Foundations AI **mountain PNG logo** must be a central and prominent feature, symbolizing the brand’s identity throughout the design.
+
+This project requires integrating **specific functionalities** (voice interaction, agent selection, payment processing, SMS notifications, and calendar management) with **award-worthy design elements** (smooth scrolling, geometric layouts, parallax effects, and animated components). The website should be responsive across all devices—desktops, tablets, and smartphones—ensuring a consistent and polished experience. Your work in Replit will leverage HTML, CSS, JavaScript, and API integrations to bring this vision to life.
+
+---
+
+### Core Features
+
+The website must include the following features, each implemented with precision and aligned with the specified tools and design goals:
+
+1. **Voice Interaction**
+   - **Integration**: Use the **11 Labs API** to enable real-time voice input and output.
+   - **Functionality**: Allow users to speak to AI agents and receive spoken responses seamlessly. Include visual indicators (e.g., a microphone icon that pulses when active, a waveform for speaking) to show when the AI is listening or responding.
+   - **Implementation**: Embed a toggle button for voice mode within the conversational interface, ensuring intuitive usability.
+
+2. **Agent Selection**
+   - **Variety**: Provide a selection of **multiple AI agents**, each with a **unique personality and conversational style** (e.g., "Friendly Receptionist," "Professional Sales Agent," "Helpful Concierge").
+   - **Display**: Present agents in an **interactive grid layout** using cards or tiles. Each card should include:
+     - An **image or icon** representing the agent’s personality.
+     - A **name** and **brief description** (e.g., "Emma: Warm and welcoming, perfect for customer service").
+     - A **"Select" button** with hover effects (e.g., scale or color change).
+   - **Implementation**: Use a responsive grid (`display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));`) to ensure adaptability across devices.
+
+3. **Conversational Interface**
+   - **Design**: Create an **intuitive chat-like interface** for user-AI interactions.
+   - **Features**:
+     - Display **conversation history** with clear distinctions between user inputs (e.g., right-aligned, light background) and AI responses (e.g., left-aligned, darker background).
+     - Include a **text input field** alongside the voice toggle for dual interaction modes.
+     - Use subtle animations (e.g., fade-in for new messages) to enhance engagement.
+   - **Implementation**: Style with CSS to differentiate user and AI messages, and use JavaScript to update the history dynamically.
+
+4. **Payment Processing**
+   - **Integration**: Implement **Stripe** for secure payment processing.
+   - **Functionality**: Enable potential monetization features, such as unlocking premium agents or extended interaction time. Include a checkout button or modal (e.g., "Upgrade to Premium" styled with rounded corners and a tech palette color).
+   - **Implementation**: Use Stripe’s JavaScript SDK to handle transactions, ensuring a user-friendly and secure experience.
+
+5. **SMS Notifications**
+   - **Integration**: Use the **Twilio API** to send SMS messages.
+   - **Functionality**: Send notifications or reminders related to AI interactions (e.g., "Your appointment with Agent Emma is confirmed for 3 PM"). Include an opt-in checkbox for user consent during interaction setup.
+   - **Implementation**: Trigger SMS messages via Twilio based on user actions (e.g., scheduling or completing a conversation).
+
+6. **Calendar Integration**
+   - **Integration**: Incorporate the **Google Calendar API** for scheduling.
+   - **Functionality**: Allow users to book appointments or schedule follow-ups with AI agents. Provide a calendar widget or button (e.g., "Schedule a Call") that connects to the user’s Google Calendar.
+   - **Implementation**: Use OAuth for calendar access and display a confirmation modal after booking.
+
+7. **Visual Design**
+   - **Aesthetic**: Design a **visually striking and modern interface** that captivates potential clients with a tech-forward look.
+   - **Key Elements**:
+     - **Mountain PNG Logo**: Feature prominently in the header, footer, or as a fixed watermark with subtle animation (e.g., fade-in on load).
+     - **Lenis Smooth Scrolling**: Implement using the Lenis library for a polished scrolling experience.
+     - **Geometric Layouts**: Use a grid system (`display: grid`) for structured organization of content.
+     - **Parallax Effects**: Apply to full-screen sections (e.g., hero image or agent selection) with `CSS position: fixed; transform: translateY();` and JavaScript for animation.
+     - **Overlays**: Add semi-transparent dark overlays (`background-color: rgba(0, 0, 0, 0.5);`) on images and text for sophistication.
+     - **Animated Components**: Include subtle hover effects (e.g., scale or shadow on agent cards) and dynamic transitions (e.g., slide-in for chat messages).
+   - **Responsiveness**: Ensure all elements adapt seamlessly across devices using media queries.
+
+---
+
+### Website Structure
+
+Organize the website into the following sections, each designed to guide users through an engaging experience:
+
+1. **Home Page**
+   - **Hero Section**: Feature the mountain PNG logo, a bold headline (e.g., "Experience the Future of Voice AI"), and a call-to-action button (e.g., "Start Talking Now") with parallax scrolling background.
+   - **Purpose**: Draw users in immediately with a visually immersive introduction.
+
+2. **Agent Selection Page**
+   - **Layout**: Display AI agents in a responsive grid with interactive cards.
+   - **Details**: Include agent images, names, and personality descriptions, with hover effects for interactivity.
+   - **Navigation**: Link to the conversational interface upon selection.
+
+3. **Conversation Page**
+   - **Interface**: Show the selected agent’s details (name, image) at the top, followed by the chat window with voice toggle and conversation history.
+   - **Features**: Enable real-time voice and text interaction with clear visual feedback.
+
+4. **Payment Page**
+   - **Purpose**: Offer premium features or extended access via Stripe checkout.
+   - **Design**: Use a modal or dedicated section with a clean, secure payment form.
+
+5. **Calendar Page**
+   - **Functionality**: Integrate Google Calendar for scheduling, with a widget or button for easy booking.
+   - **Confirmation**: Display a success message or SMS notification post-booking.
+
+6. **Footer**
+   - **Content**: Include links to privacy policy, terms of service, and contact info, styled with the mountain logo and tech palette colors.
+
+---
+
+### Technical Implementation
+
+#### Frontend
+- **HTML**: Structure the site with semantic tags (`<header>`, `<main>`, `<section>`, `<footer>`).
+- **CSS**:
+  - Use `display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));` for layouts.
+  - Apply `background-color: rgba(0, 0, 0, 0.5);` for overlays.
+  - Implement Lenis smooth scrolling via CDN or npm package.
+  - Add parallax effects with `position: fixed; transform: translateY();`.
+  - Use media queries for responsiveness (e.g., adjust grid columns to `minmax(200px, 1fr)` on mobile).
+- **JavaScript**:
+  - Handle animations with CSS keyframes or a library like GSAP.
+  - Manage dynamic updates (e.g., conversation history) with DOM manipulation.
+
+#### Backend
+- **Language**: Use **Node.js** (or Python) in Replit to handle API integrations.
+- **APIs**:
+  - **11 Labs**: Enable voice interaction with API calls for input/output.
+  - **Stripe**: Process payments securely with server-side validation.
+  - **Twilio**: Send SMS notifications with user-triggered events.
+  - **Google Calendar**: Manage schedules with OAuth and API endpoints.
+- **Setup**: Store API keys in Replit’s environment variables (e.g., `process.env.STRIPE_KEY`).
+
+#### Database
+- **Storage**: Use **MongoDB** (via MongoDB Atlas) or **Firebase** to store:
+  - User interactions (e.g., conversation logs).
+  - Agent data (e.g., names, personalities).
+- **Implementation**: Connect via Replit’s database tools or external services.
+
+#### Security
+- **HTTPS**: Ensure secure data transmission (Replit provides this by default).
+- **Best Practices**: Sanitize inputs, secure API keys, and handle payment data with Stripe’s protocols.
+
+---
+
+### Style Guide
+
+- **Layout**: Geometric grid system with overlapping elements, full-screen immersive sections, and parallax scrolling.
+- **Components**: Responsive grids, semi-transparent overlays, animated transitions.
+- **Visual Elements**: Mountain logo as a focal point, tech-forward design with modern aesthetics.
+- **Colors**: Derive from the mountain PNG logo (e.g., earthy tones with tech accents like blue or neon), ensuring a modern palette with visual impact.
+- **Typography**: Use clean, sans-serif fonts (e.g., Roboto, Open Sans) that complement the design.
+- **Animations**: Implement Lenis smooth scrolling, subtle hover effects (e.g., `transform: scale(1.05);`), and dynamic transitions (e.g., `@keyframes slideIn`).
+
+---
+
+### Visual References
+
+Draw inspiration from cutting-edge tech demos and award-winning websites like:
+- **Apple**: For sleek animations and immersive scrolling.
+- **Awwwards Winners**: For geometric layouts and parallax effects.
+- **Tesla**: For a modern tech palette and sophisticated overlays.
+
+Adapt these influences to create a unique, future-forward aesthetic tailored to Foundations AI’s voice AI focus.
+
+---
+
+### User Experience Flow
+
+1. **Landing**: Users arrive on the home page, greeted by the mountain logo and a visually striking hero section with a "Start Talking Now" button.
+2. **Selection**: They navigate to the agent selection page, choosing an AI agent from an interactive grid.
+3. **Interaction**: Users engage with the selected agent via the conversational interface, using voice or text, with real-time feedback.
+4. **Enhancement**: Optional premium features are accessed via Stripe payment, with SMS confirmations via Twilio.
+5. **Scheduling**: Users book follow-ups using Google Calendar integration.
+6. **Impression**: The seamless design and advanced features leave a 'wow' factor, showcasing Foundations AI’s capabilities.
+
+---
+
+### Additional Instructions for Replit Agent
+
+- **Assets**: Upload the mountain PNG logo to Replit and reference it in the code (e.g., `<img src="/mountain.png">`).
+- **Dependencies**: Install required packages via Replit’s package manager:
+  - `lenis` for smooth scrolling.
+  - `stripe` for payment processing.
+  - `twilio` for SMS.
+  - `googleapis` for calendar integration.
+- **Testing**: Use Replit’s live preview to test responsiveness and API functionality across devices.
+- **Debugging**: Log errors to the console and verify API responses in the Replit terminal.
+
+---
+
+### Goal
+
+Your mission is to create a demo website that not only functions flawlessly but also visually impresses potential clients, highlighting Foundations AI’s voice AI agents as a game-changing technology. The combination of advanced features and a stunning design should evoke a 'wow' reaction, positioning Foundations AI as a leader in the AI space.
+
+---
+
+This prompt provides a clear, detailed, and actionable guide for a Replit agent, incorporating all requirements from the user’s query and second prompt while ensuring a cohesive and impressive final product.
