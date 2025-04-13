@@ -73,8 +73,8 @@ export const MountainRevealSection: React.FC = () => {
         className="sticky top-0 h-screen w-full overflow-hidden"
         style={{ opacity }}
       >
-        {/* Sky gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-500 via-purple-400 to-indigo-800" />
+        {/* Sky gradient that transitions from cloud color to mountain color */}
+        <div className="absolute inset-0 bg-gradient-to-b from-sky-200 via-sky-300 to-blue-400" />
         
         {/* Atmospheric fog layer */}
         <motion.div 
@@ -118,7 +118,7 @@ export const MountainRevealSection: React.FC = () => {
           >
             <path 
               d="M0 300L50 250L100 270L150 200L200 220L250 180L300 250L350 200L400 190L450 250L500 220L550 240L600 180L650 260L700 220L750 200L800 240L850 180L900 250L950 200L1000 220L1050 180L1100 240L1150 280L1200 220V300H0Z" 
-              fill="#2d3748" 
+              fill="#8FB3D9" 
             />
           </svg>
         </motion.div>
@@ -140,7 +140,7 @@ export const MountainRevealSection: React.FC = () => {
           >
             <path 
               d="M0 350L100 250L200 320L300 200L400 280L500 180L600 300L700 150L800 270L900 200L1000 250L1100 180L1200 270V350H0Z" 
-              fill="#4a5568" 
+              fill="#6B93C3" 
             />
           </svg>
         </motion.div>
@@ -161,7 +161,7 @@ export const MountainRevealSection: React.FC = () => {
           >
             <path 
               d="M0 400L200 300L300 350L400 250L500 350L600 100L700 350L800 250L900 300L1000 200L1200 300V400H0Z" 
-              fill="#5D3FD3" 
+              fill="#8673D9" 
             />
             
             {/* Mountain peak highlight/snow */}
@@ -179,7 +179,7 @@ export const MountainRevealSection: React.FC = () => {
             className="mb-64 max-w-3xl"
             style={{ opacity: textOpacity1, y: y1 }}
           >
-            <h2 className="text-3xl md:text-6xl font-bold text-white drop-shadow-lg mb-6">
+            <h2 className="text-3xl md:text-6xl font-bold text-blue-800 drop-shadow-lg mb-6">
               <AnimatedText 
                 text="Revolutionary Peaks of Achievement" 
                 as="span" 
@@ -187,7 +187,7 @@ export const MountainRevealSection: React.FC = () => {
                 className="font-bold"
               />
             </h2>
-            <p className="text-xl md:text-2xl text-white/90 drop-shadow-md">
+            <p className="text-xl md:text-2xl text-blue-700 drop-shadow-md">
               Our voice technology stands at the summit of what's possible, transforming how humans and AI interact
             </p>
           </motion.div>
@@ -196,7 +196,7 @@ export const MountainRevealSection: React.FC = () => {
             className="absolute max-w-3xl"
             style={{ opacity: textOpacity2, y: y2 }}
           >
-            <h2 className="text-3xl md:text-5xl font-bold text-white drop-shadow-lg mb-6">
+            <h2 className="text-3xl md:text-5xl font-bold text-blue-800 drop-shadow-lg mb-6">
               <AnimatedText 
                 text="The Pinnacle of Voice AI" 
                 as="span" 
@@ -204,7 +204,7 @@ export const MountainRevealSection: React.FC = () => {
                 className="font-bold"
               />
             </h2>
-            <p className="text-xl md:text-2xl text-white/90 drop-shadow-md">
+            <p className="text-xl md:text-2xl text-blue-700 drop-shadow-md">
               Built on next-generation neural networks trained on billions of conversations, our agents understand context like never before
             </p>
           </motion.div>
@@ -213,7 +213,7 @@ export const MountainRevealSection: React.FC = () => {
             className="absolute max-w-3xl"
             style={{ opacity: textOpacity3, y: y3 }}
           >
-            <h2 className="text-3xl md:text-5xl font-bold text-white drop-shadow-lg mb-6">
+            <h2 className="text-3xl md:text-5xl font-bold text-blue-800 drop-shadow-lg mb-6">
               <AnimatedText 
                 text="Ascend to New Possibilities" 
                 as="span" 
@@ -221,7 +221,7 @@ export const MountainRevealSection: React.FC = () => {
                 className="font-bold"
               />
             </h2>
-            <p className="text-xl md:text-2xl text-white/90 drop-shadow-md">
+            <p className="text-xl md:text-2xl text-blue-700 drop-shadow-md">
               Continue your journey to explore the limitless applications of our voice agents
             </p>
           </motion.div>
@@ -241,9 +241,9 @@ export const MountainRevealSection: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 + index * 0.1 }}
                 >
-                  <FloatingCard className="glass-card p-6 rounded-xl h-full">
-                    <h3 className="text-xl font-bold mb-2">{card.title}</h3>
-                    <p className="text-white/70">{card.description}</p>
+                  <FloatingCard className="glass-card p-6 rounded-xl h-full bg-white/20 backdrop-blur-md">
+                    <h3 className="text-xl font-bold mb-2 text-blue-800">{card.title}</h3>
+                    <p className="text-blue-700">{card.description}</p>
                   </FloatingCard>
                 </motion.div>
               ))}
