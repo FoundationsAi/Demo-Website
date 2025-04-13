@@ -70,12 +70,12 @@ export const TechnologyFoundationSection: React.FC = () => {
         className="sticky top-0 h-screen w-full overflow-hidden"
         style={{ opacity, scale: sectionScale }}
       >
-        {/* Dark background with particle effects */}
-        <div className="absolute inset-0 bg-gradient-to-b from-indigo-900 via-[#1A0B2E] to-indigo-950" />
+        {/* Lighter background with particle effects - continue the heavenly theme */}
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-400 via-indigo-500 to-purple-600" />
         <ParticleBackground variant="intense" className="opacity-60" />
         
-        {/* Grid effect */}
-        <div className="absolute inset-0 grid-background opacity-30" />
+        {/* Grid effect - more subtle for heavenly feel */}
+        <div className="absolute inset-0 grid-background opacity-20" />
         
         {/* Neural network visualization */}
         <motion.div 
@@ -174,7 +174,7 @@ export const TechnologyFoundationSection: React.FC = () => {
                 className="block"
               />
             </h2>
-            <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
               Built on breakthrough neural architectures and trained on billions of conversations
             </p>
           </motion.div>
@@ -205,12 +205,12 @@ export const TechnologyFoundationSection: React.FC = () => {
                   transition={{ delay: 0.3 + index * 0.1 }}
                 >
                   <FloatingCard 
-                    className="glass-card p-6 rounded-xl h-full border border-white/10"
+                    className="glass-card p-6 rounded-xl h-full border border-white/20 bg-white/20 backdrop-blur-md"
                     intensity={10}
                     glare={true}
                   >
-                    <h3 className="text-xl font-bold mb-3 text-cyan-400">{feature.title}</h3>
-                    <p className="text-white/70">{feature.description}</p>
+                    <h3 className="text-xl font-bold mb-3 text-blue-800">{feature.title}</h3>
+                    <p className="text-blue-700">{feature.description}</p>
                   </FloatingCard>
                 </motion.div>
               ))}
@@ -280,13 +280,13 @@ const TechOrbs: React.FC = () => {
   );
 };
 
-// Color palette for the orbs
+// Color palette for the orbs - lighter, more heavenly colors
 const orbColors = [
-  '#5D3FD3', // Purple
-  '#2A6BFF', // Blue
-  '#34D399', // Green
-  '#0FF4C6', // Cyan
-  '#7C3AED', // Violet
+  '#8673D9', // Light Purple
+  '#60A5FA', // Light Blue
+  '#93C5FD', // Sky Blue
+  '#A5B4FC', // Indigo
+  '#C4B5FD', // Lavender
 ];
 
 // Tech features data
