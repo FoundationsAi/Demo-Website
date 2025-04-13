@@ -1,6 +1,6 @@
-import React, { useLayoutEffect, useRef } from "react";
-import SplitType from "split-type";
-import { gsap } from "gsap";
+import React, { useEffect, useRef } from 'react';
+import { motion, useAnimation, useInView } from 'framer-motion';
+import SplitType from 'split-type';
 
 interface AnimatedTextProps {
   text: string;
@@ -14,169 +14,174 @@ interface AnimatedTextProps {
   color?: string;
 }
 
+/**
+ * Animated Text component that adds attractive motion effects to typography
+ */
 export const AnimatedText: React.FC<AnimatedTextProps> = ({
   text,
-  as: Component = "div",
+  as: Component = "p",
   className = "",
   animation = "slide",
   delay = 0,
   duration = 0.5,
   stagger = 0.02,
   once = true,
-  color,
+  color
 }) => {
-  const textRef = useRef<HTMLElement>(null);
-  const hasAnimated = useRef(false);
+  const controls = useAnimation();
+  const textRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(textRef, { amount: 0.3, once });
+  const [splitText, setSplitText] = React.useState<SplitType | null>(null);
 
-  useLayoutEffect(() => {
-    if (once && hasAnimated.current) return;
-
-    if (!textRef.current) return;
-
-    // Create empty timeline
-    const tl = gsap.timeline();
-
-    // Split text into chars, words, or lines
-    const splitLevel = animation === "wave" ? "chars" : "words";
-    const splitText = new SplitType(textRef.current, { types: [splitLevel] });
-    
-    const chars = splitText.chars;
-    const words = splitText.words;
-    const elements = animation === "wave" ? chars : words;
-
-    if (!elements) return;
-
-    // Reset visibility
-    gsap.set(elements, { autoAlpha: 1 });
-
+  // Define animation variants based on the animation type
+  const getVariants = () => {
     switch (animation) {
-      case "slide": 
-        // Initial state
-        gsap.set(elements, { 
-          y: "100%", 
-          opacity: 0 
-        });
-        
-        // Animate each word/char with stagger
-        tl.to(elements, {
-          y: "0%",
-          opacity: 1,
-          duration,
-          stagger,
-          ease: "power3.out",
-          delay
-        });
-        break;
-        
+      case "slide":
+        return {
+          hidden: { y: "100%", opacity: 0 },
+          visible: (i: number) => ({
+            y: "0%",
+            opacity: 1,
+            transition: {
+              delay: delay + (i * stagger),
+              duration,
+              ease: [0.22, 1, 0.36, 1]
+            }
+          })
+        };
       case "fade":
-        // Initial state
-        gsap.set(elements, { 
-          opacity: 0,
-          scale: 0.9
-        });
-        
-        // Fade in with slight scale up
-        tl.to(elements, {
-          opacity: 1,
-          scale: 1,
-          duration,
-          stagger,
-          ease: "power2.out",
-          delay
-        });
-        break;
-        
+        return {
+          hidden: { opacity: 0 },
+          visible: (i: number) => ({
+            opacity: 1,
+            transition: {
+              delay: delay + (i * stagger),
+              duration,
+              ease: "easeOut"
+            }
+          })
+        };
       case "glitch":
-        // Initial state
-        gsap.set(elements, { 
-          opacity: 0,
-          x: "random(-20, 20)",
-          y: "random(-20, 20)",
-          rotation: "random(-10, 10)",
-          scale: "random(0.8, 1.2)"
-        });
-        
-        // Glitch effect
-        tl.to(elements, {
-          opacity: 1,
-          x: 0,
-          y: 0,
-          rotation: 0,
-          scale: 1,
-          duration: duration * 1.5,
-          stagger: stagger / 2,
-          ease: "elastic.out(1, 0.3)",
-          delay
-        });
-        break;
-        
+        return {
+          hidden: { opacity: 0, x: 0 },
+          visible: (i: number) => ({
+            opacity: 1,
+            x: [0, -5, 5, -3, 3, 0],
+            transition: {
+              delay: delay + (i * stagger),
+              duration: duration * 1.5,
+              x: {
+                times: [0, 0.2, 0.4, 0.6, 0.8, 1],
+                duration: duration,
+                ease: "easeInOut"
+              }
+            }
+          })
+        };
       case "gradient":
-        // For gradient, we don't use SplitType
-        // Instead we animate the background position
-        gsap.fromTo(textRef.current, 
-          { 
-            backgroundPosition: "0% 50%",
-            backgroundSize: "200% 200%",
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            color: "transparent",
-            background: "linear-gradient(90deg, #5D3FD3, #FF4D4D, #34D399, #2A6BFF)",
-          },
-          {
-            backgroundPosition: "100% 50%",
-            duration: duration * 6,
-            ease: "none",
-            repeat: -1,
-            yoyo: true,
-            delay
-          }
-        );
-        break;
-        
+        // Gradient effect relies on CSS rather than motion animations
+        return {
+          hidden: { opacity: 0 },
+          visible: (i: number) => ({
+            opacity: 1,
+            transition: {
+              delay: delay + (i * stagger),
+              duration
+            }
+          })
+        };
       case "wave":
-        if (!chars) return;
-        
-        // Create a wave animation effect
-        gsap.set(chars, { opacity: 0.3, y: 0 });
-        
-        // Animate each character in a wave pattern
-        tl.to(chars, {
-          opacity: 1,
-          y: -15,
-          stagger: {
-            each: 0.05,
-            repeat: -1,
-            yoyo: true,
-            from: "start"
-          },
-          duration: 0.6,
-          ease: "sine.inOut",
-          delay
-        });
-        break;
+        return {
+          hidden: { y: 0, opacity: 0 },
+          visible: (i: number) => ({
+            y: [0, -15, 0],
+            opacity: 1,
+            transition: {
+              delay: delay + (i * stagger),
+              y: {
+                duration: duration * 1.2,
+                repeat: 0,
+                ease: "easeInOut"
+              },
+              opacity: {
+                duration: duration * 0.3,
+                ease: "easeIn"
+              }
+            }
+          })
+        };
+      default:
+        return {
+          hidden: { opacity: 0 },
+          visible: { opacity: 1 }
+        };
     }
+  };
 
-    hasAnimated.current = true;
-
-    // Clean up
+  // Initialize the SplitType instance
+  useEffect(() => {
+    if (textRef.current && !splitText) {
+      const split = new SplitType(textRef.current, { types: "chars", wordClass: "word" });
+      setSplitText(split);
+    }
+    
     return () => {
-      tl.kill();
       if (splitText) {
         splitText.revert();
       }
     };
-  }, [text, animation, delay, duration, stagger, once, color]);
+  }, [textRef, text]);
 
-  const textStyle: React.CSSProperties = {};
-  
-  // If it's not gradient animation and color is provided, apply it
-  if (animation !== "gradient" && color) {
-    textStyle.color = color;
-  }
+  // Control the animation based on view
+  useEffect(() => {
+    if (inView && splitText) {
+      controls.start("visible");
+    } else if (!once && !inView && splitText) {
+      controls.start("hidden");
+    }
+  }, [controls, inView, once, splitText]);
+
+  // Additional class for gradient effect
+  const gradientClass = animation === "gradient" ? "animated-gradient-text" : "";
 
   return (
-    <Component ref={textRef} className={className} style={textStyle}>
-      {text}
+    <Component
+      className={`animated-text-container overflow-hidden relative ${className} ${gradientClass}`}
+      style={{ color: color }}
+    >
+      {/* Original text for SEO (hidden visually) */}
+      <span className="sr-only">{text}</span>
+      
+      {/* Animated text */}
+      <div ref={textRef} aria-hidden="true" className="animated-text">
+        {text}
+      </div>
+      
+      {/* Animated characters will be created by SplitType and animated by Framer Motion */}
+      {splitText && splitText.chars && (
+        <div className="absolute inset-0" aria-hidden="true">
+          {splitText.chars.map((char, index) => (
+            <motion.span
+              key={index}
+              className="animated-char inline-block"
+              custom={index}
+              initial="hidden"
+              animate={controls}
+              variants={getVariants()}
+              style={{
+                display: 'inline-block',
+                width: char.clientWidth,
+                height: char.clientHeight,
+                position: 'absolute',
+                left: char.offsetLeft,
+                top: char.offsetTop,
+              }}
+            >
+              {char.textContent}
+            </motion.span>
+          ))}
+        </div>
+      )}
     </Component>
   );
 };

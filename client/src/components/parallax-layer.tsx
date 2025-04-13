@@ -7,7 +7,7 @@ interface ParallaxLayerProps {
   direction?: 'up' | 'down' | 'left' | 'right';
   zIndex?: number;
   className?: string;
-  offset?: [string, string]; // ScrollOffset format: e.g. ['start end', 'end start']
+  offset?: [number, number]; // ScrollOffset as normalized values (0-1)
   style?: React.CSSProperties;
   shouldMoveOnMobile?: boolean;
 }
@@ -21,7 +21,7 @@ export const ParallaxLayer: React.FC<ParallaxLayerProps> = ({
   direction = 'up',
   zIndex = 0,
   className = '',
-  offset = ['start end', 'end start'],
+  offset = [0, 1],
   style = {},
   shouldMoveOnMobile = false
 }) => {

@@ -9,6 +9,23 @@
   flex-direction: column;
 }
 
+/* Ensure proper positioning for scrolling effects */
+.parallax-effect, 
+.parallax-container,
+.scrollable-section,
+.scroll-reveal,
+.animated-text-container,
+.floating-card {
+  position: relative;
+}
+
+/* Ensure text fragments position correctly */
+.word,
+.char {
+  display: inline-block;
+  position: relative;
+}
+
 /* Enhanced Parallax Sections */
 .enhanced-parallax-section {
   position: relative;
