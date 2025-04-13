@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Route, RouteProps } from 'wouter';
+import { Route, RouteProps, useRoute } from 'wouter';
 
 // Custom animation variants for different routes
 export const animations = {
