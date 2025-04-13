@@ -25,7 +25,8 @@ export const Header: React.FC = () => {
   const [location] = useLocation();
   const isHomePage = location === "/";
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, item: NavItem) => {
+  // Handle navigation click for both anchor and span elements
+  const handleNavClick = (e: React.MouseEvent<HTMLElement>, item: NavItem) => {
     if (item.isSection && isHomePage) {
       e.preventDefault();
       scrollToSection(item.href.substring(1));
@@ -86,12 +87,12 @@ export const Header: React.FC = () => {
           <div className="flex flex-col space-y-4 py-4 px-6">
             {navItems.map((item) => (
               <Link key={item.name} href={item.href}>
-                <a 
-                  className="text-white/80 hover:text-white transition py-2"
+                <span
+                  className="text-white/80 hover:text-white transition py-2 block cursor-pointer"
                   onClick={(e) => handleNavClick(e, item)}
                 >
                   {item.name}
-                </a>
+                </span>
               </Link>
             ))}
             <Button className="gradient-button mt-2 w-full">
