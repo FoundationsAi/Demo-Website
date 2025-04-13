@@ -5,15 +5,28 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// Function to scroll to a section with smooth behavior
+// Function to scroll to a section with smooth behavior, optimized for mobile
 export function scrollToSection(id: string, offset: number = -100) {
   const element = document.getElementById(id);
   if (element) {
-    const position = element.getBoundingClientRect().top + window.scrollY + offset;
-    window.scrollTo({
-      top: position,
-      behavior: "smooth",
-    });
+    // Detect if we're on mobile for different offset handling
+    const isMobile = window.innerWidth < 768;
+    // Use a smaller offset on mobile to account for the smaller header
+    const mobileAdjustedOffset = isMobile ? Math.max(offset, -70) : offset;
+    
+    const position = element.getBoundingClientRect().top + window.scrollY + mobileAdjustedOffset;
+    
+    // For iOS Safari compatibility
+    try {
+      // Try modern smooth scroll
+      window.scrollTo({
+        top: position,
+        behavior: "smooth",
+      });
+    } catch (error) {
+      // Fallback for older browsers
+      window.scrollTo(0, position);
+    }
   }
 }
 

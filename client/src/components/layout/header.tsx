@@ -81,26 +81,32 @@ export const Header: React.FC = () => {
         </div>
       </div>
       
-      {/* Mobile menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-primary/95 backdrop-blur-sm">
-          <div className="flex flex-col space-y-4 py-4 px-6">
-            {navItems.map((item) => (
-              <Link key={item.name} href={item.href}>
-                <span
-                  className="text-white/80 hover:text-white transition py-2 block cursor-pointer"
-                  onClick={(e) => handleNavClick(e, item)}
-                >
-                  {item.name}
-                </span>
-              </Link>
-            ))}
-            <Button className="gradient-button mt-2 w-full">
-              Get Started
-            </Button>
-          </div>
+      {/* Mobile menu - with animation and improved accessibility */}
+      <div 
+        className={`md:hidden bg-primary/95 backdrop-blur-sm absolute w-full transition-all duration-300 ease-in-out overflow-hidden ${
+          isMenuOpen ? 'max-h-[300px] border-b border-white/10 shadow-lg' : 'max-h-0'
+        }`}
+        aria-hidden={!isMenuOpen}
+        aria-expanded={isMenuOpen}
+        role="navigation"
+      >
+        <div className="flex flex-col space-y-3 py-4 px-6">
+          {navItems.map((item) => (
+            <Link key={item.name} href={item.href}>
+              <span
+                className="text-white/90 hover:text-white transition-all py-2 block cursor-pointer font-medium"
+                onClick={(e) => handleNavClick(e, item)}
+                role="menuitem"
+              >
+                {item.name}
+              </span>
+            </Link>
+          ))}
+          <Button className="gradient-button mt-2 w-full py-2">
+            Get Started
+          </Button>
         </div>
-      )}
+      </div>
     </header>
   );
 };
