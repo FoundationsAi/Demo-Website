@@ -41,12 +41,19 @@ export const CloudNarrativeSection: React.FC = () => {
   // Cloud-like filter blur
   const blur = useTransform(smoothProgress, [0, 0.5, 1], [0, 8, 16]);
   
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+  
   useEffect(() => {
     setWindowHeight(window.innerHeight);
     
     const handleResize = () => {
       setWindowHeight(window.innerHeight);
+      setIsMobile(window.innerWidth < 768);
     };
+    
+    // Initial check
+    handleResize();
     
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -74,10 +81,10 @@ export const CloudNarrativeSection: React.FC = () => {
           }}
         >
           <CloudGroup 
-            count={15} 
-            scale={0.6} 
+            count={isMobile ? 8 : 15} 
+            scale={isMobile ? 0.5 : 0.6} 
             opacity={0.4} 
-            speed={0.2} 
+            speed={isMobile ? 0.15 : 0.2} 
             areaHeight={windowHeight} 
           />
         </motion.div>
@@ -91,10 +98,10 @@ export const CloudNarrativeSection: React.FC = () => {
           }}
         >
           <CloudGroup 
-            count={10} 
-            scale={0.8} 
+            count={isMobile ? 5 : 10} 
+            scale={isMobile ? 0.7 : 0.8} 
             opacity={0.6} 
-            speed={0.5} 
+            speed={isMobile ? 0.3 : 0.5} 
             areaHeight={windowHeight} 
           />
         </motion.div>
@@ -108,10 +115,10 @@ export const CloudNarrativeSection: React.FC = () => {
           }}
         >
           <CloudGroup 
-            count={6} 
-            scale={1.2} 
+            count={isMobile ? 3 : 6} 
+            scale={isMobile ? 1.0 : 1.2} 
             opacity={0.9} 
-            speed={1} 
+            speed={isMobile ? 0.7 : 1} 
             areaHeight={windowHeight} 
           />
         </motion.div>

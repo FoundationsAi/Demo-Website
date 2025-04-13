@@ -17,10 +17,20 @@ export const MountainRevealSection: React.FC = () => {
   // Use spring for smoother animations
   const rotationSpring = useSpringValue(0);
   
-  // Scroll-based animations
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile(); // Check on initial load
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  // Scroll-based animations - adjusted offset for better mobile experience
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"]
+    offset: isMobile ? ["start end", "end start"] : ["start end", "end start"]
   });
   
   // Smoother progress with spring physics
@@ -176,12 +186,12 @@ export const MountainRevealSection: React.FC = () => {
         {/* Narrative text elements */}
         <div className="relative z-10 h-full flex flex-col justify-center items-center px-4 text-center">
           <motion.div 
-            className="mb-64 max-w-3xl"
+            className={isMobile ? "mb-32 max-w-3xl" : "mb-64 max-w-3xl"}
             style={{ opacity: textOpacity1, y: y1 }}
           >
             <h2 className="text-3xl md:text-6xl font-bold text-blue-800 drop-shadow-lg mb-6">
               <AnimatedText 
-                text="Revolutionary Peaks of Achievement" 
+                text={isMobile ? "Revolutionary Peaks" : "Revolutionary Peaks of Achievement"}
                 as="span" 
                 animation="gradient"
                 className="font-bold"
@@ -233,17 +243,20 @@ export const MountainRevealSection: React.FC = () => {
           style={{ opacity: textOpacity3 }}
         >
           <div className="container mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {featureCards.map((card, index) => (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
+              {(isMobile ? featureCards.slice(0, 2) : featureCards).map((card, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 + index * 0.1 }}
                 >
-                  <FloatingCard className="glass-card p-6 rounded-xl h-full bg-white/20 backdrop-blur-md">
-                    <h3 className="text-xl font-bold mb-2 text-blue-800">{card.title}</h3>
-                    <p className="text-blue-700">{card.description}</p>
+                  <FloatingCard 
+                    className="glass-card p-4 md:p-6 rounded-xl h-full bg-white/20 backdrop-blur-md"
+                    intensity={isMobile ? 5 : 10}
+                  >
+                    <h3 className="text-lg md:text-xl font-bold mb-2 text-blue-800">{card.title}</h3>
+                    <p className="text-sm md:text-base text-blue-700">{isMobile ? card.mobileDescription || card.description : card.description}</p>
                   </FloatingCard>
                 </motion.div>
               ))}
