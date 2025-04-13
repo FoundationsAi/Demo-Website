@@ -8,7 +8,8 @@ import { VoiceWave } from "@/components/voice-wave";
 import { useToast } from "@/hooks/use-toast";
 import { agents } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
-import { ArrowLeft, Mic, Send, User } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { ArrowLeft, Mic, Send, User, ChevronDown } from "lucide-react";
 
 type Message = {
   id: string;
@@ -21,11 +22,13 @@ export const Chat: React.FC = () => {
   const { agentId } = useParams();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [agent, setAgent] = useState<any>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showHeaderInfo, setShowHeaderInfo] = useState(!isMobile);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Find agent by ID
@@ -152,48 +155,79 @@ export const Chat: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-primary">
       <Header />
       
-      <main className="flex-grow pt-20">
-        <div className="container mx-auto px-4 py-6 max-w-4xl">
-          {/* Chat header */}
-          <div className="flex items-center mb-6">
+      <main className="flex-grow pt-16 md:pt-20">
+        <div className="container mx-auto px-2 md:px-4 py-3 md:py-6 max-w-4xl">
+          {/* Chat header - mobile optimized */}
+          <div className="flex items-center mb-4 md:mb-6">
             <Button 
               variant="ghost" 
               size="icon" 
-              className="mr-4"
+              className="mr-2 md:mr-4"
               onClick={() => setLocation("/")}
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft size={isMobile ? 18 : 20} />
             </Button>
-            <div className="flex items-center">
-              <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-white font-bold mr-3">
+            
+            <div 
+              className="flex items-center flex-grow" 
+              onClick={() => isMobile && setShowHeaderInfo(!showHeaderInfo)}
+            >
+              <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full bg-secondary flex items-center justify-center text-white font-bold mr-2 md:mr-3 flex-shrink-0`}>
                 AI
               </div>
-              <div>
-                <h1 className="text-xl font-semibold">{agent.name}</h1>
-                <p className="text-sm text-white/60">{agent.badge}</p>
+              <div className="flex-grow">
+                <div className="flex items-center justify-between">
+                  <h1 className="text-lg md:text-xl font-semibold">{agent.name}</h1>
+                  {isMobile && (
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      className="p-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowHeaderInfo(!showHeaderInfo);
+                      }}
+                    >
+                      <ChevronDown 
+                        size={18} 
+                        className={`transition-transform duration-300 ${showHeaderInfo ? 'rotate-180' : ''}`} 
+                      />
+                    </Button>
+                  )}
+                </div>
+                {(showHeaderInfo || !isMobile) && (
+                  <div className="text-sm text-white/60 flex items-center">
+                    <span className="mr-1">{agent.badge}</span>
+                    {isMobile && agent.tags && agent.tags.length > 0 && (
+                      <span className="text-xs bg-secondary/20 px-2 py-0.5 rounded-full">
+                        {agent.tags[0]}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
           
-          {/* Chat container */}
-          <div className="bg-[#1E1E1E]/80 border border-white/10 rounded-xl h-[70vh] flex flex-col">
+          {/* Chat container - mobile optimized */}
+          <div className="bg-[#1E1E1E]/80 border border-white/10 rounded-xl h-[65vh] md:h-[70vh] flex flex-col">
             {/* Messages area */}
-            <div className="flex-grow p-4 overflow-y-auto">
+            <div className="flex-grow p-3 md:p-4 overflow-y-auto">
               {messages.map((message) => (
                 <div 
                   key={message.id}
-                  className={`flex items-start gap-3 mb-4 ${
+                  className={`flex items-start gap-2 md:gap-3 mb-3 md:mb-4 ${
                     message.sender === "user" ? "justify-end" : ""
                   }`}
                 >
                   {message.sender === "ai" && (
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
+                    <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-secondary flex items-center justify-center text-xs md:text-sm">
                       AI
                     </div>
                   )}
                   
                   <div 
-                    className={`px-4 py-3 max-w-[80%] ${
+                    className={`px-3 py-2 md:px-4 md:py-3 max-w-[85%] md:max-w-[80%] text-sm md:text-base ${
                       message.sender === "user" 
                         ? "bg-secondary/20 rounded-lg rounded-tr-none" 
                         : "bg-[#2D2D2D] rounded-lg rounded-tl-none"
@@ -203,23 +237,23 @@ export const Chat: React.FC = () => {
                   </div>
                   
                   {message.sender === "user" && (
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-accent flex items-center justify-center">
-                      <User size={16} />
+                    <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-accent flex items-center justify-center">
+                      <User size={isMobile ? 14 : 16} />
                     </div>
                   )}
                 </div>
               ))}
               
               {isProcessing && (
-                <div className="flex items-start gap-3 mb-4">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
+                <div className="flex items-start gap-2 md:gap-3 mb-3 md:mb-4">
+                  <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-secondary flex items-center justify-center text-xs md:text-sm">
                     AI
                   </div>
-                  <div className="px-4 py-3 bg-[#2D2D2D] rounded-lg rounded-tl-none">
+                  <div className="px-3 py-2 md:px-4 md:py-3 bg-[#2D2D2D] rounded-lg rounded-tl-none">
                     <div className="flex gap-1">
-                      <div className="w-2 h-2 bg-white/40 rounded-full animate-pulse"></div>
-                      <div className="w-2 h-2 bg-white/40 rounded-full animate-pulse" style={{ animationDelay: "0.2s" }}></div>
-                      <div className="w-2 h-2 bg-white/40 rounded-full animate-pulse" style={{ animationDelay: "0.4s" }}></div>
+                      <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white/40 rounded-full animate-pulse"></div>
+                      <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white/40 rounded-full animate-pulse" style={{ animationDelay: "0.2s" }}></div>
+                      <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white/40 rounded-full animate-pulse" style={{ animationDelay: "0.4s" }}></div>
                     </div>
                   </div>
                 </div>
@@ -230,13 +264,13 @@ export const Chat: React.FC = () => {
             
             {/* Voice wave animation */}
             {isRecording && (
-              <div className="px-4">
-                <VoiceWave isActive={true} />
+              <div className="px-3 md:px-4">
+                <VoiceWave isActive={true} numBars={isMobile ? 20 : 30} />
               </div>
             )}
             
-            {/* Input area */}
-            <div className="p-4 border-t border-white/10">
+            {/* Input area - mobile optimized */}
+            <div className="p-3 md:p-4 border-t border-white/10">
               <div className="flex gap-2">
                 <Button
                   type="button"
@@ -244,17 +278,17 @@ export const Chat: React.FC = () => {
                     isRecording 
                       ? "bg-red-500 hover:bg-red-600" 
                       : "bg-secondary hover:bg-secondary/90"
-                  } rounded-full w-10 h-10 flex-shrink-0 p-0`}
+                  } rounded-full w-9 h-9 md:w-10 md:h-10 flex-shrink-0 p-0`}
                   onClick={toggleRecording}
                 >
-                  <Mic size={18} />
+                  <Mic size={isMobile ? 16 : 18} />
                 </Button>
                 
                 <div className="relative flex-grow">
                   <Input
                     type="text"
-                    placeholder="Type your message..."
-                    className="w-full bg-[#2D2D2D] border border-white/10 rounded-full py-2 pr-10"
+                    placeholder={isMobile ? "Message..." : "Type your message..."}
+                    className="w-full h-9 md:h-10 text-sm md:text-base bg-[#2D2D2D] border border-white/10 rounded-full py-1 md:py-2 pr-8 md:pr-10"
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     onKeyDown={handleKeyPress}
@@ -262,11 +296,11 @@ export const Chat: React.FC = () => {
                   />
                   <Button
                     type="button"
-                    className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 bg-transparent hover:bg-white/10 text-white/80 hover:text-white rounded-full"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 md:h-8 md:w-8 p-0 bg-transparent hover:bg-white/10 text-white/80 hover:text-white rounded-full"
                     onClick={handleSendMessage}
                     disabled={!inputMessage.trim() || isRecording}
                   >
-                    <Send size={16} />
+                    <Send size={isMobile ? 14 : 16} />
                   </Button>
                 </div>
               </div>
