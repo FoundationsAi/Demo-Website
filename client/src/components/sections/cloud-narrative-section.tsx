@@ -86,7 +86,7 @@ export const CloudNarrativeSection: React.FC = () => {
         <motion.div 
           className="absolute inset-0"
           style={{ 
-            y: parallaxMid,
+            y: parallaxMid as any,
             filter: `blur(${8}px)`,
           }}
         >
@@ -103,7 +103,7 @@ export const CloudNarrativeSection: React.FC = () => {
         <motion.div 
           className="absolute inset-0"
           style={{ 
-            y: parallaxClose,
+            y: parallaxClose as any,
             filter: "blur(0px)",
           }}
         >
