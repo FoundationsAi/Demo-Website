@@ -62,8 +62,8 @@ export const CloudNarrativeSection: React.FC = () => {
         className="sticky top-0 h-screen w-full overflow-hidden"
         style={{ opacity }}
       >
-        {/* Dynamic, interactive cloud background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-300 via-blue-400 to-blue-500" />
+        {/* Heavenly, airy cloud background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-sky-100 via-sky-200 to-blue-300" />
         
         {/* Far cloud layer */}
         <motion.div 
@@ -133,7 +133,7 @@ export const CloudNarrativeSection: React.FC = () => {
             className="mb-64 max-w-3xl"
             style={{ opacity: textOpacity1, y: y1 }}
           >
-            <h2 className="text-3xl md:text-6xl font-bold text-white drop-shadow-lg mb-6">
+            <h2 className="text-3xl md:text-6xl font-bold text-blue-800 drop-shadow-lg mb-6">
               <AnimatedText 
                 text="Beyond the Digital Frontier" 
                 as="span" 
@@ -141,7 +141,7 @@ export const CloudNarrativeSection: React.FC = () => {
                 className="font-bold"
               />
             </h2>
-            <p className="text-xl md:text-2xl text-white/90 drop-shadow-md">
+            <p className="text-xl md:text-2xl text-blue-700 drop-shadow-md">
               Where human imagination and artificial intelligence converge to create a new reality
             </p>
           </motion.div>
@@ -150,7 +150,7 @@ export const CloudNarrativeSection: React.FC = () => {
             className="absolute max-w-3xl"
             style={{ opacity: textOpacity2, y: y2 }}
           >
-            <h2 className="text-3xl md:text-5xl font-bold text-white drop-shadow-lg mb-6">
+            <h2 className="text-3xl md:text-5xl font-bold text-blue-800 drop-shadow-lg mb-6">
               <AnimatedText 
                 text="Voice of the Future" 
                 as="span" 
@@ -158,7 +158,7 @@ export const CloudNarrativeSection: React.FC = () => {
                 className="font-bold"
               />
             </h2>
-            <p className="text-xl md:text-2xl text-white/90 drop-shadow-md">
+            <p className="text-xl md:text-2xl text-blue-700 drop-shadow-md">
               Our AI agents communicate with unprecedented natural fluency, understanding context and emotion
             </p>
           </motion.div>
@@ -167,7 +167,7 @@ export const CloudNarrativeSection: React.FC = () => {
             className="absolute max-w-3xl"
             style={{ opacity: textOpacity3, y: y3 }}
           >
-            <h2 className="text-3xl md:text-5xl font-bold text-white drop-shadow-lg mb-6">
+            <h2 className="text-3xl md:text-5xl font-bold text-blue-800 drop-shadow-lg mb-6">
               <AnimatedText 
                 text="Descend to the Peaks of Innovation" 
                 as="span" 
@@ -175,7 +175,7 @@ export const CloudNarrativeSection: React.FC = () => {
                 className="font-bold"
               />
             </h2>
-            <p className="text-xl md:text-2xl text-white/90 drop-shadow-md">
+            <p className="text-xl md:text-2xl text-blue-700 drop-shadow-md">
               Continue your journey to discover the revolutionary foundation of our technology
             </p>
           </motion.div>
