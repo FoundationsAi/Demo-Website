@@ -1,195 +1,169 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { ArrowRight, Mic } from "lucide-react";
 import { Link } from "wouter";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { VoiceWave } from "@/components/voice-wave";
-import { Mic, Send } from "lucide-react";
-import { useParallax } from "@/hooks/use-scroll";
+
+import { AnimatedText } from "../animated-text";
+import { FloatingCard } from "../floating-card";
+import { MountainLogo } from "../mountain-logo";
+import { ParticleBackground } from "../particle-background";
+import { VoiceWave } from "../voice-wave";
 
 export const HeroSection: React.FC = () => {
-  const [message, setMessage] = useState("");
-  const { offset } = useParallax(0.15);
+  const [isVoiceActive, setIsVoiceActive] = useState(false);
 
-  // Example conversation
-  const conversations = [
-    {
-      sender: "AI",
-      message: "Hello! I'm Emma, your AI sales assistant. How can I help you today?"
-    },
-    {
-      sender: "You",
-      message: "Hi Emma! I'm interested in your voice AI solutions."
-    },
-    {
-      sender: "AI",
-      message: "Great! Our voice AI solutions offer natural conversations with customers. Would you like to know about specific use cases or pricing?"
-    }
-  ];
+  const toggleVoice = () => {
+    setIsVoiceActive(!isVoiceActive);
+    // In a real application, this would trigger voice recognition
+  };
 
   return (
-    <section className="relative min-h-screen pt-20 overflow-hidden" id="hero">
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-primary/10 to-primary"></div>
-        <motion.div 
-          className="absolute top-20 right-10 w-72 h-72 bg-secondary/20 rounded-full filter blur-3xl"
-          animate={{ 
-            y: [0, 20, 0],
-            opacity: [0.2, 0.3, 0.2]
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          style={{ y: -offset / 2 }}
-        />
-        <motion.div 
-          className="absolute bottom-10 left-10 w-80 h-80 bg-accent/10 rounded-full filter blur-3xl"
-          animate={{ 
-            y: [0, -20, 0],
-            opacity: [0.1, 0.2, 0.1]
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          style={{ y: offset / 2 }}
-        />
-      </div>
-
-      <div className="relative container mx-auto px-4 py-20 md:py-32 flex flex-col md:flex-row items-center">
-        <motion.div 
-          className="md:w-1/2 md:pr-8 mb-10 md:mb-0 z-10"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
-            Experience the Future of{" "}
-            <span className="gradient-text">Voice AI</span>
+    <section id="hero" className="relative min-h-screen flex flex-col justify-center overflow-hidden">
+      {/* Interactive particle background */}
+      <ParticleBackground variant="hero" />
+      
+      {/* Futuristic grid overlay */}
+      <div className="absolute inset-0 grid-background opacity-20" />
+      
+      <div className="section-container relative z-10">
+        <div className="flex flex-col items-center text-center mb-8">
+          {/* Logo with glow effect */}
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="mb-8"
+          >
+            <MountainLogo className="w-24 h-24 md:w-32 md:h-32" />
+          </motion.div>
+          
+          {/* Main title with gradient animation */}
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-4">
+            <AnimatedText 
+              text="Foundations AI" 
+              animation="gradient" 
+              as="span" 
+              className="block mb-2"
+            />
+            <AnimatedText 
+              text="Voice Agents Demo" 
+              animation="slide" 
+              delay={0.5} 
+              className="block" 
+            />
           </h1>
-          <p className="text-lg md:text-xl text-white/80 mb-8 max-w-lg">
-            Our state-of-the-art voice agents deliver natural, engaging conversations for your business needs. Seamlessly integrate with your existing tech stack.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Link href="#agents">
-              <Button className="gradient-button">
-                Start Talking Now
-              </Button>
+          
+          {/* Subtitle with shimmer effect */}
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1 }}
+            className="shimmer-text text-xl md:text-2xl max-w-xl mx-auto mb-8 font-light"
+          >
+            Experience the future of conversational AI with our revolutionary voice agents
+          </motion.p>
+          
+          {/* Call to action buttons */}
+          <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 mt-8">
+            <Link href="/agent-select">
+              <motion.a
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="gradient-button flex items-center"
+              >
+                Try It Now <ArrowRight className="ml-2 h-5 w-5" />
+              </motion.a>
             </Link>
-            <Link href="#demo">
-              <Button variant="outline" className="outline-button">
-                View Demo
-              </Button>
-            </Link>
+            
+            <button 
+              onClick={toggleVoice}
+              className="outline-button flex items-center"
+            >
+              <Mic className={`mr-2 h-5 w-5 ${isVoiceActive ? 'text-accent' : 'text-white'}`} />
+              Speak to Demo
+            </button>
           </div>
           
-          {/* Metrics */}
-          <div className="flex flex-wrap gap-8 mt-12">
-            <div>
-              <div className="text-3xl font-bold text-accent">99.9%</div>
-              <div className="text-white/60 text-sm">Uptime</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-accent">500ms</div>
-              <div className="text-white/60 text-sm">Response Latency</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-accent">18+</div>
-              <div className="text-white/60 text-sm">Languages</div>
-            </div>
+          {/* Voice wave animation component */}
+          <div className="mt-12">
+            <VoiceWave 
+              isActive={isVoiceActive}
+              numBars={40}
+              className="mx-auto"
+            />
           </div>
-        </motion.div>
+        </div>
         
-        <motion.div 
-          className="md:w-1/2 relative z-10"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-        >
-          {/* Voice Chat Interface */}
-          <div className="bg-[#1E1E1E]/80 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8 relative overflow-hidden">
-            <div className="flex items-center mb-6 gap-4">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-secondary/90 to-secondary flex items-center justify-center">
-                <Mic className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <div className="text-lg font-semibold">Sales Agent Emma</div>
-                <div className="text-white/60 text-sm">Active and listening</div>
-              </div>
-            </div>
-            
-            {/* Conversation Simulation */}
-            <div className="space-y-4 mb-6">
-              {conversations.map((convo, index) => (
-                <div 
-                  key={index}
-                  className={`flex items-start gap-3 ${
-                    convo.sender === "You" ? "justify-end" : ""
-                  }`}
-                >
-                  {convo.sender !== "You" && (
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-xs font-medium">
-                      AI
-                    </div>
-                  )}
-                  <div 
-                    className={`${
-                      convo.sender === "You" 
-                        ? "bg-secondary/20 rounded-lg rounded-tr-none" 
-                        : "bg-[#2D2D2D] rounded-lg rounded-tl-none"
-                    } px-4 py-3 text-white/90 max-w-[80%]`}
-                  >
-                    {convo.message}
-                  </div>
-                  {convo.sender === "You" && (
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-accent flex items-center justify-center text-xs font-medium">
-                      You
-                    </div>
-                  )}
+        {/* Floating feature cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+          {features.map((feature, index) => (
+            <motion.div
+              key={feature.title}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.2 + index * 0.2 }}
+            >
+              <FloatingCard className="glass-card p-6 rounded-xl h-full">
+                <div className="feature-icon rounded-full">
+                  <feature.icon className="h-6 w-6 text-white" />
                 </div>
-              ))}
-            </div>
-            
-            {/* Voice Wave Visualization */}
-            <VoiceWave />
-            
-            {/* Input Area */}
-            <div className="flex gap-2">
-              <Button 
-                className="bg-secondary hover:bg-secondary/90 rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 transition-all p-0"
-                aria-label="Start voice input"
-              >
-                <Mic size={20} />
-              </Button>
-              <div className="relative flex-grow">
-                <Input 
-                  type="text"
-                  placeholder="Type your message..."
-                  className="w-full bg-[#2D2D2D] border border-white/10 rounded-full py-2 px-4 pr-10"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                />
-                <Button 
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-transparent hover:bg-transparent text-white/80 hover:text-white p-1 h-auto"
-                  aria-label="Send message"
-                >
-                  <Send size={18} />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-      
-      {/* Client Logos */}
-      <div className="relative container mx-auto px-4 py-12 mb-12">
-        <p className="text-center text-white/60 mb-8">Trusted by innovative companies</p>
-        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="opacity-60 hover:opacity-100 transition-opacity">
-              <div className="h-8 w-28 bg-white/10 rounded-md"></div>
-            </div>
+                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                <p className="text-white/70">{feature.description}</p>
+              </FloatingCard>
+            </motion.div>
           ))}
         </div>
+        
+        {/* Scroll indicator */}
+        <motion.div 
+          className="flex justify-center mt-16"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, repeatType: "loop" }}
+        >
+          <div className="w-8 h-12 rounded-full border-2 border-white/30 flex justify-center pt-2">
+            <div className="w-1 h-2 bg-white rounded-full" />
+          </div>
+        </motion.div>
       </div>
     </section>
   );
 };
+
+// Sample feature data
+const features = [
+  {
+    title: "Natural Conversations",
+    description: "Our AI agents understand context and respond naturally to create fluid conversations.",
+    icon: (props: React.SVGProps<SVGSVGElement>) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+    )
+  },
+  {
+    title: "Voice Recognition",
+    description: "Speak naturally and our AI understands your voice with impressive accuracy.",
+    icon: (props: React.SVGProps<SVGSVGElement>) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+        <line x1="12" y1="19" x2="12" y2="23" />
+        <line x1="8" y1="23" x2="16" y2="23" />
+      </svg>
+    )
+  },
+  {
+    title: "Personalized Agents",
+    description: "Choose from a variety of AI personalities tailored to different needs and preferences.",
+    icon: (props: React.SVGProps<SVGSVGElement>) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    )
+  }
+];
 
 export default HeroSection;

@@ -1,16 +1,16 @@
 import React, { useEffect } from "react";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
-import { HeroSection } from "@/components/sections/hero-section";
-import { FeaturesSection } from "@/components/sections/features-section";
-import { AgentSelectionSection } from "@/components/sections/agent-selection-section";
-import { HowItWorksSection } from "@/components/sections/how-it-works-section";
-import { DemoSection } from "@/components/sections/demo-section";
-import { CTASection } from "@/components/sections/cta-section";
+import { ReactLenis } from "@studio-freight/react-lenis";
+import { Header } from "../components/layout/header";
+import { Footer } from "../components/layout/footer";
+import { HeroSection } from "../components/sections/hero-section";
 
 export const Home: React.FC = () => {
-  // Handle smooth scrolling to sections when URL contains a hash
+  // Set title and handle smooth scrolling to sections when URL contains a hash
   useEffect(() => {
+    // Set title
+    document.title = "Foundations AI - Voice Agents Demo";
+    
+    // Smooth scroll to hash
     if (window.location.hash) {
       const id = window.location.hash.substring(1);
       const element = document.getElementById(id);
@@ -22,18 +22,16 @@ export const Home: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-grow">
-        <HeroSection />
-        <FeaturesSection />
-        <AgentSelectionSection />
-        <HowItWorksSection />
-        <DemoSection />
-        <CTASection />
-      </main>
-      <Footer />
-    </div>
+    <ReactLenis root options={{ duration: 1.2, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) }}>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow">
+          <HeroSection />
+          {/* More sections will be added in future updates */}
+        </main>
+        <Footer />
+      </div>
+    </ReactLenis>
   );
 };
 
