@@ -1,154 +1,184 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { agents } from "@/lib/utils";
-import { Link } from "wouter";
-import { Button } from "@/components/ui/button";
+import React, { useState } from 'react';
+import { Link } from 'wouter';
+import { motion, AnimatePresence } from 'framer-motion';
+import { agents } from '@/lib/utils';
+import { HoverableCard } from '@/components/hoverable-card';
+import { ScrollReveal } from '@/components/scroll-reveal';
+import { VoiceWave } from '@/components/voice-wave';
+import { AnimatedText } from '@/components/animated-text';
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-};
-
+/**
+ * AgentSelectionSection - Interactive section for selecting and trying AI agents
+ * with voice capabilities powered by 11 Labs
+ */
 export const AgentSelectionSection: React.FC = () => {
-  // Mobile detection
-  const [isMobile, setIsMobile] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [inputText, setInputText] = useState('');
   
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile(); // Check on initial load
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  // Mock function for using 11Labs API when integrated
+  const speakWithAgent = (agentId: string, text: string) => {
+    if (!text.trim()) return;
+    
+    // In a real implementation, this would call the 11Labs API
+    setIsPlaying(true);
+    console.log(`Agent ${agentId} is speaking: ${text}`);
+    
+    // Simulate voice playback time
+    setTimeout(() => {
+      setIsPlaying(false);
+      setInputText('');
+    }, 3000);
+  };
   
   return (
-    <section id="agents" className="relative py-20 min-h-screen flex items-center" style={{ background: 'linear-gradient(to bottom, #8673D9, #6B93C3)' }}>
-      {/* Floating particles in the background - reduced for mobile */}
-      <div className="absolute inset-0 overflow-hidden">
-        {Array.from({ length: isMobile ? 10 : 20 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-white opacity-30"
-            style={{
-              width: 5 + Math.random() * 10,
-              height: 5 + Math.random() * 10,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              filter: 'blur(1px)'
-            }}
-            animate={{
-              y: [0, -20, 0],
-              opacity: [0.2, 0.5, 0.2]
-            }}
-            transition={{
-              duration: isMobile ? (2 + Math.random() * 3) : (3 + Math.random() * 5),
-              repeat: Infinity,
-              delay: Math.random() * 5
-            }}
-          />
-        ))}
+    <section className="relative bg-gradient-to-b from-[#142448] to-[#0a1528] text-white py-24 min-h-screen flex flex-col justify-center">
+      {/* Background mountains silhouette */}
+      <div className="absolute bottom-0 left-0 w-full pointer-events-none z-0 opacity-20">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+          <path fill="#ffffff" fillOpacity="1" d="M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,234.7C672,245,768,235,864,202.7C960,171,1056,117,1152,106.7C1248,96,1344,128,1392,144L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
       </div>
-
-      <div className="section-container relative z-10 px-4 py-12 md:py-20">
+      
+      <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
-          <motion.h2 
-            className="text-3xl md:text-5xl font-bold text-blue-800 mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            Choose Your AI Agent
-          </motion.h2>
-          <motion.p 
-            className="text-blue-700 text-lg max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            Select from our range of specialized voice AI agents, each with unique personalities and capabilities designed for specific business needs.
-          </motion.p>
+          <ScrollReveal>
+            <AnimatedText
+              text="INTERACT WITH OUR AI"
+              as="h2"
+              className="text-4xl md:text-5xl font-bold mb-6 tracking-wider"
+              animation="fade"
+              stagger={0.03}
+            />
+            <p className="text-xl text-blue-300 max-w-3xl mx-auto leading-relaxed">
+              Experience the future of voice AI technology. Select an agent with a distinct 
+              personality, knowledge base and communication style to engage with.
+            </p>
+          </ScrollReveal>
         </div>
         
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
-        >
-          {/* On mobile, only display first 2 agents by default */}
-          {(isMobile ? agents.slice(0, 2) : agents).map((agent) => (
-            <motion.div 
-              key={agent.id}
-              className="bg-white/30 backdrop-blur-md border border-white/40 rounded-xl overflow-hidden hover:shadow-xl hover:shadow-white/20 transition-all duration-300 transform hover:-translate-y-1"
-              variants={item}
-            >
-              <div className="h-2 bg-gradient-to-r from-blue-400 to-purple-400"></div>
-              <div className="p-4 md:p-6">
-                <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-base md:text-lg font-bold text-white shadow-md">
-                    AI
-                  </div>
-                  <div>
-                    <h3 className="text-lg md:text-xl font-semibold text-blue-800">{agent.name}</h3>
-                    <div className="flex items-center mt-1">
-                      <div className="w-2 h-2 bg-purple-400 rounded-full mr-2"></div>
-                      <span className="text-xs md:text-sm text-blue-700">{agent.badge}</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {agents.map((agent, index) => (
+            <ScrollReveal key={agent.id} delay={index * 0.1}>
+              <motion.div 
+                whileHover={{ scale: 1.03 }} 
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setSelectedAgent(agent.id)}
+              >
+                <HoverableCard 
+                  className={`h-full ${selectedAgent === agent.id ? 'bg-blue-900/40' : 'bg-gray-900/70'} backdrop-blur-sm rounded-lg overflow-hidden cursor-pointer border-2 ${selectedAgent === agent.id ? 'border-blue-400' : 'border-transparent'}`}
+                >
+                  <div className="p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className={`w-16 h-16 ${selectedAgent === agent.id ? 'bg-blue-600' : 'bg-blue-800'} rounded-full flex items-center justify-center transition-colors duration-300`}>
+                        <span className="text-2xl">{agent.icon}</span>
+                      </div>
+                      <VoiceWave isActive={isPlaying && selectedAgent === agent.id} numBars={4} className="h-10" />
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold mb-2">{agent.name}</h3>
+                    <p className="text-blue-100 mb-4">{agent.description}</p>
+                    
+                    <div className="mt-auto">
+                      <div className="flex flex-wrap gap-2">
+                        {agent.skills.map((skill) => (
+                          <span 
+                            key={skill}
+                            className="px-3 py-1 bg-blue-900/50 rounded-full text-sm"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
+                </HoverableCard>
+              </motion.div>
+            </ScrollReveal>
+          ))}
+        </div>
+        
+        {/* Agent interaction area */}
+        <AnimatePresence>
+          {selectedAgent !== null && (
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 50 }}
+              transition={{ duration: 0.5 }}
+              className="mt-12 max-w-3xl mx-auto bg-blue-900/30 backdrop-blur-md p-8 rounded-lg border border-blue-400/30"
+            >
+              <div className="flex items-center mb-6">
+                <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mr-4">
+                  <span className="text-xl">{agents.find(a => a.id === selectedAgent)?.icon}</span>
                 </div>
+                <div>
+                  <h3 className="text-xl font-bold">{agents.find(a => a.id === selectedAgent)?.name}</h3>
+                  <p className="text-blue-300 text-sm">AI Voice Agent</p>
+                </div>
+                <div className="ml-auto">
+                  <VoiceWave isActive={isPlaying} className="h-8 w-20" />
+                </div>
+              </div>
+              
+              <div className="mb-6">
+                <textarea
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  placeholder="Type a message to hear the agent speak..."
+                  className="w-full bg-blue-950/50 border border-blue-800 rounded-lg p-3 text-white placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={3}
+                  disabled={isPlaying}
+                />
+              </div>
+              
+              <div className="flex justify-between">
+                <button
+                  onClick={() => setSelectedAgent(null)}
+                  className="px-4 py-2 bg-transparent border border-blue-500 text-blue-400 rounded-lg hover:bg-blue-900/30"
+                >
+                  Back to Selection
+                </button>
                 
-                <p className="text-sm md:text-base text-blue-700 mb-4 md:mb-6">
-                  {isMobile && agent.description.length > 120 
-                    ? `${agent.description.substring(0, 120)}...` 
-                    : agent.description}
-                </p>
-                
-                <div className="flex flex-wrap gap-1 md:gap-2 mb-4 md:mb-6">
-                  {agent.tags.slice(0, isMobile ? 3 : undefined).map((tag, index) => (
-                    <span key={index} className="bg-blue-100 text-blue-800 text-xs rounded-full px-2 md:px-3 py-1 shadow-sm">
-                      {tag}
-                    </span>
-                  ))}
-                  {isMobile && agent.tags.length > 3 && (
-                    <span className="bg-blue-100 text-blue-800 text-xs rounded-full px-2 py-1 shadow-sm">
-                      +{agent.tags.length - 3} more
-                    </span>
+                <button
+                  onClick={() => speakWithAgent(selectedAgent, inputText)}
+                  disabled={!inputText.trim() || isPlaying}
+                  className={`px-6 py-2 rounded-lg ${!inputText.trim() || isPlaying ? 'bg-gray-600 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} flex items-center`}
+                >
+                  {isPlaying ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                      </svg>
+                      Speak Message
+                    </>
                   )}
-                </div>
-                
-                <Link href={`/chat/${agent.id}`}>
-                  <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:opacity-90 transition-opacity text-sm md:text-base py-1.5 md:py-2">
-                    {isMobile ? "Chat Now" : "Select Agent"}
-                  </Button>
-                </Link>
+                </button>
+              </div>
+              
+              <div className="mt-6 text-sm text-blue-300 text-center">
+                <p>Voice synthesis powered by 11 Labs AI technology</p>
               </div>
             </motion.div>
-          ))}
-        </motion.div>
+          )}
+        </AnimatePresence>
         
-        <div className="mt-8 md:mt-12 text-center">
-          <Button 
-            variant="outline" 
-            className="bg-white/40 backdrop-blur-sm border border-white/50 text-blue-800 hover:bg-white/60 hover:text-blue-900 font-medium px-6 md:px-8 py-4 md:py-6 rounded-full transition-all duration-300 shadow-md text-sm md:text-base"
-          >
-            {isMobile ? "Show More Agents" : "View All Agents"}
-          </Button>
+        <div className="text-center mt-16">
+          <Link href="/chat">
+            <button className="px-8 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
+              Engage in Full Conversation
+            </button>
+          </Link>
         </div>
       </div>
     </section>
   );
 };
-
-export default AgentSelectionSection;

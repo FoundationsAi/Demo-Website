@@ -76,49 +76,84 @@ export const features = [
   }
 ];
 
-// Agent types
+// Agent types with voices
 export const agents = [
   {
     id: "customer-service",
     name: "AI Customer Service",
     description: "Friendly and efficient agent that handles customer inquiries with empathy and precision.",
-    badge: "24/7 Availability",
-    tags: ["Customer Support", "Troubleshooting", "Information"]
+    icon: "👋",
+    skills: ["Customer Support", "Troubleshooting", "Information"]
   },
   {
     id: "sales",
-    name: "AI Sales Qualification",
+    name: "AI Sales Rep",
     description: "Professional agent that qualifies leads, books meetings, and nurtures potential customers.",
-    badge: "Lead Generation",
-    tags: ["Lead Qualification", "Meeting Booking", "Follow-up"]
+    icon: "💼",
+    skills: ["Lead Qualification", "Meeting Booking", "Follow-up"]
   },
   {
     id: "receptionist",
     name: "AI Receptionist",
     description: "Professional virtual receptionist that greets callers, directs inquiries, and schedules appointments.",
-    badge: "Call Handling",
-    tags: ["Call Routing", "Appointment Setting", "FAQs"]
+    icon: "📞",
+    skills: ["Call Routing", "Appointment Setting", "FAQs"]
   },
   {
     id: "mortgage",
     name: "AI Mortgage Specialist",
     description: "Knowledgeable agent specializing in mortgage information, pre-qualification, and application processes.",
-    badge: "Financial Services",
-    tags: ["Pre-qualification", "Rate Information", "Application"]
+    icon: "🏦",
+    skills: ["Pre-qualification", "Rate Information", "Application"]
   },
   {
     id: "healthcare",
     name: "AI Healthcare Scheduler",
     description: "Compassionate agent that schedules medical appointments, sends reminders, and answers basic health questions.",
-    badge: "HIPAA Compliant",
-    tags: ["Appointment Booking", "Reminders", "Basic Information"]
+    icon: "🩺",
+    skills: ["Appointment Booking", "Reminders", "Basic Information"]
   },
   {
     id: "concierge",
     name: "AI Concierge",
     description: "Sophisticated concierge agent that assists with bookings, recommendations, and special requests.",
-    badge: "Hospitality",
-    tags: ["Reservations", "Recommendations", "Special Requests"]
+    icon: "✨",
+    skills: ["Reservations", "Recommendations", "Special Requests"]
+  },
+  {
+    id: "technical-support",
+    name: "AI Tech Support",
+    description: "Tech-savvy agent that helps users troubleshoot technical issues with patience and clarity.",
+    icon: "💻",
+    skills: ["Troubleshooting", "System Setup", "Software Support"]
+  },
+  {
+    id: "travel",
+    name: "AI Travel Agent",
+    description: "Experienced travel agent that helps plan trips, book flights, and provide travel recommendations.",
+    icon: "✈️",
+    skills: ["Trip Planning", "Booking", "Travel Tips"]
+  },
+  {
+    id: "educator",
+    name: "AI Educator",
+    description: "Knowledgeable educational guide that helps explain complex topics and answer learning questions.",
+    icon: "🎓",
+    skills: ["Explanations", "Knowledge Base", "Learning Aids"]
+  },
+  {
+    id: "personal-assistant",
+    name: "AI Personal Assistant",
+    description: "Organized assistant that helps manage schedules, tasks, and provide timely reminders.",
+    icon: "📅",
+    skills: ["Scheduling", "Task Management", "Reminders"]
+  },
+  {
+    id: "creative",
+    name: "AI Creative Consultant",
+    description: "Creative consultant that assists with brainstorming, idea generation, and creative problem-solving.",
+    icon: "🎨",
+    skills: ["Brainstorming", "Idea Development", "Creative Direction"]
   }
 ];
 

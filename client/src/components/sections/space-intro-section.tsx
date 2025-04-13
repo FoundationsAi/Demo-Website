@@ -53,35 +53,59 @@ export const SpaceIntroSection: React.FC = () => {
     
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'rgba(0, 5, 20, 1)'; // Deep space blue
+      ctx.fillStyle = 'rgb(0, 0, 0)'; // Pure black for true space
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      // Draw stars
+      // Draw stars with more dramatic movement
       stars.forEach(star => {
         ctx.beginPath();
         ctx.globalAlpha = star.opacity;
+        
+        // Make some stars larger with glow
+        if (star.radius > 1.2) {
+          // Add glow effect for larger stars
+          const gradient = ctx.createRadialGradient(
+            star.x, star.y, 0,
+            star.x, star.y, star.radius * 4
+          );
+          gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+          gradient.addColorStop(0.5, 'rgba(210, 230, 255, 0.3)');
+          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          
+          ctx.fillStyle = gradient;
+          ctx.arc(star.x, star.y, star.radius * 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        
+        // Draw actual star
+        ctx.beginPath();
         ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
         ctx.fill();
         
-        // Move star (subtly)
+        // More dynamic movement - some stars move diagonally
+        star.x += star.speed * (Math.random() > 0.5 ? 0.2 : -0.2);
         star.y += star.speed;
         
-        // If star moves off screen, reset it to the top
-        if (star.y > canvas.height) {
+        // If star moves off screen, reset it
+        if (star.y > canvas.height || star.x < 0 || star.x > canvas.width) {
           star.y = 0;
           star.x = Math.random() * canvas.width;
+          // Randomly vary the speed for more natural movement
+          star.speed = Math.random() * 0.08 + 0.02;
         }
       });
       
-      // Create occasional twinkling effect
-      if (Math.random() > 0.99) {
+      // Create more frequent twinkling effect
+      if (Math.random() > 0.95) {
         const randomStar = stars[Math.floor(Math.random() * stars.length)];
         if (randomStar) {
           randomStar.opacity = 1;
+          randomStar.radius *= 1.3; // Briefly expand
           setTimeout(() => {
             randomStar.opacity = Math.random() * 0.8 + 0.2;
-          }, 100);
+            randomStar.radius /= 1.3; // Return to normal size
+          }, 100 + Math.random() * 200);
         }
       }
       
