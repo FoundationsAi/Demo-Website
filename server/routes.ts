@@ -43,8 +43,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`Attempting to call 11Labs Conversational AI with agent ID: ${agentId}`);
       
-      // Call 11Labs Conversational AI Agent API
-      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${agentId}`, {
+      // Call 11Labs Conversational AI Agent API - using the correct endpoint for agent conversations
+      const response = await fetch(`https://api.elevenlabs.io/v1/chat-with-agent`, {
         method: "POST",
         headers: {
           "Accept": "application/json",
@@ -52,11 +52,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           "xi-api-key": ELEVENLABS_API_KEY
         },
         body: JSON.stringify({
-          text: message,
-          model_id: "eleven_monolingual_v1",
+          agent_id: agentId,
+          message: message,
+          conversation_history: formattedHistory,
+          audio_enabled: true, // Request audio response
           voice_settings: {
             stability: 0.5,
-            similarity_boost: 0.75
+            similarity_boost: 0.75,
+            style: 0.0,
+            use_speaker_boost: true
           }
         })
       });
@@ -70,16 +74,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Get the audio data as an ArrayBuffer
-      const audioData = await response.arrayBuffer();
+      // Parse the JSON response from the API
+      const data = await response.json();
+      console.log("Received response from 11Labs:", data);
       
-      // Convert to base64 for sending to the client
-      const base64Audio = Buffer.from(audioData).toString('base64');
+      // Extract the AI text response and audio
+      const aiText = data.response || "I'm sorry, I didn't catch that. Could you please try again?";
+      const audioContent = data.audio_response || "";
       
       // Create a response with both AI response text and the audio
       res.json({ 
-        text: message, // For now, we'll echo back the input message as the response
-        audio: base64Audio
+        text: aiText,
+        audio: audioContent // 11Labs API already provides base64 encoded audio
       });
     } catch (error: any) {
       console.error("Error in conversational agent:", error);
