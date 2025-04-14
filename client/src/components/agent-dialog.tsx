@@ -647,12 +647,12 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       case 'widget-fallback':
         return (
           <>
-            <DialogHeader className="border-b pb-4">
+            <DialogHeader className="border-b border-[#304060] pb-4 space-y-1">
               <div className="text-center">
-                <DialogTitle className="text-2xl font-medium">
+                <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-100">
                   {selectedGender === 'male' ? maleName : femaleName}
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-blue-200 opacity-90">
                   AI Voice Assistant
                 </DialogDescription>
               </div>
@@ -690,12 +690,12 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       case 'lead-capture':
         return (
           <>
-            <DialogHeader className="border-b pb-4">
+            <DialogHeader className="border-b border-[#304060] pb-4 space-y-1">
               <div className="text-center">
-                <DialogTitle className="text-2xl font-medium">
+                <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-100">
                   Voice Demo Request
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-blue-200 opacity-90">
                   Try a personalized AI voice conversation tailored to your use case
                 </DialogDescription>
               </div>
@@ -800,18 +800,18 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       case 'full-demo':
         return (
           <>
-            <DialogHeader className="border-b pb-4">
+            <DialogHeader className="border-b border-[#304060] pb-4 space-y-1">
               <div className="text-center">
-                <DialogTitle className="text-2xl font-medium">
+                <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-100">
                   {selectedGender === 'male' ? maleName : femaleName}
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-blue-200 opacity-90">
                   AI Voice Assistant
                 </DialogDescription>
               </div>
             </DialogHeader>
             
-            <div className="flex-1 py-6 px-4 flex flex-col bg-slate-50">
+            <div className="flex-1 py-6 px-4 flex flex-col bg-gradient-to-b from-[#0f1729] to-[#101b2e]">
               <div className="w-full">
                 {/* Removed connection status indicator for cleaner UI */}
                 
@@ -822,11 +822,13 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                       {/* Single button to start demo */}
                       <div 
                         onClick={startCustomConversation}
-                        className="rounded-full bg-white shadow-md hover:shadow-lg p-10 mb-6 cursor-pointer transition-all duration-300 ease-in-out"
+                        className="rounded-full bg-gradient-to-br from-blue-600 to-indigo-800 shadow-lg hover:shadow-blue-900/50 p-10 mb-6 cursor-pointer transition-all duration-300 ease-in-out relative group overflow-hidden"
                       >
-                        <Mic size={48} className="text-blue-500" />
+                        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gMTAgMCBMIDAgMCAwIDEwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiIHN0cm9rZS13aWR0aD0iMC41Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+                        <div className="animate-pulse absolute inset-0 bg-blue-500/20 rounded-full blur-xl"></div>
+                        <Mic size={48} className="text-white relative z-10" />
                       </div>
-                      <p className="text-slate-700 text-center font-medium text-lg">
+                      <p className="text-blue-100 text-center font-medium text-lg">
                         Start Your Demo
                       </p>
                     </div>
@@ -963,10 +965,10 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                           }
                         }}
                         variant="outline"
-                        className="flex items-center gap-2 border-slate-300 hover:bg-slate-100 mt-4 rounded-full"
+                        className="flex items-center gap-2 mt-4 rounded-full border-blue-500/30 bg-blue-900/20 text-blue-200 hover:bg-blue-800/30 hover:text-blue-100 transition-all duration-300"
                         size="lg"
                       >
-                        <MicOff size={16} />
+                        <MicOff size={16} className="text-blue-300" />
                         <span>End Voice Conversation</span>
                       </Button>
                     </div>
