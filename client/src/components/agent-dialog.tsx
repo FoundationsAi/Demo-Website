@@ -109,54 +109,127 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
 
   // Handle confirmed close
   const handleConfirmClose = async () => {
+    console.log("handleConfirmClose called - terminating conversation and closing dialog");
     // Show loading/progress indicator
     toast({
       title: "Ending conversation",
       description: "Please wait while we clean up...",
     });
     
-    // Force stop everything - add more cleanup to ensure it fully stops
+    // Force stop everything with comprehensive cleanup to ensure it fully stops
     try {
-      // First ensure WebSocket is closed if it exists
-      const ws = (window as any).__elevenlabsWs;
-      if (ws) {
-        try {
-          ws.close();
-          console.log("WebSocket forcibly closed");
-        } catch (e) {
-          console.error("Error closing WebSocket:", e);
+      // STEP 1: Force close any WebSocket connections from 11Labs
+      console.log("Attempting to close all WebSocket connections");
+      const closeWebSocket = (ws: any) => {
+        if (ws && typeof ws.close === 'function') {
+          try {
+            // Use code 1000 (normal closure) and reason
+            ws.close(1000, 'User terminated conversation');
+            console.log("WebSocket forcibly closed successfully");
+            return true;
+          } catch (e) {
+            console.error("Error closing WebSocket:", e);
+          }
+        }
+        return false;
+      };
+      
+      // Try multiple places where the WebSocket might be stored
+      let wsFound = false;
+      
+      // Check global variable
+      const globalWs = (window as any).__elevenlabsWs;
+      if (globalWs) {
+        wsFound = closeWebSocket(globalWs) || wsFound;
+        // Also null out the reference
+        (window as any).__elevenlabsWs = null;
+      }
+      
+      // Check other possible locations
+      const elevenLabsClient = (window as any).elevenLabsClient;
+      if (elevenLabsClient && elevenLabsClient.socket) {
+        wsFound = closeWebSocket(elevenLabsClient.socket) || wsFound;
+      }
+      
+      // Look for any WebSocket objects in window
+      if (!wsFound) {
+        console.log("No WebSocket connections found via known variables, looking deeper...");
+        // Try to find any WebSockets attached to the window 
+        for (const key in window) {
+          try {
+            const obj = (window as any)[key];
+            if (obj && 
+                typeof obj === 'object' && 
+                obj.readyState !== undefined && 
+                typeof obj.close === 'function') {
+              console.log(`Found potential WebSocket in window.${key}`);
+              closeWebSocket(obj);
+            }
+          } catch (e) {
+            // Ignore errors during inspection
+          }
         }
       }
       
-      // Stop any audio elements that might be playing
+      // STEP 2: Stop all audio playback 
+      console.log("Stopping all audio playback");
       document.querySelectorAll('audio').forEach(audio => {
         try {
           audio.pause();
           audio.currentTime = 0;
-        } catch(e) {}
+          if (audio.srcObject && audio.srcObject instanceof MediaStream) {
+            // Also stop any tracks in srcObject (for getUserMedia streams)
+            const tracks = audio.srcObject.getTracks();
+            tracks.forEach((track: MediaStreamTrack) => track.stop());
+            audio.srcObject = null;
+          }
+          console.log("Audio element stopped");
+        } catch(e) {
+          console.error("Error stopping audio element:", e);
+        }
       });
       
-      // Kill any remaining audio contexts
+      // STEP 3: Terminate any audio contexts
       if ((window as any).AudioContext) {
         try {
+          // Create and immediately close a temporary context to force cleanup
           const tempCtx = new AudioContext();
-          tempCtx.close();
-        } catch(e) {}
+          await tempCtx.close();
+          console.log("Audio context closed");
+        } catch(e) {
+          console.error("Error closing audio context:", e);
+        }
       }
       
-      // Make sure to properly stop the conversation with the API
+      // STEP 4: Make explicit call to terminate the conversation with 11Labs
+      console.log("Calling stopConversation service");
       await conversationalAIService.stopConversation();
+      console.log("stopConversation service call completed");
       
-      // Cancel any pending requests
+      // STEP 5: Cancel any pending fetch requests
       try {
+        console.log("Aborting any pending fetch requests");
         const controller = new AbortController();
         controller.abort();
       } catch (e) {
-        // Ignore errors
+        console.error("Error aborting pending requests:", e);
       }
+      
+      // Success notification
+      toast({
+        title: "Conversation terminated",
+        description: "Voice conversation has been successfully closed.",
+        variant: "default",
+      });
     } catch (error) {
       console.error("Error while cleaning up:", error);
+      toast({
+        title: "Error during cleanup",
+        description: "There was a problem during cleanup, but we'll still close the dialog.",
+        variant: "destructive",
+      });
     } finally {
+      console.log("Final cleanup and dialog closing");
       // Always reset UI states no matter what
       setIsPlaying(false);
       setDemoMessages([]);
@@ -166,6 +239,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       // Always close the dialog even if there's an error
       onOpenChange(false);
       onClose();
+      console.log("Dialog closed");
     }
   };
 
@@ -765,6 +839,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                       {/* End conversation button */}
                       <Button
                         onClick={async () => {
+                          console.log("End Voice Conversation button clicked");
                           try {
                             // Show loading state
                             toast({
@@ -772,63 +847,111 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                               description: "Please wait while we clean up...",
                             });
                             
-                            // Force stop everything - add more cleanup to ensure it fully stops
-                            // First ensure WebSocket is closed if it exists
-                            const ws = (window as any).__elevenlabsWs;
-                            if (ws) {
-                              try {
-                                ws.close();
-                                console.log("WebSocket forcibly closed");
-                              } catch (e) {
-                                console.error("Error closing WebSocket:", e);
+                            // STEP 1: Force close any WebSocket connections from 11Labs
+                            // Look in multiple places where the WebSocket might be stored
+                            const closeWebSocket = (ws: any) => {
+                              if (ws && typeof ws.close === 'function') {
+                                try {
+                                  // Use code 1000 (normal closure) and reason
+                                  ws.close(1000, 'User terminated conversation');
+                                  console.log("WebSocket forcibly closed successfully");
+                                  return true;
+                                } catch (e) {
+                                  console.error("Error closing WebSocket:", e);
+                                }
                               }
+                              return false;
+                            };
+                            
+                            // Try multiple places where the WebSocket might be stored
+                            let wsFound = false;
+                            
+                            // Check global variable
+                            const globalWs = (window as any).__elevenlabsWs;
+                            if (globalWs) {
+                              wsFound = closeWebSocket(globalWs) || wsFound;
+                              // Also null out the reference
+                              (window as any).__elevenlabsWs = null;
                             }
                             
-                            // Stop any audio elements that might be playing
+                            // Check other possible locations
+                            const elevenLabsClient = (window as any).elevenLabsClient;
+                            if (elevenLabsClient && elevenLabsClient.socket) {
+                              wsFound = closeWebSocket(elevenLabsClient.socket) || wsFound;
+                            }
+                            
+                            if (!wsFound) {
+                              console.log("No WebSocket connections found to close");
+                            }
+                            
+                            // STEP 2: Stop all audio playback
+                            console.log("Stopping all audio playback");
                             document.querySelectorAll('audio').forEach(audio => {
                               try {
                                 audio.pause();
                                 audio.currentTime = 0;
-                              } catch(e) {}
+                                if (audio.srcObject) {
+                                  const tracks = audio.srcObject.getTracks();
+                                  tracks.forEach(track => track.stop());
+                                  audio.srcObject = null;
+                                }
+                                console.log("Audio element stopped");
+                              } catch(e) {
+                                console.error("Error stopping audio element:", e);
+                              }
                             });
                             
-                            // Kill any remaining audio contexts
+                            // STEP 3: Close all audio contexts
                             if ((window as any).AudioContext) {
                               try {
+                                // Create and immediately close a temporary context to force cleanup
                                 const tempCtx = new AudioContext();
-                                tempCtx.close();
-                              } catch(e) {}
+                                await tempCtx.close();
+                                console.log("Audio context closed");
+                              } catch(e) {
+                                console.error("Error closing audio context:", e);
+                              }
                             }
                             
-                            // Make sure to properly stop the conversation with the API
+                            // STEP 4: Make explicit call to terminate the conversation with 11Labs
+                            console.log("Calling stopConversation service");
                             await conversationalAIService.stopConversation();
+                            console.log("stopConversation completed");
                             
-                            // Cancel any pending requests
+                            // STEP 5: Cancel any pending fetch requests
                             try {
                               const controller = new AbortController();
                               controller.abort();
+                              console.log("Pending requests aborted");
                             } catch (e) {
-                              // Ignore errors
+                              console.error("Error aborting pending requests:", e);
                             }
                             
-                            // Success notification
+                            // STEP 6: Success notification
                             toast({
                               title: "Conversation ended",
                               description: "Voice conversation has been successfully terminated.",
                               variant: "default",
                             });
                             
-                            // Reset all states
+                            // STEP 7: Reset all client-side state
+                            console.log("Resetting state");
                             setIsPlaying(false);
                             setDemoMessages([]);
                             setAudioIntensity(0);
                             
-                            // Close the dialog IMMEDIATELY
+                            // STEP 8: Close the dialog IMMEDIATELY
+                            console.log("Closing dialog");
                             onOpenChange(false);
                             onClose();
                           } catch (error) {
                             console.error("Error ending conversation:", error);
-                            // Force close dialog even if there's an error
+                            // Show error notification but still force close dialog
+                            toast({
+                              title: "Error ending conversation",
+                              description: "There was a problem terminating the conversation, but we'll close the dialog anyway.",
+                              variant: "destructive",
+                            });
                             onOpenChange(false);
                             onClose();
                           }
