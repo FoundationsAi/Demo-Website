@@ -32,7 +32,18 @@ export const AgentSelectionSection: React.FC = () => {
   };
   
   return (
-    <section className="relative bg-gradient-to-b from-[#142448] to-[#0a1528] text-white py-24 min-h-screen flex flex-col justify-center">
+    <section className="relative bg-gradient-to-b from-[#142448] to-[#0a1528] text-white py-24 min-h-screen flex flex-col justify-center section-wrapper"
+      style={{ 
+        margin: 0,
+        padding: 0,
+        marginTop: '-2px',
+        marginBottom: '-2px',
+        position: 'relative',
+        zIndex: 1,
+        transformStyle: 'preserve-3d',
+        transform: 'translateZ(0)',
+        backfaceVisibility: 'hidden'
+      }}>
       {/* Background mountains silhouette */}
       <div className="absolute bottom-0 left-0 w-full pointer-events-none z-0 opacity-20">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">

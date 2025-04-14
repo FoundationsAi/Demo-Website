@@ -49,7 +49,7 @@ export const LargeNumberSection: React.FC<LargeNumberSectionProps> = ({
   return (
     <section 
       ref={sectionRef}
-      className="relative h-screen w-full overflow-hidden"
+      className="relative h-screen w-full overflow-hidden section-wrapper"
       style={{ 
         backgroundColor,
         backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined,
@@ -57,8 +57,13 @@ export const LargeNumberSection: React.FC<LargeNumberSectionProps> = ({
         backgroundPosition: 'center',
         margin: 0,
         padding: 0,
-        marginTop: '-1px', // Ensure seamless connection with previous section
-        marginBottom: '-1px', // Ensure seamless connection with next section
+        marginTop: '-2px', // Ensure seamless connection with previous section
+        marginBottom: '-2px', // Ensure seamless connection with next section
+        position: 'relative',
+        zIndex: 1,
+        transformStyle: 'preserve-3d', // Fix for potential Safari issues
+        transform: 'translateZ(0)', // Hardware acceleration
+        backfaceVisibility: 'hidden' // Prevent rendering artifacts
       }}
     >
       {/* Background overlay */}
