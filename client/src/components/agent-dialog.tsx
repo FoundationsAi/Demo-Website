@@ -680,7 +680,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
             </div>
             
             <DialogFooter className="border-t border-[#304060] pt-2 sm:pt-3">
-              <div className="text-sm text-center w-full text-blue-300 opacity-80 font-medium">
+              <div className="text-xs sm:text-sm text-center w-full text-blue-300 opacity-80 font-medium">
                 Powered by Foundations AI
               </div>
             </DialogFooter>
@@ -820,12 +820,12 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               </div>
             </DialogHeader>
             
-            <div className="flex-1 py-6 px-4 flex flex-col bg-gradient-to-b from-[#0f1729] to-[#101b2e]">
+            <div className="flex-1 py-3 px-3 xs:py-4 xs:px-3 sm:py-6 sm:px-4 flex flex-col bg-gradient-to-b from-[#0f1729] to-[#101b2e]">
               <div className="w-full">
                 {/* Removed connection status indicator for cleaner UI */}
                 
                 {/* Simplified Voice Demo Interface */}
-                <div className="flex-1 min-h-[280px] mb-6 flex flex-col items-center justify-center">
+                <div className="flex-1 min-h-[180px] xs:min-h-[220px] sm:min-h-[280px] mb-3 sm:mb-6 flex flex-col items-center justify-center">
                   {!conversationalAIService.isConversationActive() ? (
                     <div className="h-full w-full flex flex-col items-center justify-center">
                       {/* Single button to start demo */}
@@ -986,7 +986,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
             </div>
             
             <DialogFooter className="border-t border-[#304060] pt-2 sm:pt-3">
-              <div className="text-sm text-center w-full text-blue-300 opacity-80 font-medium">
+              <div className="text-xs sm:text-sm text-center w-full text-blue-300 opacity-80 font-medium">
                 Powered by Foundations AI
               </div>
             </DialogFooter>
