@@ -5,7 +5,6 @@ import { SectionWrapper } from '@/components/section-wrapper';
 import { SpaceIntroSection } from '@/components/sections/space-intro-section';
 import { FullscreenMountainSection } from '@/components/sections/fullscreen-mountain-section';
 import { MountainTextOverlaySection } from '@/components/sections/mountain-text-overlay-section';
-import { LargeNumberSection } from '@/components/sections/large-number-section';
 import { AgentSelectionSection } from '@/components/sections/agent-selection-section';
 import { PricingSection } from '@/components/sections/pricing-section';
 import { ScrollReveal } from '@/components/scroll-reveal';
@@ -123,28 +122,17 @@ export const ImmersiveHome: React.FC = () => {
           </div>
         </SectionWrapper>
         
-        {/* 3. Large number section with 11 Voices */}
-        <SectionWrapper>
-          <LargeNumberSection
-            number="11 Voices"
-            backgroundColor="#0a1528"
-            textPosition="right"
-            title="DISTINCTIVE PERSONALITIES"
-            description="Our system offers 11 distinct AI personalities, each with unique traits, speaking styles, and knowledge bases that adapt to different contexts and user preferences."
-          />
-        </SectionWrapper>
-        
-        {/* 4. Interactive Agent selection with 11 Labs */}
+        {/* 3. Interactive Agent selection with 11 Labs */}
         <SectionWrapper>
           <AgentSelectionSection />
         </SectionWrapper>
         
-        {/* 5. Pricing section */}
+        {/* 4. Pricing section */}
         <SectionWrapper>
           <PricingSection />
         </SectionWrapper>
         
-        {/* 6. Footer/Contact */}
+        {/* 5. Footer/Contact */}
         <SectionWrapper>
           <section className="bg-black py-16 text-white">
             <div className="container mx-auto px-6">
