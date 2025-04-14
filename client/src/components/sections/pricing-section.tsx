@@ -180,6 +180,14 @@ export const PricingSection: React.FC = () => {
                       </div>
                     )}
                     
+                    {tier.hasTrial && (
+                      <div className="absolute top-0 left-0">
+                        <div className="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-br-lg">
+                          {tier.trialDays}-DAY FREE TRIAL
+                        </div>
+                      </div>
+                    )}
+                    
                     <div className="text-center mb-6">
                       {tier.icon && (
                         <span className="text-3xl mb-4 inline-block">{tier.icon}</span>
@@ -273,8 +281,8 @@ export const PricingSection: React.FC = () => {
               <div className="bg-blue-900/20 rounded-lg p-6 backdrop-blur-sm border border-blue-800/30 text-left">
                 <h4 className="text-xl font-semibold mb-3">How does billing work?</h4>
                 <p className="text-blue-200">
-                  Choose between monthly or annual billing. Annual plans include a 20% discount.
-                  You can upgrade or downgrade your plan at any time.
+                  Choose between monthly or annual billing. Annual plans include a 10% discount.
+                  You can upgrade or downgrade your plan at any time. Setup fee of $3,000 is waived for annual contracts.
                 </p>
               </div>
             </ScrollReveal>
@@ -283,8 +291,18 @@ export const PricingSection: React.FC = () => {
               <div className="bg-blue-900/20 rounded-lg p-6 backdrop-blur-sm border border-blue-800/30 text-left">
                 <h4 className="text-xl font-semibold mb-3">Can I integrate this with my existing systems?</h4>
                 <p className="text-blue-200">
-                  Yes, our Professional and Enterprise plans include API access for integration with your existing systems.
-                  Our Enterprise plan includes custom integration support.
+                  Yes, all plans include API integrations. Our Pro and Enterprise plans feature more advanced integration options
+                  with custom support available for Enterprise customers.
+                </p>
+              </div>
+            </ScrollReveal>
+            
+            <ScrollReveal delay={0.3}>
+              <div className="bg-blue-900/20 rounded-lg p-6 backdrop-blur-sm border border-blue-800/30 text-left">
+                <h4 className="text-xl font-semibold mb-3">Do you have a risk-free guarantee?</h4>
+                <p className="text-blue-200">
+                  Yes, we offer a risk-free guarantee. Try any plan for 3 months—if your business metrics don't improve by at least 5%, we'll refund you. 
+                  We're confident our AI agents will deliver measurable value.
                 </p>
               </div>
             </ScrollReveal>
