@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'wouter';
 import { motion, AnimatePresence, useAnimation, useInView } from 'framer-motion';
 import { agents } from '@/lib/utils';
 import { HoverableCard } from '@/components/hoverable-card';
@@ -7,6 +6,8 @@ import { ScrollReveal } from '@/components/scroll-reveal';
 import { VoiceWave } from '@/components/voice-wave';
 import { AnimatedText } from '@/components/animated-text';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { AgentDialog } from '@/components/agent-dialog';
+import { Button } from '@/components/ui/button';
 
 /**
  * AgentSelectionSection - Interactive section for selecting and trying AI agents
@@ -17,6 +18,8 @@ export const AgentSelectionSection: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [inputText, setInputText] = useState('');
   const [hoveredAgent, setHoveredAgent] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedAgentForDialog, setSelectedAgentForDialog] = useState<any>(null);
   const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -284,7 +287,10 @@ export const AgentSelectionSection: React.FC = () => {
               animate="visible"
               whileHover="hover"
               whileTap="tap"
-              onClick={() => setSelectedAgent(agent.id)}
+              onClick={() => {
+                setSelectedAgentForDialog(agent);
+                setIsDialogOpen(true);
+              }}
               onMouseEnter={() => setHoveredAgent(agent.id)}
               onMouseLeave={() => setHoveredAgent(null)}
               className="h-full"
@@ -622,30 +628,45 @@ export const AgentSelectionSection: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
         >
-          <Link href="/chat">
-            <motion.button 
-              className="px-8 py-4 relative group overflow-hidden rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium transition-colors duration-300 shadow-lg"
-              style={{ boxShadow: '0 4px 20px -5px rgba(59, 130, 246, 0.6)' }}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {/* Background glow */}
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-blue-400/50 to-blue-400/0 opacity-0 group-hover:opacity-100 -skew-x-30 transition-opacity duration-500" />
-              
-              {/* Button content */}
-              <span className="relative flex items-center gap-2">
-                <span>Try Full Conversation</span>
-                <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-              </span>
-            </motion.button>
-          </Link>
+          <Button
+            onClick={() => {
+              // Just open the dialog with a random agent if none selected
+              if (!selectedAgentForDialog) {
+                const randomAgent = agents[Math.floor(Math.random() * agents.length)];
+                setSelectedAgentForDialog(randomAgent);
+              }
+              setIsDialogOpen(true);
+            }}
+            className="px-8 py-6 relative group overflow-hidden rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium transition-colors duration-300 shadow-lg text-lg"
+            style={{ boxShadow: '0 4px 20px -5px rgba(59, 130, 246, 0.6)' }}
+          >
+            {/* Background glow */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-blue-400/50 to-blue-400/0 opacity-0 group-hover:opacity-100 -skew-x-30 transition-opacity duration-500" />
+            
+            {/* Button content */}
+            <span className="relative flex items-center gap-2">
+              <span>Try Full Conversation</span>
+              <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+              </svg>
+            </span>
+          </Button>
           
           {/* Button glow effect */}
           <div className="absolute -inset-10 rounded-full opacity-30 blur-xl bg-blue-500/20 animate-pulse-slow pointer-events-none" />
         </motion.div>
       </div>
+      
+      {/* Agent Dialog */}
+      <AgentDialog 
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        agent={selectedAgentForDialog}
+        onClose={() => {
+          setSelectedAgentForDialog(null);
+          setIsDialogOpen(false);
+        }}
+      />
     </section>
   );
 };
