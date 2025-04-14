@@ -25,14 +25,18 @@ export const CloudTransitionSection: React.FC<CloudTransitionSectionProps> = ({ 
   const bottomCloudY = useTransform(scrollYProgress, [0, 1], ['10%', '0%']);
   const textY = useTransform(scrollYProgress, [0, 0.5, 1], ['50px', '0px', '-50px']);
   
-  // Create cloud elements
+  // Create cloud elements with optimized rendering
   const createClouds = (count: number, className: string) => {
-    return Array.from({ length: count }).map((_, index) => {
+    // Reduce cloud count for better performance
+    const optimizedCount = Math.max(3, Math.floor(count * 0.7));
+    
+    return Array.from({ length: optimizedCount }).map((_, index) => {
+      // Simplified animation values for better performance
       const speed = className.includes('slow') ? 120 : className.includes('medium') ? 80 : 60;
-      const delay = Math.random() * 10;
-      const top = `${(Math.random() * 60) + 10}%`;
-      const size = Math.random() * 0.5 + 0.5; // Scale between 0.5 and 1
-      const opacity = Math.random() * 0.4 + 0.5; // Opacity between 0.5 and 0.9
+      const delay = Math.floor(Math.random() * 10);
+      const top = `${Math.floor((Math.random() * 60) + 10)}%`;
+      const size = Math.floor((Math.random() * 5) + 5) / 10; // Simplified scale calculation
+      const opacity = Math.floor((Math.random() * 4) + 5) / 10; // Simplified opacity calculation
       
       return (
         <div 
@@ -40,11 +44,13 @@ export const CloudTransitionSection: React.FC<CloudTransitionSectionProps> = ({ 
           className={`cloud ${className}`}
           style={{
             top,
-            left: `-${Math.random() * 20 + 10}%`,
+            left: `-${Math.floor(Math.random() * 20 + 10)}%`,
             transform: `scale(${size})`,
             opacity,
             animationDelay: `${delay}s`,
-            animationDuration: `${speed + Math.random() * 20}s`
+            animationDuration: `${speed}s`,
+            willChange: 'transform',
+            backfaceVisibility: 'hidden',
           }}
         />
       );

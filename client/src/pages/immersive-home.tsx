@@ -22,13 +22,11 @@ export const ImmersiveHome: React.FC = () => {
   // Reference for scroll progress indicator
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Remove the cursor to mimic National Geographic style
+  // Ensure black background throughout
   useEffect(() => {
-    document.body.classList.add('cursor-default');
-    document.body.style.background = '#000'; // Ensure black background throughout
+    document.body.style.background = '#000';
     
     return () => {
-      document.body.classList.remove('cursor-default');
       document.body.style.background = '';
     };
   }, []);
