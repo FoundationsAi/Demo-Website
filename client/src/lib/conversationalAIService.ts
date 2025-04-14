@@ -114,11 +114,11 @@ export const startConversation = async (agentType: AgentType): Promise<boolean> 
         activeConversation = null;
         isListening = false;
       },
-      onMessage: (message: Record<string, any>) => {
+      onMessage: (message: any) => {
         console.log('Received message from agent:', message);
         messageListeners.forEach(listener => listener(message));
       },
-      onError: (error: Error) => {
+      onError: (error: any) => {
         console.error('Conversation error:', error);
         updateConnectionStatus('error');
       },

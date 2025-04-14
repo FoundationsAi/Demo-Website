@@ -650,7 +650,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                   size="lg"
                   className="h-auto py-4 px-8 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
                   onClick={() => {
-                    // Get the agent ID based on gender
+                    // Get the agent ID and name based on gender
                     const agentId = selectedGender === 'male' ? '0Ako2MORgNjlSpGTU75E' : 'Jw7iQ8oXMG3MZeuyLfmH';
                     const agentName = selectedGender === 'male' ? maleName : femaleName;
                     
@@ -658,9 +658,20 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                     const agentType = agent?.id || 'default';
                     const url = `/agent-chat?agentId=${agentId}&gender=${selectedGender}&type=${agentType}&name=${agentName}`;
                     
-                    // Close this dialog and open the full page experience
+                    // Close this dialog and open the full page experience with the voice agent
                     onOpenChange(false);
-                    window.location.href = url;
+                    
+                    // Use setLocation from wouter for cleaner navigation without page reload
+                    try {
+                      window.location.href = url;
+                    } catch (error) {
+                      console.error("Navigation error:", error);
+                      toast({
+                        title: "Navigation error",
+                        description: "There was an error starting the voice experience. Please try again.",
+                        variant: "destructive"
+                      });
+                    }
                   }}
                 >
                   <div className="flex flex-col items-center gap-3">

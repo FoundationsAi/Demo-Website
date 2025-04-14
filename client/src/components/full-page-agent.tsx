@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { VoiceWave } from '@/components/voice-wave';
-import { Mic, Volume2, X } from 'lucide-react';
+import { Mic, MicOff, Volume2, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useLocation } from 'wouter';
+import * as conversationalAIService from '@/lib/conversationalAIService';
 
 interface FullPageAgentProps {
   agentId: string;
@@ -20,36 +21,102 @@ export const FullPageAgent: React.FC<FullPageAgentProps> = ({
 }) => {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
+  const [connectionStatus, setConnectionStatus] = useState<'disconnected' | 'connecting' | 'connected' | 'error'>('disconnected');
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [messages, setMessages] = useState<{role: 'user' | 'assistant', content: string}[]>([]);
   const [transcript, setTranscript] = useState('');
-  const wsRef = useRef<WebSocket | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Connect to the WebSocket on component mount
+  // Connect to the 11Labs Conversational AI service when component mounts
   useEffect(() => {
-    initWebSocket();
-    
-    // Add a welcome message
+    // Add welcome message
     setMessages([{
       role: 'assistant',
       content: `Hi there! I'm ${agentName}, your AI ${agentType}. How can I help you today?`
     }]);
 
-    // Start speaking immediately - simulate auto-greeting
-    setTimeout(() => {
-      setIsSpeaking(true);
-      // Simulate greeting duration
-      setTimeout(() => {
+    // Set up status change listener
+    const unsubscribeStatus = conversationalAIService.onConnectionStatusChange((status) => {
+      setConnectionStatus(status);
+      
+      if (status === 'connected') {
+        console.log('Connected to conversational AI agent');
+        // Start speaking indication 
+        setIsSpeaking(true);
+      } else if (status === 'error') {
+        toast({
+          title: "Connection error",
+          description: "Unable to connect to the AI agent. Please try again.",
+          variant: "destructive"
+        });
+      } else if (status === 'disconnected') {
         setIsSpeaking(false);
-      }, 3000);
-    }, 800);
-
-    return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
+        setIsListening(false);
       }
+    });
+
+    // Set up message listener
+    const unsubscribeMessage = conversationalAIService.onMessage((message) => {
+      console.log('Received message from agent:', message);
+      
+      // Handle different message types
+      if (message.type === 'user_transcript') {
+        setTranscript(message.text || '');
+      } 
+      else if (message.type === 'agent_response' && message.text) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: message.text
+        }]);
+      }
+      else if (message.type === 'audio_response') {
+        // Audio response is being sent
+        setIsSpeaking(true);
+      }
+      else if (message.type === 'interruption') {
+        setIsSpeaking(false);
+      }
+      else if (message.type === 'audio_response_end') {
+        // Audio response has finished playing
+        setIsSpeaking(false);
+      }
+    });
+
+    // Start the conversation with the appropriate agent
+    const startupConversation = async () => {
+      try {
+        // Detect which agent we need (Steve or Sarah based on the agent ID)
+        const agentType = agentId === '0Ako2MORgNjlSpGTU75E' ? 'STEVE' : 'SARAH';
+        setConnectionStatus('connecting');
+        
+        const success = await conversationalAIService.startConversation(agentType);
+        
+        if (!success) {
+          toast({
+            title: "Connection failed",
+            description: "Failed to connect to the voice agent. Please try again.",
+            variant: "destructive"
+          });
+        }
+      } catch (error) {
+        console.error('Error starting conversation:', error);
+        toast({
+          title: "Connection error",
+          description: "There was an error connecting to the AI voice service.",
+          variant: "destructive"
+        });
+      }
+    };
+
+    // Start the conversation
+    startupConversation();
+
+    // Cleanup function to stop conversation when component unmounts
+    return () => {
+      conversationalAIService.stopConversation();
+      unsubscribeStatus();
+      unsubscribeMessage();
     };
   }, []);
 
@@ -60,131 +127,44 @@ export const FullPageAgent: React.FC<FullPageAgentProps> = ({
     }
   }, [messages]);
 
-  // Initialize WebSocket connection
-  const initWebSocket = () => {
-    try {
-      const ws = new WebSocket(`wss://api.elevenlabs.io/v1/convai/conversation?agent_id=${agentId}`);
-      
-      ws.onopen = () => {
-        console.log('WebSocket connection established');
-        
-        // Send initialization data
-        ws.send(JSON.stringify({
-          type: 'conversation_initiation_client_data',
-          history: [],
-          autoplay_response: true,
-          allow_interruption: true
-        }));
-      };
-      
-      ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        console.log('WebSocket message received:', data);
-        
-        handleWebSocketMessage(data);
-      };
-      
-      ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        toast({
-          title: "Connection error",
-          description: "Unable to connect to the AI agent. Please try again.",
-          variant: "destructive"
-        });
-      };
-      
-      ws.onclose = () => {
-        console.log('WebSocket connection closed');
-      };
-      
-      wsRef.current = ws;
-    } catch (error) {
-      console.error('Error initializing WebSocket:', error);
+  // Toggle listening state
+  const toggleListening = async () => {
+    if (connectionStatus !== 'connected') {
+      toast({
+        title: "Not connected",
+        description: "Waiting for connection to the voice service...",
+        variant: "default"
+      });
+      return;
     }
-  };
 
-  // Handle WebSocket messages
-  const handleWebSocketMessage = (data: any) => {
-    switch (data.type) {
-      case 'user_transcript':
-        setTranscript(data.text);
-        break;
-        
-      case 'agent_response':
-        setMessages(prev => [...prev, {
-          role: 'assistant',
-          content: data.text
-        }]);
-        break;
-        
-      case 'audio_response':
-        // Audio is being sent
-        setIsSpeaking(true);
-        // Typically the audio playback would be handled here
-        break;
-        
-      case 'interruption':
-        // Handle interruption
-        setIsSpeaking(false);
-        break;
-        
-      case 'ping':
-        // Send a pong response
-        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-          wsRef.current.send(JSON.stringify({
-            type: 'pong',
-            sequence_number: data.sequence_number
-          }));
-        }
-        break;
-    }
-  };
-
-  // Start/stop listening
-  const toggleListening = () => {
     if (isListening) {
-      stopListening();
+      // If we were listening, stop
+      setIsListening(false);
+      setTranscript('');
     } else {
-      startListening();
-    }
-  };
-
-  // Start listening for user input
-  const startListening = () => {
-    setIsListening(true);
-    // In a real implementation, this would use the browser's audio API
-    // to capture the user's voice and send it to the WebSocket
-    
-    // Simulate speaking for demo purposes
-    setTimeout(() => {
-      setTranscript('This is a simulated user message');
-      setMessages(prev => [...prev, {
-        role: 'user',
-        content: 'This is a simulated user message'
-      }]);
-      stopListening();
+      // If we weren't listening, start
+      setIsListening(true);
       
-      // Simulate AI response
+      // In a real implementation, this would trigger voice capture
+      // For now, we'll simulate a user message after a short delay
       setTimeout(() => {
-        const agentResponse = `As your AI ${agentType}, I'm here to assist you with any questions or requests you may have. I can provide information, help with tasks, or engage in conversation on various topics. What specific area would you like to explore today?`;
-        
-        setMessages(prev => [...prev, {
-          role: 'assistant',
-          content: agentResponse
-        }]);
-        
-        setIsSpeaking(true);
-        setTimeout(() => {
-          setIsSpeaking(false);
-        }, 5000);
-      }, 1000);
-    }, 3000);
-  };
-
-  // Stop listening
-  const stopListening = () => {
-    setIsListening(false);
-    setTranscript('');
+        if (isListening) {
+          const userMessage = "Tell me more about your voice AI services";
+          setTranscript(userMessage);
+          
+          // Add to messages after a short delay to simulate processing
+          setTimeout(() => {
+            setMessages(prev => [...prev, {
+              role: 'user',
+              content: userMessage
+            }]);
+            setTranscript('');
+            setIsListening(false);
+          }, 1000);
+        }
+      }, 2000);
+    }
   };
 
   return (
