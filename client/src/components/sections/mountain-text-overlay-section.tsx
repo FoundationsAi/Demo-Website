@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 interface MountainTextOverlaySectionProps {
@@ -8,29 +8,48 @@ interface MountainTextOverlaySectionProps {
 
 /**
  * MountainTextOverlaySection - Shows the "A NEW FRONTIER" and "VOICE AI" text
- * as a pure overlay with no screen height consumption
+ * as a fixed overlay that appears when the mountain section comes into view
  */
 export const MountainTextOverlaySection: React.FC<MountainTextOverlaySectionProps> = ({ 
   id,
   targetRef
 }) => {
-  // Create scroll-based animations using the provided target or the document
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-    offset: ["start", "end start"]
-  });
+  const [isVisible, setIsVisible] = useState(false);
   
-  // Transform values for text animations - start at top and fade out as we scroll
-  const opacity = useTransform(scrollYProgress, [0, 0.1, 0.3, 0.4], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 0.1, 0.3, 0.4], [50, 0, 0, -50]);
+  // Watch window scroll to determine when we're at the mountain section
+  useEffect(() => {
+    const handleScroll = () => {
+      // When we reach about 75% of the first screen height, show the text
+      const scrollPosition = window.scrollY;
+      const windowHeight = window.innerHeight;
+      
+      // Show the text when we've scrolled about 1.75 screen heights
+      if (scrollPosition > windowHeight * 1.75) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
   
   return (
     <motion.div
       id={id}
       className="fixed top-32 left-0 w-full z-30 flex flex-col items-center justify-center text-center pointer-events-none"
-      style={{ 
-        opacity,
-        y,
+      animate={{ 
+        opacity: isVisible ? 1 : 0,
+        y: isVisible ? 0 : 50,
+      }}
+      transition={{
+        opacity: { duration: 0.5, ease: 'easeInOut' },
+        y: { duration: 0.7, ease: 'easeOut' }
+      }}
+      style={{
         willChange: "transform, opacity",
         transform: "translateZ(0)",
         backfaceVisibility: "hidden"
