@@ -890,9 +890,9 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                               try {
                                 audio.pause();
                                 audio.currentTime = 0;
-                                if (audio.srcObject) {
+                                if (audio.srcObject && audio.srcObject instanceof MediaStream) {
                                   const tracks = audio.srcObject.getTracks();
-                                  tracks.forEach(track => track.stop());
+                                  tracks.forEach((track: MediaStreamTrack) => track.stop());
                                   audio.srcObject = null;
                                 }
                                 console.log("Audio element stopped");
