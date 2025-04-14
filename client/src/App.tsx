@@ -4,7 +4,8 @@ import { Switch, useLocation } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { AnimatedRoute } from "@/components/animated-route";
 import NotFound from "@/pages/not-found";
-import ImmersiveHome from "@/pages/immersive-home";
+// Import the optimized version instead
+import ImmersiveHome from "@/pages/immersive-home-optimized";
 import Chat from "@/pages/chat";
 import Payment from "@/pages/payment";
 import Calendar from "@/pages/calendar";

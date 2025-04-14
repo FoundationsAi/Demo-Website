@@ -259,56 +259,18 @@ a:hover, button:hover, .interactive:hover {
     50% { transform: scale(1.1); opacity: 1; }
   }
   
-  /* Cloud movement animations */
-  .cloud {
-    position: absolute;
-    width: 180px;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50px;
-    filter: blur(15px);
-    pointer-events: none;
+  /* National Geographic-style cloud effects */
+  .nat-geo-clouds {
+    position: relative;
+    overflow: hidden;
+    will-change: transform;
   }
 
-  .cloud::before,
-  .cloud::after {
-    content: '';
-    position: absolute;
-    background: rgba(255, 255, 255, 0.2);
-    filter: blur(15px);
-  }
-
-  .cloud::before {
-    width: 100px;
-    height: 100px;
-    top: -40px;
-    left: 40px;
-    border-radius: 50%;
-  }
-
-  .cloud::after {
-    width: 80px;
-    height: 80px;
-    top: -30px;
-    left: 80px;
-    border-radius: 50%;
-  }
-
-  .cloud-fast {
-    animation: moveRight 60s linear infinite;
-  }
-
-  .cloud-medium {
-    animation: moveRight 90s linear infinite;
-  }
-
-  .cloud-slow {
-    animation: moveRight 120s linear infinite;
-  }
-
-  @keyframes moveRight {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(2000px); }
+  /* Optimize performance for cloud elements */
+  .cloud-layer {
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateZ(0);
   }
   
   /* Advanced Parallax Container */
