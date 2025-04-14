@@ -50,15 +50,66 @@ const updateConnectionStatus = (status: ConnectionStatus) => {
   statusListeners.forEach(listener => listener(status));
 };
 
-// Request microphone permission
+// Microphone analysis variables
+let microphoneAudioContext: AudioContext | null = null;
+let microphoneAnalyser: AnalyserNode | null = null;
+let microphoneDataArray: Uint8Array | null = null;
+let microphoneAnalysisInterval: number | null = null;
+
+// Request microphone permission and set up audio analysis
 const requestMicrophonePermission = async () => {
   try {
-    await navigator.mediaDevices.getUserMedia({ audio: true });
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    
+    // Set up audio analysis
+    microphoneAudioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    microphoneAnalyser = microphoneAudioContext.createAnalyser();
+    microphoneAnalyser.fftSize = 256;
+    
+    // Create buffer for frequency data
+    const bufferLength = microphoneAnalyser.frequencyBinCount;
+    microphoneDataArray = new Uint8Array(bufferLength);
+    
+    // Connect microphone to analyzer
+    const microphoneSource = microphoneAudioContext.createMediaStreamSource(stream);
+    microphoneSource.connect(microphoneAnalyser);
+    
+    // Start continuous analysis
+    startMicrophoneAnalysis();
+    
     return true;
   } catch (error) {
-    console.error('Microphone permission denied:', error);
+    console.error('Microphone permission denied or audio setup failed:', error);
     return false;
   }
+};
+
+// Start analyzing microphone input
+const startMicrophoneAnalysis = () => {
+  if (microphoneAnalysisInterval) {
+    clearInterval(microphoneAnalysisInterval);
+  }
+  
+  // Analyze at regular intervals
+  microphoneAnalysisInterval = window.setInterval(() => {
+    if (!microphoneAnalyser || !microphoneDataArray || !isListening) return;
+    
+    // Get frequency data
+    microphoneAnalyser.getByteFrequencyData(microphoneDataArray);
+    
+    // Calculate average intensity (0-1 scale)
+    const sum = Array.from(microphoneDataArray).reduce((acc, val) => acc + val, 0);
+    const averageIntensity = sum / (microphoneDataArray.length * 255); // Normalize to 0-1
+    
+    // Update intensity with smoothing
+    const smoothingFactor = 0.3;
+    const smoothedIntensity = currentAudioIntensity * (1 - smoothingFactor) + averageIntensity * smoothingFactor;
+    
+    // Only update if we're in listening mode (not speaking)
+    if (!audioSource) {
+      updateIntensity(smoothedIntensity);
+    }
+  }, 50); // 50ms intervals for responsive visualization
 };
 
 // Get signed URL for WebSocket connection
@@ -250,8 +301,61 @@ export const sendMessageToAgent = async (
 // Audio handling
 let audioContext: AudioContext | null = null;
 let audioSource: AudioBufferSourceNode | null = null;
+let audioAnalyser: AnalyserNode | null = null;
+let analyserDataArray: Uint8Array | null = null;
 
-// Play audio from base64 string
+// Track audio intensity for visualization
+let currentAudioIntensity = 0;
+const intensityListeners: ((intensity: number) => void)[] = [];
+
+// Add audio intensity change listener
+export const addIntensityListener = (callback: (intensity: number) => void): (() => void) => {
+  intensityListeners.push(callback);
+  
+  // Return cleanup function
+  return () => {
+    const index = intensityListeners.indexOf(callback);
+    if (index > -1) {
+      intensityListeners.splice(index, 1);
+    }
+  };
+};
+
+// Get current audio intensity (0-1 scale)
+export const getAudioIntensity = (): number => {
+  return currentAudioIntensity;
+};
+
+// Function to update audio intensity value and notify listeners
+const updateIntensity = (newIntensity: number) => {
+  currentAudioIntensity = newIntensity;
+  intensityListeners.forEach(listener => listener(newIntensity));
+};
+
+// Function to analyze audio and update intensity
+const analyzeAudio = () => {
+  if (!audioAnalyser || !analyserDataArray) return;
+  
+  // Get frequency data
+  audioAnalyser.getByteFrequencyData(analyserDataArray);
+  
+  // Calculate average intensity (0-1 scale)
+  const sum = analyserDataArray.reduce((acc, val) => acc + val, 0);
+  const averageIntensity = sum / (analyserDataArray.length * 255); // Normalize to 0-1
+  
+  // Update intensity with smoothing
+  const smoothingFactor = 0.3;
+  const smoothedIntensity = currentAudioIntensity * (1 - smoothingFactor) + averageIntensity * smoothingFactor;
+  
+  updateIntensity(smoothedIntensity);
+  
+  // Continue analyzing
+  if (audioSource) {
+    requestAnimationFrame(analyzeAudio);
+  }
+};
+
+// Play audio from base64 string with enhanced analysis
 export const playAudio = async (base64Audio: string): Promise<void> => {
   try {
     if (!base64Audio) {
@@ -292,20 +396,32 @@ export const playAudio = async (base64Audio: string): Promise<void> => {
       audioSource = audioContext.createBufferSource();
       audioSource.buffer = audioBuffer;
       
-      // Connect to the destination
-      audioSource.connect(audioContext.destination);
+      // Create analyzer for visualizations
+      audioAnalyser = audioContext.createAnalyser();
+      audioAnalyser.fftSize = 256;
       
-      // Create an analyzer for visualizations if needed by the UI
-      const analyzer = audioContext.createAnalyser();
-      analyzer.fftSize = 256;
-      audioSource.connect(analyzer);
+      // Create buffer for frequency data
+      const bufferLength = audioAnalyser.frequencyBinCount;
+      analyserDataArray = new Uint8Array(bufferLength);
+      
+      // Connect nodes: source -> analyzer -> destination
+      audioSource.connect(audioAnalyser);
+      audioAnalyser.connect(audioContext.destination);
       
       // Start playing
       audioSource.start(0);
       
+      // Start analyzing audio
+      analyzeAudio();
+      
+      // Signal that speaking has started
+      updateIntensity(0.5); // Initial intensity
+      
       return new Promise((resolve) => {
         if (audioSource) {
           audioSource.onended = () => {
+            // Reset intensity when audio ends
+            updateIntensity(0);
             resolve();
           };
         }
@@ -317,10 +433,12 @@ export const playAudio = async (base64Audio: string): Promise<void> => {
         await audioContext.close();
         audioContext = null;
       }
+      updateIntensity(0);
       throw decodeError;
     }
   } catch (error) {
     console.error('Error playing audio:', error);
+    updateIntensity(0);
     throw error;
   }
 };

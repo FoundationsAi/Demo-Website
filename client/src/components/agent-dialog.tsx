@@ -741,13 +741,15 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                         ))}
                       </div>
                       
-                      {/* Voice Wave Visualization */}
+                      {/* Enhanced Voice Wave Visualization */}
                       <div className="mb-4">
                         <VoiceWave 
                           isActive={true} 
                           numBars={32}
                           className="h-24 w-64" 
-                          barClassName={isPlaying ? "bg-gradient-to-t from-purple-400 to-purple-600" : "bg-gradient-to-t from-blue-400 to-blue-600"}
+                          mode={isPlaying ? "speaking" : "listening"}
+                          analyzeAudio={true}
+                          intensityThresholds={{ low: 0.2, medium: 0.5, high: 0.75 }}
                         />
                       </div>
                       
