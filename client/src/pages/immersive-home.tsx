@@ -68,9 +68,12 @@ export const ImmersiveHome: React.FC = () => {
         <CloudTransitionSection />
         
         {/* 3. Mountain section - cinematic with top text that scrolls behind mountains */}
-        <div className="relative">
+        <div className="relative min-h-screen">
           {/* New "A new frontier in voice AI" text at the top that will scroll behind the mountain */}
-          <div className="absolute top-0 left-0 right-0 w-full z-20 pt-24 pb-32 text-center bg-gradient-to-b from-[#142448] via-[#142448]/80 to-transparent">
+          <div 
+            className="absolute top-0 left-0 right-0 w-full z-20 pt-24 pb-40 text-center bg-gradient-to-b from-[#142448] via-[#142448]/80 to-transparent"
+            style={{ position: 'absolute' }} // Explicitly set position to fix the warning
+          >
             <AnimatedText
               text="A NEW FRONTIER IN VOICE AI"
               as="h1"
@@ -81,7 +84,7 @@ export const ImmersiveHome: React.FC = () => {
           </div>
           
           {/* The mountain image with higher z-index to appear in front of the text as you scroll */}
-          <div className="relative z-30">
+          <div className="relative z-30" style={{ position: 'relative' }}>
             <FullscreenMountainSection
               title=""
               backgroundImage={mountainBg1}

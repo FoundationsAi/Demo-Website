@@ -58,6 +58,7 @@ export const CloudTransitionSection: React.FC<CloudTransitionSectionProps> = ({ 
       className="relative min-h-screen w-full overflow-hidden"
       style={{ 
         background: 'linear-gradient(to bottom, #000000, #111a30, #1a2f59, #243882, #2e42ab, #142448)',
+        position: 'relative', // Explicitly set position for proper scrolling calculation
       }}
     >
       {/* Top cloud layer (fast moving) */}
@@ -106,7 +107,8 @@ export const CloudTransitionSection: React.FC<CloudTransitionSectionProps> = ({ 
         </div>
       </motion.div>
       
-      {/* Remove the bottom gradient to eliminate the black line */}
+      {/* Add a subtle gradient that matches the mountain section's gradient colors */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#142448] to-transparent z-50 pointer-events-none" />
     </section>
   );
 };
