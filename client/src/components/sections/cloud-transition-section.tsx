@@ -12,55 +12,9 @@ interface CloudTransitionSectionProps {
  * with animated cloud movement
  */
 export const CloudTransitionSection: React.FC<CloudTransitionSectionProps> = ({ id }) => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
-  
-  // Transform values for parallax effects
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  const topCloudY = useTransform(scrollYProgress, [0, 1], ['-10%', '-30%']);
-  const middleCloudY = useTransform(scrollYProgress, [0, 1], ['0%', '-15%']);
-  const bottomCloudY = useTransform(scrollYProgress, [0, 1], ['10%', '0%']);
-  const textY = useTransform(scrollYProgress, [0, 0.5, 1], ['50px', '0px', '-50px']);
-  
-  // Create cloud elements with optimized rendering
-  const createClouds = (count: number, className: string) => {
-    // Reduce cloud count for better performance
-    const optimizedCount = Math.max(3, Math.floor(count * 0.7));
-    
-    return Array.from({ length: optimizedCount }).map((_, index) => {
-      // Simplified animation values for better performance
-      const speed = className.includes('slow') ? 120 : className.includes('medium') ? 80 : 60;
-      const delay = Math.floor(Math.random() * 10);
-      const top = `${Math.floor((Math.random() * 60) + 10)}%`;
-      const size = Math.floor((Math.random() * 5) + 5) / 10; // Simplified scale calculation
-      const opacity = Math.floor((Math.random() * 2) + 1) / 10; // Greatly reduced opacity for better text visibility
-      
-      return (
-        <div 
-          key={`${className}-${index}`}
-          className={`cloud ${className}`}
-          style={{
-            top,
-            left: `-${Math.floor(Math.random() * 20 + 10)}%`,
-            transform: `scale(${size})`,
-            opacity,
-            animationDelay: `${delay}s`,
-            animationDuration: `${speed}s`,
-            willChange: 'transform',
-            backfaceVisibility: 'hidden',
-          }}
-        />
-      );
-    });
-  };
-  
   return (
     <section 
       id={id}
-      ref={sectionRef}
       className="relative min-h-screen w-full overflow-hidden section-wrapper"
       style={{ 
         background: 'linear-gradient(to bottom, #000000, #111a30, #1a2f59, #243882, #2e42ab)',
@@ -70,104 +24,28 @@ export const CloudTransitionSection: React.FC<CloudTransitionSectionProps> = ({ 
         marginBottom: '-2px', // Ensure seamless connection with next section
         position: 'relative',
         zIndex: 1,
-        transformStyle: 'preserve-3d', // Fix for potential Safari issues
-        transform: 'translateZ(0)', // Hardware acceleration
-        backfaceVisibility: 'hidden' // Prevent rendering artifacts
       }}
     >
-      {/* Background darker overlay to help text visibility - much darker and more opaque */}
-      <div className="absolute inset-0 bg-black/80 z-5"></div>
+      {/* Static background with stars */}
+      <div className="absolute inset-0" style={{ 
+        background: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)',
+        backgroundSize: '30px 30px'
+      }}></div>
       
-      {/* Top cloud layer (fast moving) - reduced count for better performance */}
-      <motion.div 
-        className="absolute inset-0 z-10"
-        style={{ 
-          opacity, 
-          y: topCloudY,
-          willChange: "transform, opacity",
-          transform: "translateZ(0)",
-          backfaceVisibility: "hidden" 
-        }}
-      >
-        {createClouds(3, 'cloud-fast')}
-      </motion.div>
-      
-      {/* Middle cloud layer (medium speed) - reduced count for better performance */}
-      <motion.div 
-        className="absolute inset-0 z-20"
-        style={{ 
-          opacity, 
-          y: middleCloudY,
-          willChange: "transform, opacity",
-          transform: "translateZ(0)",
-          backfaceVisibility: "hidden"
-        }}
-      >
-        {createClouds(5, 'cloud-medium')}
-      </motion.div>
-      
-      {/* Bottom cloud layer (slow moving) - reduced count for better performance */}
-      <motion.div 
-        className="absolute inset-0 z-30"
-        style={{ 
-          opacity, 
-          y: bottomCloudY,
-          willChange: "transform, opacity",
-          transform: "translateZ(0)",
-          backfaceVisibility: "hidden"
-        }}
-      >
-        {createClouds(4, 'cloud-slow')}
-      </motion.div>
-      
-      {/* Text content - with hardware acceleration */}
-      <motion.div 
-        className="relative z-40 flex items-center justify-center min-h-screen"
-        style={{ 
-          opacity, 
-          y: textY,
-          willChange: "transform, opacity",
-          transform: "translateZ(0)",
-          backfaceVisibility: "hidden"
-        }}
-      >
+      {/* Fixed, centered content that will absolutely be visible */}
+      <div className="absolute inset-0 flex items-center justify-center z-10">
         <div className="text-center max-w-4xl mx-auto px-6">
-          <ScrollReveal>
-            <div className="relative mb-8">
-              {/* Semi-transparent gradient background behind text */}
-              <div className="absolute inset-0 -m-4 bg-gradient-to-b from-black/80 via-blue-900/60 to-black/80 blur-sm z-[-1] rounded-3xl"></div>
-              
-              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-wider sm:tracking-widest text-white mb-2"
-                  style={{
-                    textShadow: `
-                      0 0 5px #fff,
-                      0 0 10px #fff,
-                      0 0 15px #0066ff,
-                      0 0 20px #0066ff,
-                      0 0 25px #0066ff,
-                      0 0 30px #0066ff,
-                      0 0 35px #0066ff
-                    `,
-                    WebkitTextStroke: '1px rgba(255,255,255,0.8)',
-                    letterSpacing: '0.15em'
-                  }}>
-                BEYOND THE COSMOS
-              </h2>
-              <div className="h-1 w-40 bg-blue-500 mx-auto mb-4 rounded-full"></div>
-            </div>
-            
-            <div className="text-xl md:text-2xl text-white leading-relaxed max-w-2xl mx-auto font-medium bg-black/90 backdrop-blur-sm p-6 rounded-lg shadow-[0_4px_30px_rgba(0,0,0,0.8)]" 
-              style={{ border: '1px solid rgba(255,255,255,0.2)' }}>
-              <p style={{ 
-                  textShadow: '0 0 10px rgba(255,255,255,0.8)',
-                  fontWeight: 'bold'
-                }}>
-                Where the vastness of space meets the beauty of Earth. Our journey continues through the clouds and beyond.
-              </p>
-            </div>
-          </ScrollReveal>
+          <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-widest text-white mb-6">
+            BEYOND THE COSMOS
+          </h2>
+          
+          <div className="h-1 w-48 bg-blue-500 mx-auto mb-8"></div>
+          
+          <p className="text-xl md:text-2xl text-white leading-relaxed max-w-2xl mx-auto font-bold">
+            Where the vastness of space meets the beauty of Earth. Our journey continues through the clouds and beyond.
+          </p>
         </div>
-      </motion.div>
+      </div>
       
       {/* Bottom gradient for smooth transition */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#142448] to-transparent z-50" />
