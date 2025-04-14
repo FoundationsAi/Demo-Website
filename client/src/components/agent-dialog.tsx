@@ -12,7 +12,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { X, Mic, Send, Volume2 } from 'lucide-react';
 
 // Stages of the dialog flow
-type DialogStage = 'gender-selection' | 'mini-chat' | 'lead-capture' | 'full-demo';
+type DialogStage = 'gender-selection' | 'lead-capture' | 'full-demo' | 'widget-fallback';
 
 interface AgentDialogProps {
   open: boolean;
@@ -153,7 +153,8 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
   // Handle gender selection
   const handleSelectGender = (gender: 'male' | 'female') => {
     setSelectedGender(gender);
-    setStage('mini-chat');
+    // Skip mini-chat and go directly to lead capture
+    setStage('lead-capture');
   };
 
   // Handle submit mini chat message
@@ -443,7 +444,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
           </>
         );
         
-      case 'mini-chat':
+      case 'widget-fallback':
         return (
           <>
             <DialogHeader>
@@ -451,56 +452,31 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                 Talk to {selectedGender === 'male' ? maleName : femaleName}
               </DialogTitle>
               <DialogDescription>
-                Type a short message to hear how the AI agent responds with their voice
+                Chat with our AI agent using the 11Labs widget
               </DialogDescription>
             </DialogHeader>
             
             <div className="py-6">
-              <div className="relative mb-4">
-                <Textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Type a short message to hear how the agent responds..."
-                  className="resize-none p-4 pr-12 min-h-[100px]"
-                  maxLength={150}
-                  disabled={isPlaying}
-                />
-                
-                {/* Character counter */}
-                <div className="absolute bottom-3 right-3 text-xs text-muted-foreground">
-                  {message.length}/150
+              <div className="flex justify-center items-center min-h-[300px]">
+                <div className="text-center">
+                  <p className="mb-4">Our embedded AI agent is currently undergoing maintenance.</p>
+                  <p className="mb-4">You can also try our 11Labs widget experience:</p>
+                  <Button 
+                    className="gap-2 bg-blue-600 hover:bg-blue-700"
+                    onClick={() => window.open('https://elevenlabs.io/speech-synthesis', '_blank')}
+                  >
+                    <Volume2 size={18} />
+                    <span>Try 11Labs Widget</span>
+                  </Button>
                 </div>
-              </div>
-              
-              {/* Voice wave animation */}
-              {isPlaying && (
-                <div className="mb-4">
-                  <div className="mb-2 text-sm text-center text-muted-foreground">
-                    {selectedGender === 'male' ? maleName : femaleName} is speaking...
-                  </div>
-                  <VoiceWave isActive={true} numBars={20} className="h-12 mx-auto" />
-                </div>
-              )}
-              
-              <div className="flex justify-center">
-                <Button 
-                  onClick={handleSubmitMiniChat} 
-                  className="gap-2"
-                  disabled={!message.trim() || isPlaying}
-                >
-                  <Volume2 size={18} />
-                  <span>Speak Message</span>
-                </Button>
               </div>
             </div>
             
-            {!isPlaying && (
-              <DialogFooter>
-                <div className="text-sm text-center w-full text-muted-foreground">
-                  Powered by 11Labs realistic voice technology
-                </div>
-              </DialogFooter>
-            )}
+            <DialogFooter>
+              <div className="text-sm text-center w-full text-muted-foreground">
+                Powered by 11Labs realistic voice technology
+              </div>
+            </DialogFooter>
           </>
         );
         
