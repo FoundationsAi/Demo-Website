@@ -139,24 +139,12 @@ export const ImmersiveHome: React.FC = () => {
           <AgentSelectionSection />
         </SectionWrapper>
         
-        {/* 5. Mountain transition to pricing */}
-        <SectionWrapper>
-          <FullscreenMountainSection
-            backgroundImage={mountainBg3}
-            title="TRANSFORMING POSSIBILITIES"
-            subtitle="Discover how our voice AI can elevate your business"
-            textPosition="center"
-            actionLabel="VIEW PRICING"
-            actionLink="#pricing"
-          />
-        </SectionWrapper>
-        
-        {/* 6. Pricing section */}
+        {/* 5. Pricing section */}
         <SectionWrapper>
           <PricingSection />
         </SectionWrapper>
         
-        {/* 9. Footer/Contact */}
+        {/* 6. Footer/Contact */}
         <SectionWrapper>
           <section className="bg-black py-16 text-white">
             <div className="container mx-auto px-6">
