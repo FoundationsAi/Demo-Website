@@ -154,96 +154,197 @@ export const PricingSection: React.FC = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6 max-w-7xl mx-auto">
-          <AnimatePresence>
-            {pricingTiers.map((tier, index) => (
-              <ScrollReveal key={tier.name} delay={index * 0.1}>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  <HoverableCard
-                    className={`h-full backdrop-blur-sm rounded-xl overflow-hidden border-2 p-8 relative ${
-                      tier.isPopular 
-                        ? 'bg-blue-900/30 border-blue-500/50' 
-                        : 'bg-gray-900/40 border-gray-700/50'
-                    }`}
-                    intensity={0.05}
-                  >
-                    {tier.isPopular && (
-                      <div className="absolute top-0 right-0">
-                        <div className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
-                          MOST POPULAR
-                        </div>
-                      </div>
-                    )}
-                    
-                    {tier.hasTrial && (
-                      <div className="absolute top-0 left-0">
-                        <div className="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-br-lg">
-                          {tier.trialDays}-DAY FREE TRIAL
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="text-center mb-6">
-                      {tier.icon && (
-                        <span className="text-3xl mb-4 inline-block">{tier.icon}</span>
-                      )}
-                      <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
-                      <div className="text-blue-300 text-sm mb-4">{tier.description}</div>
-                      <div className="flex justify-center items-baseline">
-                        <span className="text-4xl font-extrabold">
-                          {billingCycle === 'yearly' && tier.price !== 'Custom' 
-                            ? `$${(parseFloat(tier.price.replace('$', '')) * 0.9 * 12).toFixed(2)}` // Apply 10% annual discount
-                            : tier.price}
-                        </span>
-                        {tier.price !== 'Custom' && (
-                          <span className="text-blue-300 ml-1">/{billingCycle === 'yearly' ? 'year' : 'month'}</span>
+        {/* Responsive pricing grid - improved for all screen sizes with swipe-friendly design */}
+        <div className="flex flex-col items-center justify-center w-full">
+          {/* Mobile view scrollable container for small screens */}
+          <div className="w-full overflow-x-auto pb-6 hide-scrollbar md:hidden">
+            <div className="inline-flex space-x-4 px-4" style={{ minWidth: "min-content" }}>
+              {pricingTiers.map((tier, index) => (
+                <div key={tier.name} className="w-[280px] flex-shrink-0">
+                  <ScrollReveal delay={index * 0.1}>
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 20 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      className="h-full"
+                    >
+                      <HoverableCard
+                        className={`h-full backdrop-blur-sm rounded-xl overflow-hidden border-2 p-6 relative ${
+                          tier.isPopular 
+                            ? 'bg-blue-900/30 border-blue-500/50' 
+                            : 'bg-gray-900/40 border-gray-700/50'
+                        }`}
+                        intensity={0.05}
+                      >
+                        {tier.isPopular && (
+                          <div className="absolute top-0 right-0">
+                            <div className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+                              POPULAR
+                            </div>
+                          </div>
                         )}
+                        
+                        {tier.hasTrial && (
+                          <div className="absolute top-0 left-0">
+                            <div className="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-br-lg whitespace-nowrap">
+                              {tier.trialDays}-DAY FREE TRIAL
+                            </div>
+                          </div>
+                        )}
+                        
+                        <div className="text-center mb-4">
+                          {tier.icon && (
+                            <span className="text-2xl mb-3 inline-block">{tier.icon}</span>
+                          )}
+                          <h3 className="text-xl font-bold mb-2">{tier.name}</h3>
+                          <div className="text-blue-300 text-xs mb-3 h-12 flex items-center justify-center">{tier.description}</div>
+                          <div className="flex flex-col justify-center items-center">
+                            <span className="text-3xl font-extrabold">
+                              {billingCycle === 'yearly' && tier.price !== 'Custom' 
+                                ? `$${(parseFloat(tier.price.replace('$', '')) * 0.9 * 12).toFixed(2)}` 
+                                : tier.price}
+                            </span>
+                            {tier.price !== 'Custom' && (
+                              <span className="text-blue-300 text-sm">/{billingCycle === 'yearly' ? 'year' : 'month'}</span>
+                            )}
+                            {tier.overageFee && (
+                              <div className="text-xs text-blue-400 mt-1">Overage: {tier.overageFee}</div>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div className="mb-6">
+                          <ul className="space-y-2 text-sm">
+                            {tier.features.map((feature, i) => (
+                              <motion.li 
+                                key={i}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.2 + (i * 0.05) }}
+                                className="flex items-start"
+                              >
+                                <svg className="w-4 h-4 text-blue-400 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span className="text-blue-100">{feature}</span>
+                              </motion.li>
+                            ))}
+                          </ul>
+                        </div>
+                        
+                        <div className="mt-auto">
+                          <button
+                            className={`w-full py-3 rounded-lg font-medium transition transform hover:scale-105 ${
+                              tier.isPopular
+                                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                                : 'bg-gray-800 hover:bg-gray-700 text-blue-300 border border-blue-800'
+                            }`}
+                          >
+                            {tier.buttonText}
+                          </button>
+                        </div>
+                      </HoverableCard>
+                    </motion.div>
+                  </ScrollReveal>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Tablet and desktop grid view */}
+          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6 max-w-7xl mx-auto">
+            <AnimatePresence>
+              {pricingTiers.map((tier, index) => (
+                <ScrollReveal key={tier.name} delay={index * 0.1}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <HoverableCard
+                      className={`h-full backdrop-blur-sm rounded-xl overflow-hidden border-2 p-6 lg:p-8 relative ${
+                        tier.isPopular 
+                          ? 'bg-blue-900/30 border-blue-500/50' 
+                          : 'bg-gray-900/40 border-gray-700/50'
+                      }`}
+                      intensity={0.05}
+                    >
+                      {tier.isPopular && (
+                        <div className="absolute top-0 right-0">
+                          <div className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+                            MOST POPULAR
+                          </div>
+                        </div>
+                      )}
+                      
+                      {tier.hasTrial && (
+                        <div className="absolute top-0 left-0">
+                          <div className="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-br-lg whitespace-nowrap">
+                            {tier.trialDays}-DAY FREE TRIAL
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="text-center mb-6">
+                        {tier.icon && (
+                          <span className="text-3xl mb-4 inline-block">{tier.icon}</span>
+                        )}
+                        <h3 className="text-xl lg:text-2xl font-bold mb-2">{tier.name}</h3>
+                        <div className="text-blue-300 text-sm mb-4 h-12 flex items-center justify-center">{tier.description}</div>
+                        <div className="flex flex-col lg:flex-row justify-center items-center lg:items-baseline">
+                          <span className="text-3xl lg:text-4xl font-extrabold">
+                            {billingCycle === 'yearly' && tier.price !== 'Custom' 
+                              ? `$${(parseFloat(tier.price.replace('$', '')) * 0.9 * 12).toFixed(2)}` // Apply 10% annual discount
+                              : tier.price}
+                          </span>
+                          {tier.price !== 'Custom' && (
+                            <span className="text-blue-300 ml-0 lg:ml-1">/{billingCycle === 'yearly' ? 'year' : 'month'}</span>
+                          )}
+                          
+                        </div>
                         {tier.overageFee && (
                           <div className="text-xs text-blue-400 mt-1">Overage: {tier.overageFee}</div>
                         )}
                       </div>
-                    </div>
-                    
-                    <div className="mb-8">
-                      <ul className="space-y-3">
-                        {tier.features.map((feature, i) => (
-                          <motion.li 
-                            key={i}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.2 + (i * 0.1) }}
-                            className="flex items-start"
-                          >
-                            <svg className="w-5 h-5 text-blue-400 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <span className="text-blue-100">{feature}</span>
-                          </motion.li>
-                        ))}
-                      </ul>
-                    </div>
-                    
-                    <div className="mt-auto">
-                      <button
-                        className={`w-full py-3 rounded-lg font-medium transition transform hover:scale-105 ${
-                          tier.isPopular
-                            ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                            : 'bg-gray-800 hover:bg-gray-700 text-blue-300 border border-blue-800'
-                        }`}
-                      >
-                        {tier.buttonText}
-                      </button>
-                    </div>
-                  </HoverableCard>
-                </motion.div>
-              </ScrollReveal>
-            ))}
-          </AnimatePresence>
+                      
+                      <div className="mb-8">
+                        <ul className="space-y-3">
+                          {tier.features.map((feature, i) => (
+                            <motion.li 
+                              key={i}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.2 + (i * 0.1) }}
+                              className="flex items-start"
+                            >
+                              <svg className="w-5 h-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                              </svg>
+                              <span className="text-blue-100">{feature}</span>
+                            </motion.li>
+                          ))}
+                        </ul>
+                      </div>
+                      
+                      <div className="mt-auto">
+                        <button
+                          className={`w-full py-3 rounded-lg font-medium transition transform hover:scale-105 ${
+                            tier.isPopular
+                              ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                              : 'bg-gray-800 hover:bg-gray-700 text-blue-300 border border-blue-800'
+                          }`}
+                        >
+                          {tier.buttonText}
+                        </button>
+                      </div>
+                    </HoverableCard>
+                  </motion.div>
+                </ScrollReveal>
+              ))}
+            </AnimatePresence>
+          </div>
         </div>
         
         {/* Enterprise section */}

@@ -85,6 +85,16 @@
     transition-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+  
+  /* Hidden scrollbar for better mobile experience */
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 
   :root {
     --background: 204 100% 95%;

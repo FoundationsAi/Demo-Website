@@ -276,8 +276,8 @@ export const AgentSelectionSection: React.FC = () => {
           />
         </div>
         
-        {/* Card grid with enhanced animations and responsiveness */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full max-w-7xl mx-auto">
+        {/* Card grid with improved responsive layout for all screen sizes */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8 w-full max-w-7xl mx-auto px-2 sm:px-4">
           {agents.map((agent, index) => (
             <motion.div 
               key={agent.id}
@@ -320,11 +320,11 @@ export const AgentSelectionSection: React.FC = () => {
                   }}
                 />
                 
-                {/* Card content */}
-                <div className="p-6 sm:p-7 flex flex-col h-full">
-                  <div className="flex justify-between items-start mb-4">
+                {/* Card content - improved responsiveness for all screen sizes */}
+                <div className="p-4 xs:p-5 sm:p-6 lg:p-7 flex flex-col h-full">
+                  <div className="flex justify-between items-start mb-3 sm:mb-4">
                     <motion.div 
-                      className={`w-16 h-16 rounded-full flex items-center justify-center z-10 transition-colors duration-500`}
+                      className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center z-10 transition-colors duration-500`}
                       initial={false}
                       animate={{
                         background: selectedAgent === agent.id 
@@ -398,12 +398,12 @@ export const AgentSelectionSection: React.FC = () => {
                     </div>
                   </div>
                   
-                  {/* Agent details with enhanced typography */}
+                  {/* Agent details with improved responsive typography */}
                   <div>
-                    <h3 className="text-xl sm:text-2xl font-bold mb-2 bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent">
+                    <h3 className="text-lg xs:text-xl sm:text-2xl font-bold mb-1 sm:mb-2 bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent leading-tight">
                       {agent.name}
                     </h3>
-                    <p className="text-sm sm:text-base text-blue-100/90 mb-6 line-clamp-3">
+                    <p className="text-xs xs:text-sm sm:text-base text-blue-100/90 mb-4 sm:mb-6 line-clamp-3 leading-relaxed">
                       {agent.description}
                     </p>
                   </div>
@@ -456,7 +456,7 @@ export const AgentSelectionSection: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 50 }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-12 max-w-3xl mx-auto w-full backdrop-blur-xl p-8 sm:p-10 rounded-2xl border border-blue-400/30 relative z-20"
+              className="mt-8 sm:mt-12 max-w-3xl mx-auto w-full backdrop-blur-xl p-4 xs:p-6 sm:p-8 md:p-10 rounded-xl sm:rounded-2xl border border-blue-400/30 relative z-20 mx-4 sm:mx-auto"
               style={{
                 background: 'linear-gradient(135deg, rgba(30, 58, 138, 0.4) 0%, rgba(7, 18, 42, 0.7) 100%)',
                 boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.3), 0 0 20px rgba(59, 130, 246, 0.3)'
