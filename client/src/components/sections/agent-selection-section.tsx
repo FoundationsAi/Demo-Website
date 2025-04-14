@@ -172,7 +172,7 @@ export const AgentSelectionSection: React.FC = () => {
         </AnimatePresence>
         
         <div className="text-center mt-16">
-          <Link href={selectedAgent ? `/chat/${selectedAgent}` : `/chat/customer-service`}>
+          <Link href="/chat">
             <button className="px-8 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
               Engage in Full Conversation
             </button>

@@ -31,13 +31,9 @@ export const Chat: React.FC = () => {
   const [showHeaderInfo, setShowHeaderInfo] = useState(!isMobile);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Find agent by ID or use default agent
+  // Find agent by ID
   useEffect(() => {
-    // Use a default agent if none is provided
-    const defaultAgentId = "customer-service";
-    const targetAgentId = agentId || defaultAgentId;
-    
-    const foundAgent = agents.find(a => a.id === targetAgentId);
+    const foundAgent = agents.find(a => a.id === agentId);
     if (foundAgent) {
       setAgent(foundAgent);
       
@@ -50,11 +46,6 @@ export const Chat: React.FC = () => {
           timestamp: new Date()
         }
       ]);
-      
-      // If we came in without an agent ID, redirect to include the default agent ID
-      if (!agentId) {
-        setLocation(`/chat/${defaultAgentId}`, { replace: true });
-      }
     } else {
       toast({
         title: "Agent Not Found",
@@ -88,7 +79,7 @@ export const Chat: React.FC = () => {
     try {
       // Call API to get AI response
       const response = await apiRequest("POST", "/api/chat", {
-        agentId: agentId || "customer-service", // Use default if none provided
+        agentId,
         message: inputMessage
       });
       

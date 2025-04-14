@@ -62,18 +62,12 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children, options })
   }
   
   const defaultOptions = {
-    duration: 1.0, // Reduced duration for faster response
+    duration: 1.2,
     easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential ease out
     smooth: true,
     smoothTouch: false,
-    touchMultiplier: 1.3, // Reduced from 1.5
-    wheelMultiplier: 0.8, // Better wheel control
-    syncTouch: true, // Better touch sync
-    lerp: 0.06, // Lower lerp value for better performance (0.1 -> 0.06)
-    orientation: 'vertical' as const,
-    gestureOrientation: 'vertical' as const,
-    smoothWheel: true,
-    wheelEventsTarget: window, // Use window for better wheel event capture
+    touchMultiplier: 1.5,
+    lerp: 0.1
   };
   
   return (
@@ -108,53 +102,34 @@ export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
   const [ref, setRef] = useState<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   
-  // Memoize the callback functions to prevent unnecessary observer recreations
-  const handleIntersect = React.useCallback((entries: IntersectionObserverEntry[]) => {
-    entries.forEach((entry) => {
-      const isIntersecting = entry.isIntersecting;
-      
-      // Only update state and call callbacks if the visibility changes
-      if (isIntersecting !== isVisible) {
-        if (isIntersecting) {
-          setIsVisible(true);
-          if (onEnter) onEnter();
-        } else {
-          setIsVisible(false);
-          if (onExit) onExit();
-        }
-      }
-    });
-  }, [isVisible, onEnter, onExit]);
-  
-  // Use a ref for the observer to avoid recreating it unnecessarily
-  const observerRef = React.useRef<IntersectionObserver | null>(null);
-  
   useEffect(() => {
     if (!ref) return;
     
-    // Use passive: true for better performance
-    const options = {
-      threshold,
-      rootMargin,
-      passive: true
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+            if (onEnter) onEnter();
+            if (once) observer.unobserve(ref);
+          } else {
+            setIsVisible(false);
+            if (onExit) onExit();
+          }
+        });
+      },
+      {
+        threshold,
+        rootMargin
+      }
+    );
     
-    // Create observer only if needed
-    if (!observerRef.current) {
-      observerRef.current = new IntersectionObserver(handleIntersect, options);
-    }
-    
-    const currentObserver = observerRef.current;
-    const currentRef = ref;
-    
-    currentObserver.observe(currentRef);
+    observer.observe(ref);
     
     return () => {
-      if (currentRef && currentObserver) {
-        currentObserver.unobserve(currentRef);
-      }
+      if (ref) observer.unobserve(ref);
     };
-  }, [ref, handleIntersect, threshold, rootMargin, once]);
+  }, [ref, onEnter, onExit, threshold, rootMargin, once]);
   
   return (
     <div 

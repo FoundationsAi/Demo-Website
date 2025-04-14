@@ -4,21 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom cursor styles to ensure visibility across all sections */
-* {
-  cursor: auto !important;
-}
-
-/* Enhanced styles for interactive elements */
-a, button, .interactive {
-  cursor: pointer !important;
-  transition: transform 0.2s ease;
-}
-
-a:hover, button:hover, .interactive:hover {
-  transform: scale(1.02);
-}
-
 @layer base {
   * {
     @apply border-border;
@@ -257,20 +242,6 @@ a:hover, button:hover, .interactive:hover {
   @keyframes cloudPulse {
     0%, 100% { transform: scale(1); opacity: 0.8; }
     50% { transform: scale(1.1); opacity: 1; }
-  }
-  
-  /* National Geographic-style cloud effects */
-  .nat-geo-clouds {
-    position: relative;
-    overflow: hidden;
-    will-change: transform;
-  }
-
-  /* Optimize performance for cloud elements */
-  .cloud-layer {
-    will-change: transform;
-    backface-visibility: hidden;
-    transform: translateZ(0);
   }
   
   /* Advanced Parallax Container */

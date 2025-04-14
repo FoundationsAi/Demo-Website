@@ -4,8 +4,7 @@ import { Switch, useLocation } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { AnimatedRoute } from "@/components/animated-route";
 import NotFound from "@/pages/not-found";
-// Import the optimized version instead
-import ImmersiveHome from "@/pages/immersive-home-optimized";
+import ImmersiveHome from "@/pages/immersive-home";
 import Chat from "@/pages/chat";
 import Payment from "@/pages/payment";
 import Calendar from "@/pages/calendar";
@@ -37,7 +36,7 @@ function App() {
         <div key={location} className="page-wrapper">
           <Switch location={location}>
             <AnimatedRoute path="/" component={ImmersiveHome} animation="fade" />
-            <AnimatedRoute path="/chat/:agentId?" component={Chat} animation="slideHorizontal" />
+            <AnimatedRoute path="/chat/:agentId" component={Chat} animation="slideHorizontal" />
             <AnimatedRoute path="/payment" component={Payment} animation="slideUp" />
             <AnimatedRoute path="/calendar" component={Calendar} animation="zoom" />
             <AnimatedRoute component={NotFound} animation="fade" />

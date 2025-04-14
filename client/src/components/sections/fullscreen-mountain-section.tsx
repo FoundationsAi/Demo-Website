@@ -6,7 +6,7 @@ import { ScrollReveal } from '@/components/scroll-reveal';
 
 interface FullscreenMountainSectionProps {
   id?: string;
-  title?: string;
+  title: string;
   subtitle?: string;
   backgroundImage: string;
   textPosition?: 'center' | 'left' | 'right';
@@ -38,10 +38,8 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
     offset: ["start end", "end start"]
   });
   
-  // Enhanced parallax effect for smoother transition
-  const y = useTransform(scrollYProgress, [0, 1], [0, 200]); // Increased movement range
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.05, 1.02, 1]); // Subtle zoom effect
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.8, 1], [0, 1, 1, 0]);
   
   // Text position classes
   const textPositionClass = {
@@ -63,16 +61,13 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
       id={id} 
       ref={sectionRef}
       className="relative h-screen w-full overflow-hidden"
-      style={{ position: 'relative' }} // Explicitly set position for proper scrolling calculation
     >
-      {/* Parallax Background with subtle zoom effect */}
+      {/* Parallax Background */}
       <motion.div 
         className="absolute inset-0 w-full h-full"
         style={{
           ...bgStyle,
           y,
-          scale, // Apply the subtle zoom effect
-          transformOrigin: "center center",
         }}
       />
       
@@ -81,24 +76,19 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent pointer-events-none" />
       )}
       
-      {/* Add bottom gradient to flow into dark section - updated color to match next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0a1528] to-transparent pointer-events-none z-10" />
-      
       {/* Content Container */}
       <div className="relative z-10 h-full w-full max-w-screen-2xl mx-auto px-6 md:px-12 flex flex-col">
         <div className={`flex flex-col max-w-2xl ${textPositionClass} h-full py-24`}>
           <div className="mt-auto mb-4">
-            {title ? (
-              <ScrollReveal animation="fadeInUp">
-                <AnimatedText
-                  text={title}
-                  as="h2"
-                  className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 ${textColor}`}
-                  animation="slide"
-                  stagger={0.03}
-                />
-              </ScrollReveal>
-            ) : null}
+            <ScrollReveal animation="fadeInUp">
+              <AnimatedText
+                text={title}
+                as="h2"
+                className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 ${textColor}`}
+                animation="slide"
+                stagger={0.03}
+              />
+            </ScrollReveal>
             
             {subtitle && (
               <ScrollReveal animation="fadeInUp" delay={0.2}>
