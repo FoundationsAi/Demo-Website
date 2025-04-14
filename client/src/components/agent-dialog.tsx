@@ -810,12 +810,12 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       case 'full-demo':
         return (
           <>
-            <DialogHeader className="border-b border-[#304060] pb-4 space-y-1">
+            <DialogHeader className="border-b border-[#304060] pb-3 sm:pb-4 space-y-0.5 sm:space-y-1">
               <div className="text-center">
-                <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-100">
+                <DialogTitle className="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-100">
                   {selectedGender === 'male' ? maleName : femaleName}
                 </DialogTitle>
-                <DialogDescription className="text-blue-200 opacity-90">
+                <DialogDescription className="text-sm sm:text-base text-blue-200 opacity-90">
                   AI Voice Assistant
                 </DialogDescription>
               </div>
@@ -848,8 +848,8 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                       <div className="mb-4">
                         <VoiceWave 
                           isActive={true} 
-                          numBars={18}
-                          className="h-16 w-64" 
+                          numBars={16}
+                          className="h-12 w-48 xs:h-14 xs:w-56 sm:h-16 sm:w-64" 
                           mode={isPlaying ? "speaking" : "listening"}
                         />
                       </div>
@@ -975,10 +975,9 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                           }
                         }}
                         variant="outline"
-                        className="flex items-center gap-2 mt-4 rounded-full border-blue-500/30 bg-blue-900/20 text-blue-200 hover:bg-blue-800/30 hover:text-blue-100 transition-all duration-300"
-                        size="lg"
+                        className="flex items-center gap-1 xs:gap-2 mt-4 rounded-full border-blue-500/30 bg-blue-900/20 text-blue-200 hover:bg-blue-800/30 hover:text-blue-100 transition-all duration-300 text-xs xs:text-sm sm:text-base px-3 py-1.5 xs:px-4 xs:py-2 sm:px-5 sm:py-2.5"
                       >
-                        <MicOff size={16} className="text-blue-300" />
+                        <MicOff size={14} className="text-blue-300 w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5" />
                         <span>End Voice Conversation</span>
                       </Button>
                     </div>
