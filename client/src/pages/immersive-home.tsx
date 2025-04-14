@@ -70,7 +70,7 @@ export const ImmersiveHome: React.FC = () => {
         {/* 3. Mountain section - cinematic with top text that scrolls behind mountains */}
         <div className="relative">
           {/* New "A new frontier in voice AI" text at the top that will scroll behind the mountain */}
-          <div className="absolute top-0 left-0 w-full z-10 pt-20 pb-12 text-center bg-gradient-to-b from-[#142448] to-transparent">
+          <div className="absolute top-0 left-0 right-0 w-full z-20 pt-24 pb-32 text-center bg-gradient-to-b from-[#142448] via-[#142448]/80 to-transparent">
             <AnimatedText
               text="A NEW FRONTIER IN VOICE AI"
               as="h1"
@@ -80,18 +80,20 @@ export const ImmersiveHome: React.FC = () => {
             />
           </div>
           
-          {/* The mountain image with lower z-index to appear behind the text */}
-          <FullscreenMountainSection
-            title=""
-            backgroundImage={mountainBg1}
-            textPosition="center"
-            overlay={false}
-          />
+          {/* The mountain image with higher z-index to appear in front of the text as you scroll */}
+          <div className="relative z-30">
+            <FullscreenMountainSection
+              title=""
+              backgroundImage={mountainBg1}
+              textPosition="center"
+              overlay={false}
+            />
+          </div>
         </div>
         
-        {/* 4. Description section */}
+        {/* 4. Description section - made lighter to improve transition */}
         <TextOverlaySection
-          backgroundColor="#061022"
+          backgroundColor="#0a1528"
           textColor="text-white"
           textPosition="center"
         >

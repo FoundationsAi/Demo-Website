@@ -76,22 +76,24 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent pointer-events-none" />
       )}
       
-      {/* Add bottom gradient to flow into dark section */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#061022] to-transparent pointer-events-none z-10" />
+      {/* Add bottom gradient to flow into dark section - updated color to match next section */}
+      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0a1528] to-transparent pointer-events-none z-10" />
       
       {/* Content Container */}
       <div className="relative z-10 h-full w-full max-w-screen-2xl mx-auto px-6 md:px-12 flex flex-col">
         <div className={`flex flex-col max-w-2xl ${textPositionClass} h-full py-24`}>
           <div className="mt-auto mb-4">
-            <ScrollReveal animation="fadeInUp">
-              <AnimatedText
-                text={title}
-                as="h2"
-                className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 ${textColor}`}
-                animation="slide"
-                stagger={0.03}
-              />
-            </ScrollReveal>
+            {title ? (
+              <ScrollReveal animation="fadeInUp">
+                <AnimatedText
+                  text={title}
+                  as="h2"
+                  className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 ${textColor}`}
+                  animation="slide"
+                  stagger={0.03}
+                />
+              </ScrollReveal>
+            ) : null}
             
             {subtitle && (
               <ScrollReveal animation="fadeInUp" delay={0.2}>
