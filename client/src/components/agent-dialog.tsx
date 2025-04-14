@@ -679,7 +679,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               </div>
             </div>
             
-            <DialogFooter className="border-t border-[#304060] pt-3">
+            <DialogFooter className="border-t border-[#304060] pt-2 sm:pt-3">
               <div className="text-sm text-center w-full text-blue-300 opacity-80 font-medium">
                 Powered by Foundations AI
               </div>
@@ -690,21 +690,21 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       case 'lead-capture':
         return (
           <>
-            <DialogHeader className="border-b border-[#304060] pb-4 space-y-1">
+            <DialogHeader className="border-b border-[#304060] pb-3 sm:pb-4 space-y-0.5 sm:space-y-1">
               <div className="text-center">
-                <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-100">
+                <DialogTitle className="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-100">
                   Voice Demo Request
                 </DialogTitle>
-                <DialogDescription className="text-blue-200 opacity-90">
+                <DialogDescription className="text-sm sm:text-base text-blue-200 opacity-90">
                   Try a personalized AI voice conversation tailored to your use case
                 </DialogDescription>
               </div>
             </DialogHeader>
             
-            <form onSubmit={handleSubmitLead} className="py-6">
+            <form onSubmit={handleSubmitLead} className="py-4 px-3 sm:py-6 sm:px-0">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName" className="text-blue-200">First Name <span className="text-red-400">*</span></Label>
+                  <Label htmlFor="firstName" className="text-blue-200 text-xs sm:text-sm">First Name <span className="text-red-400">*</span></Label>
                   <Input 
                     id="firstName" 
                     value={leadData.firstName}
@@ -715,7 +715,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="lastName" className="text-blue-200">Last Name <span className="text-red-400">*</span></Label>
+                  <Label htmlFor="lastName" className="text-blue-200 text-xs sm:text-sm">Last Name <span className="text-red-400">*</span></Label>
                   <Input 
                     id="lastName" 
                     value={leadData.lastName}
@@ -726,7 +726,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-blue-200">Email <span className="text-red-400">*</span></Label>
+                  <Label htmlFor="email" className="text-blue-200 text-xs sm:text-sm">Email <span className="text-red-400">*</span></Label>
                   <Input 
                     id="email" 
                     type="email"
@@ -738,7 +738,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-blue-200">Phone Number <span className="text-red-400">*</span></Label>
+                  <Label htmlFor="phone" className="text-blue-200 text-xs sm:text-sm">Phone Number <span className="text-red-400">*</span></Label>
                   <Input 
                     id="phone" 
                     type="tel"
@@ -750,7 +750,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="businessName" className="text-blue-200">Business Name</Label>
+                  <Label htmlFor="businessName" className="text-blue-200 text-xs sm:text-sm">Business Name</Label>
                   <Input 
                     id="businessName" 
                     value={leadData.businessName}
@@ -760,7 +760,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="industry" className="text-blue-200">Industry</Label>
+                  <Label htmlFor="industry" className="text-blue-200 text-xs sm:text-sm">Industry</Label>
                   <Input 
                     id="industry" 
                     value={leadData.industry}
@@ -770,7 +770,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="employees" className="text-blue-200">Number of Employees</Label>
+                  <Label htmlFor="employees" className="text-blue-200 text-xs sm:text-sm">Number of Employees</Label>
                   <Input 
                     id="employees" 
                     value={leadData.employees}
@@ -780,7 +780,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="budget" className="text-blue-200">AI Technology Budget</Label>
+                  <Label htmlFor="budget" className="text-blue-200 text-xs sm:text-sm">AI Technology Budget</Label>
                   <Input 
                     id="budget" 
                     value={leadData.budget}
@@ -793,13 +793,12 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               <div className="flex justify-center">
                 <Button 
                   type="submit"
-                  className="w-full max-w-md py-3 rounded-full shadow-lg transition-all duration-300 relative group overflow-hidden border-0 bg-gradient-to-br from-blue-600 to-indigo-800 hover:from-blue-500 hover:to-indigo-700"
-                  size="lg"
+                  className="w-full max-w-[90vw] xs:max-w-md py-2 xs:py-2.5 sm:py-3 rounded-full shadow-lg transition-all duration-300 relative group overflow-hidden border-0 bg-gradient-to-br from-blue-600 to-indigo-800 hover:from-blue-500 hover:to-indigo-700"
                 >
                   <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gMTAgMCBMIDAgMCAwIDEwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiIHN0cm9rZS13aWR0aD0iMC41Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
                   <div className="animate-pulse absolute inset-0 bg-blue-500/10 rounded-full blur-md group-hover:bg-blue-500/20"></div>
-                  <div className="flex items-center justify-center gap-2 relative z-10">
-                    <span className="text-base font-medium">Submit and Start Your Demo</span>
+                  <div className="flex items-center justify-center gap-1 xs:gap-2 relative z-10">
+                    <span className="text-sm xs:text-base font-medium">Submit and Start Your Demo</span>
                   </div>
                 </Button>
               </div>
@@ -986,7 +985,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               </div>
             </div>
             
-            <DialogFooter className="border-t border-[#304060] pt-3">
+            <DialogFooter className="border-t border-[#304060] pt-2 sm:pt-3">
               <div className="text-sm text-center w-full text-blue-300 opacity-80 font-medium">
                 Powered by Foundations AI
               </div>
@@ -1025,7 +1024,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
         <AlertDialogContent className="bg-[#0f1729] text-white border-[#304060] shadow-xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-white text-xl">Are you sure you want to exit?</AlertDialogTitle>
-            <AlertDialogDescription className="text-blue-200">
+            <AlertDialogDescription className="text-blue-200 text-xs sm:text-sm">
               All progress with this agent will be lost. You can always come back and try a different agent.
             </AlertDialogDescription>
           </AlertDialogHeader>
