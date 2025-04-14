@@ -1021,7 +1021,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       
       {/* Confirmation Dialog */}
       <AlertDialog open={showConfirmClose} onOpenChange={setShowConfirmClose}>
-        <AlertDialogContent className="bg-[#0f1729] text-white border-[#304060] shadow-xl">
+        <AlertDialogContent className="bg-[#0f1729] text-white border-[#304060] shadow-xl max-w-[90vw] xs:max-w-[85vw] sm:max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-white text-lg xs:text-xl">Are you sure you want to exit?</AlertDialogTitle>
             <AlertDialogDescription className="text-blue-200 text-xs sm:text-sm">
@@ -1031,13 +1031,13 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
           <AlertDialogFooter>
             <AlertDialogCancel 
               onClick={handleCancelClose}
-              className="bg-transparent border-blue-400 text-blue-300 hover:bg-blue-900/20 hover:text-blue-100"
+              className="bg-transparent border-blue-400 text-blue-300 hover:bg-blue-900/20 hover:text-blue-100 text-xs xs:text-sm sm:text-base py-1.5 xs:py-2 px-2 xs:px-3 sm:px-4"
             >
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleConfirmClose}
-              className="bg-blue-700 hover:bg-blue-600 text-white"
+              className="bg-blue-700 hover:bg-blue-600 text-white text-xs xs:text-sm sm:text-base py-1.5 xs:py-2 px-2 xs:px-3 sm:px-4"
             >
               Yes, exit
             </AlertDialogAction>

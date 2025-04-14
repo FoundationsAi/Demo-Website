@@ -105,7 +105,7 @@ export const VoiceWave: React.FC<VoiceWaveProps> = ({
   return (
     <div className={`text-center flex flex-col items-center justify-center ${className}`}>
       {/* Enhanced voice visualization with animated bars */}
-      <div className="flex justify-center items-end h-12 space-x-[2px]">
+      <div className="flex justify-center items-end h-full space-x-[1px] xs:space-x-[2px]">
         {barHeights.map((height, i) => {
           // Get gradient color classes based on height to create a more dynamic visualization
           const isCenter = i === Math.floor(numBars / 2) || i === Math.floor(numBars / 2) - 1 || i === Math.floor(numBars / 2) + 1;
@@ -123,14 +123,14 @@ export const VoiceWave: React.FC<VoiceWaveProps> = ({
                 height: `${height}px`,
                 transition: 'height 150ms ease-in-out'
               }}
-              className={`w-[2px] rounded-full ${colorClass} ${glowClass} opacity-90`}
+              className={`w-[1px] xs:w-[1.5px] sm:w-[2px] rounded-full ${colorClass} ${glowClass} opacity-90`}
             />
           );
         })}
       </div>
       
       {/* Listening/Speaking status text with enhanced styling */}
-      <div className={`text-sm mt-3 tracking-wide font-medium ${
+      <div className={`text-xs xs:text-sm mt-2 xs:mt-3 tracking-wide font-medium ${
         mode === 'speaking' 
           ? 'bg-clip-text text-transparent bg-gradient-to-r from-purple-300 to-blue-300' 
           : 'bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-200'
