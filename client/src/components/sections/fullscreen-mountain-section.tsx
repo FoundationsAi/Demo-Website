@@ -39,7 +39,8 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
   });
   
   // Enhanced parallax effect for smoother transition
-  const y = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 200]); // Increased movement range
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.05, 1.02, 1]); // Subtle zoom effect
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   
   // Text position classes
@@ -64,12 +65,14 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
       className="relative h-screen w-full overflow-hidden"
       style={{ position: 'relative' }} // Explicitly set position for proper scrolling calculation
     >
-      {/* Parallax Background */}
+      {/* Parallax Background with subtle zoom effect */}
       <motion.div 
         className="absolute inset-0 w-full h-full"
         style={{
           ...bgStyle,
           y,
+          scale, // Apply the subtle zoom effect
+          transformOrigin: "center center",
         }}
       />
       

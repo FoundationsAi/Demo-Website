@@ -80,23 +80,31 @@ export const ImmersiveHome: React.FC = () => {
       {/* 1. Space intro section with stars */}
       <SpaceIntroSection />
       
-      {/* 2. Cloud transition with static clouds (National Geographic style) */}
-      <CloudTransitionSection />
-      
+      {/* Direct transition from space to mountains (skipping clouds) */}
       {/* 3. Mountain section - cinematic with top text that scrolls behind mountains */}
-      <div className="relative min-h-screen">
-        {/* New "A new frontier in voice AI" text at the top that will scroll behind the mountain */}
+      <div className="relative min-h-screen" id="mountain-section">
+        {/* Subtle gradient transition from space to mountains */}
+        <div className="absolute top-0 left-0 right-0 h-40 w-full bg-gradient-to-b from-[#000000] via-[#070f24] to-transparent z-10 pointer-events-none"></div>
+        
+        {/* "A NEW FRONTIER IN VOICE AI" text at the top that will scroll behind the mountain */}
         <div 
-          className="absolute top-0 left-0 right-0 w-full z-20 pt-24 pb-40 text-center bg-gradient-to-b from-[#142448] via-[#142448]/80 to-transparent"
+          className="absolute top-0 left-0 right-0 w-full z-20 pt-32 pb-40 text-center"
           style={{ position: 'absolute' }}
         >
-          <AnimatedText
-            text="A NEW FRONTIER IN VOICE AI"
-            as="h1"
-            animation="slide"
-            className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-wider text-white"
-            stagger={0.02} // Reduced stagger for better performance
-          />
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            viewport={{ once: true, margin: "-10% 0px -10% 0px" }}
+          >
+            <AnimatedText
+              text="A NEW FRONTIER IN VOICE AI"
+              as="h1"
+              animation="slide"
+              className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-wider text-white"
+              stagger={0.02} // Reduced stagger for better performance
+            />
+          </motion.div>
         </div>
         
         {/* The mountain image with higher z-index to appear in front of the text as you scroll */}
