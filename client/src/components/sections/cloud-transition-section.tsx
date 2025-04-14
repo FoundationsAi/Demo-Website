@@ -57,7 +57,7 @@ export const CloudTransitionSection: React.FC<CloudTransitionSectionProps> = ({ 
       ref={sectionRef}
       className="relative min-h-screen w-full overflow-hidden"
       style={{ 
-        background: 'linear-gradient(to bottom, #000000, #111a30, #1a2f59, #243882, #2e42ab, #142448)',
+        background: 'linear-gradient(to bottom, #000000, #070f24, #111a30, #1a2f59, #243882, #2e42ab, #142448)',
         position: 'relative', // Explicitly set position for proper scrolling calculation
       }}
     >

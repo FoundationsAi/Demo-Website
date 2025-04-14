@@ -4,6 +4,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom cursor styles to ensure visibility across all sections */
+* {
+  cursor: auto !important;
+}
+
+/* Enhanced styles for interactive elements */
+a, button, .interactive {
+  cursor: pointer !important;
+  transition: transform 0.2s ease;
+}
+
+a:hover, button:hover, .interactive:hover {
+  transform: scale(1.02);
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -242,6 +257,58 @@
   @keyframes cloudPulse {
     0%, 100% { transform: scale(1); opacity: 0.8; }
     50% { transform: scale(1.1); opacity: 1; }
+  }
+  
+  /* Cloud movement animations */
+  .cloud {
+    position: absolute;
+    width: 180px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    filter: blur(15px);
+    pointer-events: none;
+  }
+
+  .cloud::before,
+  .cloud::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.2);
+    filter: blur(15px);
+  }
+
+  .cloud::before {
+    width: 100px;
+    height: 100px;
+    top: -40px;
+    left: 40px;
+    border-radius: 50%;
+  }
+
+  .cloud::after {
+    width: 80px;
+    height: 80px;
+    top: -30px;
+    left: 80px;
+    border-radius: 50%;
+  }
+
+  .cloud-fast {
+    animation: moveRight 60s linear infinite;
+  }
+
+  .cloud-medium {
+    animation: moveRight 90s linear infinite;
+  }
+
+  .cloud-slow {
+    animation: moveRight 120s linear infinite;
+  }
+
+  @keyframes moveRight {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(2000px); }
   }
   
   /* Advanced Parallax Container */

@@ -135,6 +135,9 @@ export const SpaceIntroSection: React.FC = () => {
         style={{ pointerEvents: 'none' }}
       />
       
+      {/* Add a gradient at the bottom to transition into the clouds section */}
+      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#000000] via-[#070f24] to-transparent z-10 pointer-events-none" />
+      
       {/* Content overlay */}
       <div className="container relative z-10 mx-auto text-center px-4 py-16 sm:py-24 flex flex-col items-center justify-center min-h-screen">
         <motion.div
