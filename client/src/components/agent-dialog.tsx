@@ -603,11 +603,11 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       case 'gender-selection':
         return (
           <>
-            <DialogHeader>
-              <DialogTitle className="text-2xl text-center sm:text-left">
+            <DialogHeader className="space-y-2 pb-2">
+              <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-blue-100 text-center">
                 {agent?.name}
               </DialogTitle>
-              <DialogDescription className="text-center sm:text-left mt-2">
+              <DialogDescription className="text-center text-blue-200 opacity-90">
                 {agent?.description}
               </DialogDescription>
             </DialogHeader>
@@ -620,18 +620,24 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               <div className="grid grid-cols-2 gap-4 mt-6">
                 <Button 
                   onClick={() => handleSelectGender('male')}
-                  className="h-auto py-6 flex flex-col items-center gap-3 bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700"
+                  className="h-auto py-6 flex flex-col items-center gap-3 relative overflow-hidden border-0 group transition-all duration-300 bg-gradient-to-br from-blue-800 to-indigo-900 hover:from-blue-700 hover:to-indigo-800"
                 >
-                  <Volume2 size={24} />
-                  <div className="text-lg font-medium">{maleName} (Male)</div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-indigo-600/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gMTAgMCBMIDAgMCAwIDEwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiIHN0cm9rZS13aWR0aD0iMC41Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+                  <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-blue-400 to-indigo-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                  <Volume2 size={24} className="relative z-10 text-blue-200 group-hover:text-blue-100" />
+                  <div className="text-lg font-medium relative z-10 text-white">{maleName} (Male)</div>
                 </Button>
                 
                 <Button 
                   onClick={() => handleSelectGender('female')}
-                  className="h-auto py-6 flex flex-col items-center gap-3 bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700"
+                  className="h-auto py-6 flex flex-col items-center gap-3 relative overflow-hidden border-0 group transition-all duration-300 bg-gradient-to-br from-purple-800 to-indigo-900 hover:from-purple-700 hover:to-indigo-800"
                 >
-                  <Volume2 size={24} />
-                  <div className="text-lg font-medium">{femaleName} (Female)</div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-indigo-600/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gMTAgMCBMIDAgMCAwIDEwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiIHN0cm9rZS13aWR0aD0iMC41Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+                  <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-purple-400 to-indigo-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                  <Volume2 size={24} className="relative z-10 text-purple-200 group-hover:text-purple-100" />
+                  <div className="text-lg font-medium relative z-10 text-white">{femaleName} (Female)</div>
                 </Button>
               </div>
             </div>
@@ -992,6 +998,12 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
         <DialogContent className={`
           ${stage === 'full-demo' ? 'sm:max-w-[600px] sm:h-[600px] flex flex-col' : 'sm:max-w-[500px]'}
           ${stage === 'lead-capture' ? 'sm:max-w-[600px]' : ''}
+          bg-[#0f1729] text-white border-[#304060] shadow-xl shadow-blue-900/20
+          data-[state=open]:animate-in data-[state=closed]:animate-out
+          data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0
+          data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95
+          data-[state=open]:slide-in-from-bottom-2 data-[state=closed]:slide-out-to-bottom-2
+          transition-all duration-300
         `}>
           {renderDialogContent()}
         </DialogContent>
@@ -999,16 +1011,26 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       
       {/* Confirmation Dialog */}
       <AlertDialog open={showConfirmClose} onOpenChange={setShowConfirmClose}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-[#0f1729] text-white border-[#304060] shadow-xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to exit?</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-white text-xl">Are you sure you want to exit?</AlertDialogTitle>
+            <AlertDialogDescription className="text-blue-200">
               All progress with this agent will be lost. You can always come back and try a different agent.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleCancelClose}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmClose}>Yes, exit</AlertDialogAction>
+            <AlertDialogCancel 
+              onClick={handleCancelClose}
+              className="bg-transparent border-blue-400 text-blue-300 hover:bg-blue-900/20 hover:text-blue-100"
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleConfirmClose}
+              className="bg-blue-700 hover:bg-blue-600 text-white"
+            >
+              Yes, exit
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
