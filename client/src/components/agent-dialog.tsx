@@ -89,7 +89,22 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
   };
 
   // Handle confirmed close
-  const handleConfirmClose = () => {
+  const handleConfirmClose = async () => {
+    // Make sure to properly clean up resources when exiting
+    try {
+      // Close any audio playback
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      await audioCtx.close();
+      
+      // Stop the conversation service
+      await conversationalAIService.stopConversation();
+    } catch (error) {
+      console.error("Error while cleaning up:", error);
+    }
+    
+    // Reset UI states
+    setIsPlaying(false);
+    setDemoMessages([]);
     setShowConfirmClose(false);
     onOpenChange(false);
     onClose();
@@ -716,7 +731,18 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                       
                       {/* End conversation button */}
                       <Button
-                        onClick={stopCustomConversation}
+                        onClick={async () => {
+                          // Close any audio playback
+                          const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+                          await audioCtx.close();
+                          
+                          // Stop the conversation service
+                          await conversationalAIService.stopConversation();
+                          
+                          // Reset UI state
+                          setIsPlaying(false);
+                          setDemoMessages([]);
+                        }}
                         variant="outline"
                         className="flex items-center gap-2 border-red-300 hover:bg-red-50 hover:text-red-600 mt-4 rounded-full"
                         size="lg"
