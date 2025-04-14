@@ -309,6 +309,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // API endpoint to get a signed URL for ElevenLabs Conversational AI WebSocket
+  app.get("/api/elevenlabs/get-signed-url", async (req, res) => {
+    try {
+      const agentId = req.query.agentId as string;
+      
+      if (!agentId) {
+        return res.status(400).json({ error: 'Agent ID is required' });
+      }
+
+      const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
+      if (!ELEVENLABS_API_KEY) {
+        return res.status(500).json({ error: 'ElevenLabs API key is not configured' });
+      }
+
+      const response = await fetch(
+        `https://api.elevenlabs.io/v1/convai/conversation/get_signed_url?agent_id=${agentId}`,
+        {
+          headers: {
+            'xi-api-key': ELEVENLABS_API_KEY,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("ElevenLabs signed URL error:", errorData);
+        return res.status(response.status).json({ 
+          error: `Failed to get signed URL: ${response.statusText}`,
+          details: errorData
+        });
+      }
+
+      const data = await response.json();
+      return res.json({ signedUrl: data.signed_url });
+    } catch (error: any) {
+      console.error('Error getting signed URL:', error);
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
   // Create HTTP server
   const httpServer = createServer(app);
 

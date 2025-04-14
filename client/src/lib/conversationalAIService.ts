@@ -1,174 +1,159 @@
-/**
- * ElevenLabs Conversational AI Service
- * Connects to pre-built 11 Labs AI agents instead of just voice synthesis
- */
+import { Conversation } from '@11labs/client';
 
-import { apiRequest } from "./queryClient";
-
-// Map of agent IDs for different agent types and genders
-interface AgentMap {
-  [key: string]: {
-    male: string;
-    female: string;
-  };
-}
-
-// These are your specific 11 Labs Conversational AI agent IDs
-export const CONVERSATIONAL_AGENTS: AgentMap = {
-  // Default agents are the sales agents
-  default: {
-    male: "0Ako2MORgNjlSpGTU75E", // Steve - Sales agent Demo
-    female: "Jw7iQ8oXMG3MZeuyLfmH" // Sarah - Sales agent Demo
-  },
-  // The sales agents specifically
-  "sales": {
-    male: "0Ako2MORgNjlSpGTU75E", // Steve - Sales agent Demo
-    female: "Jw7iQ8oXMG3MZeuyLfmH" // Sarah - Sales agent Demo
-  }
-  // Other agent types can be added as they become available
-  // For now, we'll fall back to the sales agents for other types
+// Agent IDs for different personalities
+const AGENTS = {
+  STEVE: '0Ako2MORgNjlSpGTU75E',
+  SARAH: 'Jw7iQ8oXMG3MZeuyLfmH'
 };
 
-// Audio player instance for handling speech playback
-let audioPlayer: HTMLAudioElement | null = null;
+type AgentType = keyof typeof AGENTS;
 
-/**
- * Send a message to an 11 Labs Conversational AI agent
- * @param message The user's message to send to the agent
- * @param agentType The type of agent (sales, customer-service, etc.)
- * @param gender The gender of the agent (male or female)
- * @param history Optional conversation history
- * @returns A promise that resolves with the agent's response
- */
-export async function sendMessageToAgent(
-  message: string,
-  agentType: string = 'default',
-  gender: 'male' | 'female' = 'male',
-  history: Array<{role: string, content: string}> = []
-): Promise<{text: string, audio: string}> {
+let activeConversation: any = null;
+let isListening = false;
+
+// Connection status for the conversation
+type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
+let connectionStatus: ConnectionStatus = 'disconnected';
+
+// Callbacks
+type StatusCallback = (status: ConnectionStatus) => void;
+type MessageCallback = (message: Record<string, any>) => void;
+const statusListeners: StatusCallback[] = [];
+const messageListeners: MessageCallback[] = [];
+
+// Register listeners
+export const onConnectionStatusChange = (callback: StatusCallback) => {
+  statusListeners.push(callback);
+  // Immediately call with current status
+  callback(connectionStatus);
+  return () => {
+    const index = statusListeners.indexOf(callback);
+    if (index !== -1) {
+      statusListeners.splice(index, 1);
+    }
+  };
+};
+
+export const onMessage = (callback: MessageCallback) => {
+  messageListeners.push(callback);
+  return () => {
+    const index = messageListeners.indexOf(callback);
+    if (index !== -1) {
+      messageListeners.splice(index, 1);
+    }
+  };
+};
+
+// Update connection status
+const updateConnectionStatus = (status: ConnectionStatus) => {
+  connectionStatus = status;
+  statusListeners.forEach(listener => listener(status));
+};
+
+// Request microphone permission
+const requestMicrophonePermission = async () => {
   try {
-    console.log(`Sending message to ${agentType} agent, gender: ${gender}`);
-    
-    // Get the appropriate voice ID from our agent map
-    const agentMap = CONVERSATIONAL_AGENTS[agentType] || CONVERSATIONAL_AGENTS.default;
-    const voiceId = gender === 'male' ? agentMap.male : agentMap.female;
-    
-    console.log(`Using voice ID: ${voiceId}`);
-    
-    // Call our API endpoint that connects to 11 Labs Voice API
-    const response = await apiRequest("POST", "/api/conversational-agent", {
-      message,
-      agentId: voiceId,
-      history
-    });
+    await navigator.mediaDevices.getUserMedia({ audio: true });
+    return true;
+  } catch (error) {
+    console.error('Microphone permission denied:', error);
+    return false;
+  }
+};
+
+// Get signed URL for WebSocket connection
+const getSignedUrl = async (agentId: string): Promise<string> => {
+  try {
+    const response = await fetch(`/api/elevenlabs/get-signed-url?agentId=${agentId}`);
     
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Agent response error:", errorData);
-      throw new Error(errorData.error || "Failed to get agent response");
+      throw new Error(errorData.error || 'Failed to get signed URL');
     }
     
-    return await response.json();
+    const data = await response.json();
+    return data.signedUrl;
   } catch (error: any) {
-    console.error("Error in agent communication:", error);
+    console.error('Error getting signed URL:', error);
     throw error;
   }
-}
+};
 
-/**
- * Play audio from base64 encoded audio content
- * @param audioContent Base64 encoded audio content
- * @param contentType Audio content type (e.g., "audio/mpeg")
- * @returns A promise that resolves when audio starts playing
- */
-export function playAudio(audioContent: string, contentType: string = "audio/mpeg"): Promise<void> {
-  // Stop any currently playing audio
-  stopAudio();
-  
-  // Create audio from the base64 data
-  const audioSrc = `data:${contentType};base64,${audioContent}`;
-  
-  // Create and play the audio
-  audioPlayer = new Audio(audioSrc);
-  audioPlayer.volume = 1.0;
-  
-  return new Promise((resolve, reject) => {
-    if (audioPlayer) {
-      audioPlayer.onplay = () => resolve();
-      audioPlayer.onerror = (e) => reject(new Error("Audio playback error"));
-      audioPlayer.play().catch(reject);
-    } else {
-      reject(new Error("Audio player not initialized"));
+// Start a conversation with the given agent
+export const startConversation = async (agentType: AgentType): Promise<boolean> => {
+  try {
+    // If there's an active conversation, stop it first
+    if (activeConversation) {
+      await stopConversation();
     }
-  });
-}
 
-/**
- * Stop any currently playing audio
- */
-export function stopAudio(): void {
-  if (audioPlayer) {
-    audioPlayer.pause();
-    audioPlayer.currentTime = 0;
-  }
-}
-
-/**
- * Check if audio is currently playing
- * @returns Boolean indicating if audio is playing
- */
-export function isAudioPlaying(): boolean {
-  return audioPlayer !== null && !audioPlayer.paused;
-}
-
-/**
- * Set up event listeners for audio playback events
- * @param onStart Callback when audio starts playing
- * @param onEnd Callback when audio finishes playing
- * @param onError Callback when an error occurs
- */
-export function setupAudioEventListeners(
-  onStart?: () => void,
-  onEnd?: () => void,
-  onError?: (error: any) => void
-): () => void {
-  const handleStart = () => onStart?.();
-  const handleEnd = () => {
-    audioPlayer = null;
-    onEnd?.();
-  };
-  const handleError = (e: any) => {
-    audioPlayer = null;
-    onError?.(e);
-  };
-
-  // Remove existing listeners to prevent duplicates
-  removeAudioEventListeners();
-  
-  // Add new listeners
-  if (audioPlayer) {
-    audioPlayer.addEventListener('play', handleStart);
-    audioPlayer.addEventListener('ended', handleEnd);
-    audioPlayer.addEventListener('error', handleError);
-  }
-  
-  // Return cleanup function
-  return () => {
-    if (audioPlayer) {
-      audioPlayer.removeEventListener('play', handleStart);
-      audioPlayer.removeEventListener('ended', handleEnd);
-      audioPlayer.removeEventListener('error', handleError);
+    // Request microphone permission
+    const hasMicrophonePermission = await requestMicrophonePermission();
+    if (!hasMicrophonePermission) {
+      throw new Error('Microphone permission is required for voice conversation');
     }
-  };
-}
 
-/**
- * Remove all audio event listeners
- */
-function removeAudioEventListeners(): void {
-  if (audioPlayer) {
-    audioPlayer.onplay = null;
-    audioPlayer.onended = null;
-    audioPlayer.onerror = null;
+    updateConnectionStatus('connecting');
+
+    // Select the correct agent ID based on the agent type
+    const agentId = AGENTS[agentType];
+    
+    // Get signed URL for the WebSocket connection
+    const signedUrl = await getSignedUrl(agentId);
+    
+    // Create and configure the conversation
+    activeConversation = await Conversation.startSession({
+      url: signedUrl,
+      onConnect: () => {
+        updateConnectionStatus('connected');
+        console.log('Connected to conversational AI agent');
+      },
+      onDisconnect: () => {
+        updateConnectionStatus('disconnected');
+        console.log('Disconnected from conversational AI agent');
+        activeConversation = null;
+        isListening = false;
+      },
+      onMessage: (message: Record<string, any>) => {
+        console.log('Received message from agent:', message);
+        messageListeners.forEach(listener => listener(message));
+      },
+      onError: (error: Error) => {
+        console.error('Conversation error:', error);
+        updateConnectionStatus('error');
+      },
+    });
+    
+    isListening = true;
+    return true;
+  } catch (error: any) {
+    console.error('Failed to start conversation:', error);
+    updateConnectionStatus('error');
+    return false;
   }
-}
+};
+
+// Stop the active conversation
+export const stopConversation = async (): Promise<void> => {
+  if (!activeConversation) return;
+  
+  try {
+    isListening = false;
+    await activeConversation.stopSession();
+    activeConversation = null;
+    updateConnectionStatus('disconnected');
+    console.log('Conversation stopped');
+  } catch (error: any) {
+    console.error('Error stopping conversation:', error);
+  }
+};
+
+// Check if the conversation is currently active
+export const isConversationActive = (): boolean => {
+  return !!activeConversation && isListening;
+};
+
+// Get the current connection status
+export const getConnectionStatus = (): ConnectionStatus => {
+  return connectionStatus;
+};
