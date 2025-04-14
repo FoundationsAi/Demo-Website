@@ -542,7 +542,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
             
             <DialogFooter className="border-t pt-3">
               <div className="text-sm text-center w-full text-muted-foreground">
-                Powered by advanced AI voice technology
+                Powered by Foundations AI
               </div>
             </DialogFooter>
           </>
@@ -742,6 +742,10 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                           // Reset UI state
                           setIsPlaying(false);
                           setDemoMessages([]);
+                          
+                          // Close the dialog
+                          onOpenChange(false);
+                          onClose();
                         }}
                         variant="outline"
                         className="flex items-center gap-2 border-red-300 hover:bg-red-50 hover:text-red-600 mt-4 rounded-full"
@@ -758,7 +762,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
             
             <DialogFooter className="border-t pt-3">
               <div className="text-sm text-center w-full text-muted-foreground">
-                Powered by advanced AI voice technology
+                Powered by Foundations AI
               </div>
             </DialogFooter>
           </>
