@@ -121,14 +121,15 @@ export const SpaceIntroSection: React.FC = () => {
         cursor: 'default', 
         margin: 0,
         padding: 0,
-        marginTop: '-2px',
-        marginBottom: '-2px',
+        marginTop: '-1px', 
+        marginBottom: '0',
         position: 'relative',
         zIndex: 1,
         transformStyle: 'preserve-3d',
         transform: 'translateZ(0)',
         backfaceVisibility: 'hidden',
-        backgroundColor: '#000000'
+        backgroundColor: '#000000',
+        borderBottom: 'none'
       }}
     >
       {/* Stars canvas background */}

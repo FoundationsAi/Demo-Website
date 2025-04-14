@@ -61,11 +61,13 @@ export const ImmersiveHome: React.FC = () => {
         {/* Fixed text overlay that appears during mountain section */}
         <MountainTextOverlaySection />
         
-        {/* 1. Space intro section with stars - Direct integration for seamless flow */}
-        <SpaceIntroSection />
+        {/* Space and Mountain sections with seamless transition */}
+        <div className="relative" style={{ marginBottom: '-2px' }}>
+          <SpaceIntroSection />
+        </div>
         
-        {/* 2. Mountain section with "WHERE TECHNOLOGY MEETS EMOTION" content - Direct integration for seamless flow */}
-        <div ref={mountainSectionRef} style={{ marginTop: '-2px' }}>
+        {/* Mountain section directly connected to space section */}
+        <div ref={mountainSectionRef} style={{ marginTop: '-1px' }}>
           <FullscreenMountainSection
             title="" // Empty title is required by the component props
             backgroundImage={mountainBg1}
