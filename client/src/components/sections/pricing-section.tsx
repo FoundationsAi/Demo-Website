@@ -11,55 +11,94 @@ interface PricingTier {
   features: string[];
   isPopular?: boolean;
   buttonText: string;
+  overageFee?: string;
+  hasTrial?: boolean;
+  trialDays?: number;
   icon?: string;
 }
 
 const pricingTiers: PricingTier[] = [
   {
     name: "Starter",
-    price: "$49",
-    description: "Perfect for individuals and small projects",
+    price: "$49.99",
+    description: "Perfect for startups and small businesses exploring AI automation",
     features: [
-      "3 AI Voice Agents",
-      "100 messages per month",
-      "Basic customization",
-      "Email support",
-      "Single user"
+      "50 minutes of AI usage per month",
+      "Unlimited AI agents",
+      "5 concurrent calls",
+      "Voice API, LLM, transcriber costs",
+      "API integrations",
+      "Real-time booking",
+      "Human transfer",
+      "Community support"
     ],
-    buttonText: "Get Started",
+    buttonText: "Start Testing Now",
+    overageFee: "$0.35/minute",
     icon: "🚀"
   },
   {
-    name: "Professional",
-    price: "$99",
-    description: "Enhanced features for growing businesses",
+    name: "Essential",
+    price: "$299.99",
+    description: "Ideal for small to medium businesses with low call volumes",
     features: [
-      "All 11 AI Voice Agents",
-      "1,000 messages per month",
-      "Advanced customization",
-      "Priority support",
-      "5 team members",
-      "Analytics dashboard"
+      "500 minutes of AI usage per month",
+      "Unlimited AI agents",
+      "10 concurrent calls",
+      "All Starter features"
     ],
+    buttonText: "Try Essential Free",
+    overageFee: "$0.30/minute",
+    hasTrial: true,
+    trialDays: 7,
     isPopular: true,
-    buttonText: "Choose Professional",
     icon: "⭐"
+  },
+  {
+    name: "Basic",
+    price: "$749.99",
+    description: "Designed for growing businesses with moderate call volumes",
+    features: [
+      "1,250 minutes of AI usage per month",
+      "Unlimited AI agents",
+      "25 concurrent calls",
+      "All Essential features",
+      "Team access",
+      "Support via ticketing"
+    ],
+    buttonText: "Try Basic Free",
+    overageFee: "$0.25/minute",
+    hasTrial: true,
+    trialDays: 7,
+    icon: "📈"
+  },
+  {
+    name: "Pro",
+    price: "$1,499.99",
+    description: "Built for established businesses with high call volumes",
+    features: [
+      "2,100 minutes of AI usage per month",
+      "Unlimited AI agents",
+      "50 concurrent calls",
+      "All Basic features"
+    ],
+    buttonText: "Get Pro Now",
+    overageFee: "$0.20/minute",
+    icon: "💎"
   },
   {
     name: "Enterprise",
     price: "Custom",
-    description: "Tailored solutions for large organizations",
+    description: "For large businesses and agencies with massive call volumes or unique needs",
     features: [
-      "Unlimited AI Voice Agents",
-      "Unlimited messages",
-      "Full customization",
-      "Dedicated support",
-      "Unlimited team members",
-      "Advanced analytics",
-      "Custom integration",
-      "On-premise option"
+      "Custom minutes of AI usage",
+      "Unlimited AI agents",
+      "Custom concurrent calls",
+      "All Pro features",
+      "White-label platform",
+      "Unlimited subaccounts"
     ],
     buttonText: "Contact Sales",
+    overageFee: "Custom rates",
     icon: "🏢"
   }
 ];
@@ -83,14 +122,14 @@ export const PricingSection: React.FC = () => {
         <div className="text-center mb-16">
           <ScrollReveal>
             <AnimatedText
-              text="PRICING PLANS"
+              text="FIND THE PERFECT PLAN FOR YOUR BUSINESS"
               as="h2"
               className="text-4xl md:text-5xl font-bold mb-4 tracking-wider"
               animation="fade"
               stagger={0.03}
             />
             <p className="text-xl text-blue-300 max-w-3xl mx-auto leading-relaxed mb-10">
-              Choose the perfect plan to harness the power of our voice AI technology
+              Automate tasks with our specialized AI agents—unlimited agents, flexible plans, and no limits on your potential. From customer service to creative consulting, our AI handles it all. Try risk-free with our 7-day trial on Essential and Basic, or contact us for custom Enterprise solutions.
             </p>
           </ScrollReveal>
           
@@ -110,12 +149,12 @@ export const PricingSection: React.FC = () => {
               }`}
               onClick={() => setBillingCycle('yearly')}
             >
-              Yearly <span className="text-xs font-medium text-emerald-400">Save 20%</span>
+              Yearly <span className="text-xs font-medium text-emerald-400">Save 10%</span>
             </button>
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6 max-w-7xl mx-auto">
           <AnimatePresence>
             {pricingTiers.map((tier, index) => (
               <ScrollReveal key={tier.name} delay={index * 0.1}>
@@ -150,11 +189,14 @@ export const PricingSection: React.FC = () => {
                       <div className="flex justify-center items-baseline">
                         <span className="text-4xl font-extrabold">
                           {billingCycle === 'yearly' && tier.price !== 'Custom' 
-                            ? tier.price.replace('$', '$') + '0' // Apply 20% discount
+                            ? `$${(parseFloat(tier.price.replace('$', '')) * 0.9 * 12).toFixed(2)}` // Apply 10% annual discount
                             : tier.price}
                         </span>
                         {tier.price !== 'Custom' && (
                           <span className="text-blue-300 ml-1">/{billingCycle === 'yearly' ? 'year' : 'month'}</span>
+                        )}
+                        {tier.overageFee && (
+                          <div className="text-xs text-blue-400 mt-1">Overage: {tier.overageFee}</div>
                         )}
                       </div>
                     </div>
@@ -222,7 +264,7 @@ export const PricingSection: React.FC = () => {
               <div className="bg-blue-900/20 rounded-lg p-6 backdrop-blur-sm border border-blue-800/30 text-left">
                 <h4 className="text-xl font-semibold mb-3">Can I try before I buy?</h4>
                 <p className="text-blue-200">
-                  Yes, we offer a 14-day free trial with the Starter plan. No credit card required to get started.
+                  Yes, we offer a 7-day free trial with the Essential and Basic plans. No credit card required to get started.
                 </p>
               </div>
             </ScrollReveal>

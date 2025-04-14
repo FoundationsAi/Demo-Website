@@ -1,0 +1,77 @@
+Pricing List for Web Designer
+Pricing Header
+"Find the Perfect Plan for Your Business"
+
+Automate tasks with our specialized AI agents—unlimited agents, flexible plans, and no limits on your potential. From customer service to creative consulting, our AI handles it all. Try risk-free with our 7-day trial on Essential and Basic, or contact us for custom Enterprise solutions.
+
+Tier 1: Starter
+Price: $49.99/month
+
+Description: Perfect for startups and small businesses exploring AI automation. Test our platform with any of our 11 specialized agents—customer service, sales, scheduling, and more. See how easy it is to streamline tasks and boost efficiency.
+
+What’s Included:
+
+50 minutes of AI usage per month (testing minutes count as half: 1 minute of testing = 0.5 billable minutes)
+Unlimited AI agents—deploy as many specialized agents as you need
+5 concurrent calls—manage multiple tasks at once
+Core features: Voice API, LLM, transcriber costs, API integrations, real-time booking, human transfer, community support
+Overage Fee: $0.35/minute
+CTA Button: "Start Testing Now"
+Tier 2: Essential
+Price: $299.99/month
+
+Description: Ideal for small to medium businesses with low call volumes. Use our AI agents for customer service, appointment scheduling, or lead capture—whatever your business needs. Upgrade as you grow.
+
+What’s Included:
+
+500 minutes of AI usage per month
+Unlimited AI agents—tailor agents for every task
+10 concurrent calls—handle busier workflows
+All Starter features
+Overage Fee: $0.30/minute
+Trial: 7-day free trial
+CTA Button: "Try Essential Free"
+Tier 3: Basic
+Price: $749.99/month
+
+Description: Designed for growing businesses with moderate call volumes. Scale your operations with AI agents for customer support, sales outreach, or technical assistance, plus team tools to keep everything running smoothly.
+
+What’s Included:
+
+1,250 minutes of AI usage per month
+Unlimited AI agents—unleash your full potential
+25 concurrent calls—tackle peak times with ease
+All Essential features, plus team access and support via ticketing
+Overage Fee: $0.25/minute
+Trial: 7-day free trial
+CTA Button: "Try Basic Free"
+Tier 4: Pro
+Price: $1,499.99/month
+
+Description: Built for established businesses with high call volumes. Power through customer interactions, lead generation, or support queues with ample minutes and concurrency. Perfect for industries like retail, healthcare, or finance.
+
+What’s Included:
+
+2,100 minutes of AI usage per month
+Unlimited AI agents—run unlimited campaigns
+50 concurrent calls—manage the busiest schedules
+All Basic features
+Overage Fee: $0.20/minute
+CTA Button: "Get Pro Now"
+Tier 5: Enterprise
+Price: Custom Pricing—Contact Us
+
+Description: For large businesses and agencies with massive call volumes or unique needs. Get a tailored plan with custom minutes, concurrency, and white-label options to elevate your brand and operations.
+
+What’s Included:
+
+Custom minutes of AI usage
+Unlimited AI agents
+Custom concurrent calls
+All Pro features, plus white-label platform and unlimited subaccounts
+Overage Fee: Custom rates
+CTA Button: "Contact Sales"
+Additional Details
+Setup Fee: $3,000 one-time (waived for annual contracts)
+Annual Discount: Save 10% when you pay upfront for a year (e.g., Essential drops from $299.99 to $269.99/month)
+Risk-Free Guarantee: Try any plan for 3 months—if your business metrics don’t improve by 5%, we’ll refund you.
