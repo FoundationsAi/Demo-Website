@@ -180,7 +180,16 @@ export const sendMessageToAgent = async (
     });
 
     if (!response.ok) {
-      throw new Error('Failed to get agent response');
+      // Get more detailed error information if available
+      let errorMessage = 'Failed to get agent response';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+      } catch (e) {
+        // If we can't parse the error response, use the status text
+        errorMessage = `${errorMessage}: ${response.statusText}`;
+      }
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
@@ -190,6 +199,12 @@ export const sendMessageToAgent = async (
     };
   } catch (error) {
     console.error('Error sending message to agent:', error);
+    // Add retry logic for common network issues
+    if (error instanceof TypeError && error.message.includes('network')) {
+      console.log('Network error detected, retrying in 2 seconds...');
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return sendMessageToAgent(message, agentType, gender, history);
+    }
     throw error;
   }
 };
@@ -207,7 +222,11 @@ export const playAudio = async (base64Audio: string): Promise<void> => {
     
     // Close any existing audio context to avoid multiple sounds
     if (audioContext) {
-      await audioContext.close();
+      try {
+        await audioContext.close();
+      } catch (e) {
+        console.warn('Error closing previous audio context:', e);
+      }
       audioContext = null;
     }
     
@@ -222,26 +241,46 @@ export const playAudio = async (base64Audio: string): Promise<void> => {
     // Create new audio context
     audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     
-    // Decode the audio data
-    const audioBuffer = await audioContext.decodeAudioData(bytes.buffer);
-    
-    // Create a source node
-    audioSource = audioContext.createBufferSource();
-    audioSource.buffer = audioBuffer;
-    
-    // Connect to the destination
-    audioSource.connect(audioContext.destination);
-    
-    // Start playing
-    audioSource.start(0);
-    
-    return new Promise((resolve) => {
-      if (audioSource) {
-        audioSource.onended = () => {
-          resolve();
-        };
+    try {
+      // Decode the audio data with timeout to prevent hanging
+      const decodePromise = audioContext.decodeAudioData(bytes.buffer);
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Audio decoding timed out')), 5000);
+      });
+      
+      const audioBuffer = await Promise.race([decodePromise, timeoutPromise]) as AudioBuffer;
+      
+      // Create a source node
+      audioSource = audioContext.createBufferSource();
+      audioSource.buffer = audioBuffer;
+      
+      // Connect to the destination
+      audioSource.connect(audioContext.destination);
+      
+      // Create an analyzer for visualizations if needed by the UI
+      const analyzer = audioContext.createAnalyser();
+      analyzer.fftSize = 256;
+      audioSource.connect(analyzer);
+      
+      // Start playing
+      audioSource.start(0);
+      
+      return new Promise((resolve) => {
+        if (audioSource) {
+          audioSource.onended = () => {
+            resolve();
+          };
+        }
+      });
+    } catch (decodeError) {
+      console.error('Error decoding audio data:', decodeError);
+      // If decoding fails, close the context and clean up
+      if (audioContext) {
+        await audioContext.close();
+        audioContext = null;
       }
-    });
+      throw decodeError;
+    }
   } catch (error) {
     console.error('Error playing audio:', error);
     throw error;
