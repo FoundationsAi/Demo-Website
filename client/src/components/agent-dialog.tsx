@@ -90,19 +90,36 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
 
   // Handle confirmed close
   const handleConfirmClose = async () => {
+    // Show loading/progress indicator
+    toast({
+      title: "Ending conversation",
+      description: "Please wait while we clean up...",
+    });
+    
     // Make sure to properly clean up resources when exiting
     try {
-      // Close any audio playback
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      await audioCtx.close();
-      
-      // Stop the conversation service
+      // Stop the conversation service first - this is the most important part
       await conversationalAIService.stopConversation();
+      
+      // Small delay to ensure everything is closed properly
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Success notification
+      toast({
+        title: "Conversation ended",
+        description: "Voice conversation has been successfully terminated.",
+        variant: "default",
+      });
     } catch (error) {
       console.error("Error while cleaning up:", error);
+      toast({
+        title: "Error ending conversation",
+        description: "There was a problem cleaning up resources, but we'll continue with closing the dialog.",
+        variant: "destructive",
+      });
     }
     
-    // Reset UI states
+    // Reset UI states - do this regardless of any errors above
     setIsPlaying(false);
     setDemoMessages([]);
     setShowConfirmClose(false);
@@ -742,20 +759,41 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                       {/* End conversation button */}
                       <Button
                         onClick={async () => {
-                          // Close any audio playback
-                          const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-                          await audioCtx.close();
-                          
-                          // Stop the conversation service
-                          await conversationalAIService.stopConversation();
-                          
-                          // Reset UI state
-                          setIsPlaying(false);
-                          setDemoMessages([]);
-                          
-                          // Close the dialog
-                          onOpenChange(false);
-                          onClose();
+                          try {
+                            // Show loading state
+                            toast({
+                              title: "Ending conversation",
+                              description: "Please wait while we clean up...",
+                            });
+                            
+                            // Make sure to properly stop the conversation with the API
+                            await conversationalAIService.stopConversation();
+                            
+                            // Small delay to ensure everything is closed properly
+                            await new Promise(resolve => setTimeout(resolve, 500));
+                            
+                            // Success notification
+                            toast({
+                              title: "Conversation ended",
+                              description: "Voice conversation has been successfully terminated.",
+                              variant: "default",
+                            });
+                            
+                            // Reset UI state
+                            setIsPlaying(false);
+                            setDemoMessages([]);
+                            
+                            // Close the dialog
+                            onOpenChange(false);
+                            onClose();
+                          } catch (error) {
+                            console.error("Error ending conversation:", error);
+                            toast({
+                              title: "Error",
+                              description: "There was a problem ending the conversation. Please try again.",
+                              variant: "destructive",
+                            });
+                          }
                         }}
                         variant="outline"
                         className="flex items-center gap-2 border-red-300 hover:bg-red-50 hover:text-red-600 mt-4 rounded-full"

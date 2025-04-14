@@ -133,18 +133,56 @@ export const startConversation = async (agentType: AgentType): Promise<boolean> 
   }
 };
 
-// Stop the active conversation
+// Stop the active conversation and clean up all resources
 export const stopConversation = async (): Promise<void> => {
-  if (!activeConversation) return;
+  console.log('Attempting to stop conversation and clean up resources');
   
+  // Stop any audio playback first
+  if (audioSource) {
+    try {
+      audioSource.stop();
+      audioSource.disconnect();
+      audioSource = null;
+      console.log('Audio source stopped and disconnected');
+    } catch (audioError) {
+      console.error('Error stopping audio source:', audioError);
+    }
+  }
+  
+  // Close audio context
+  if (audioContext) {
+    try {
+      await audioContext.close();
+      audioContext = null;
+      console.log('Audio context closed');
+    } catch (contextError) {
+      console.error('Error closing audio context:', contextError);
+    }
+  }
+  
+  // Now stop the active conversation if it exists
+  if (activeConversation) {
+    try {
+      isListening = false;
+      await activeConversation.stopSession();
+      console.log('Conversation session stopped successfully');
+    } catch (error: any) {
+      console.error('Error stopping conversation session:', error);
+    } finally {
+      // Always null out the conversation and update status even if there was an error
+      activeConversation = null;
+      updateConnectionStatus('disconnected');
+      console.log('Conversation fully stopped and connection status updated');
+    }
+  } else {
+    console.log('No active conversation to stop');
+  }
+  
+  // Just to be extra safe, reset any global listeners
   try {
-    isListening = false;
-    await activeConversation.stopSession();
-    activeConversation = null;
-    updateConnectionStatus('disconnected');
-    console.log('Conversation stopped');
-  } catch (error: any) {
-    console.error('Error stopping conversation:', error);
+    window.removeEventListener('error', () => {});
+  } catch (e) {
+    // Ignore errors in cleanup
   }
 };
 
