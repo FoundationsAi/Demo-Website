@@ -169,10 +169,12 @@ export const AgentSelectionSection: React.FC = () => {
   return (
     <section 
       ref={sectionRef}
-      className="relative bg-gradient-to-b from-[#142448] via-[#0c1a36] to-[#091324] text-white py-12 md:py-24 min-h-screen flex flex-col justify-center overflow-hidden section-wrapper"
+      className="relative bg-gradient-to-b from-[#142448] via-[#0c1a36] to-[#091324] text-white py-16 md:py-32 min-h-screen flex flex-col justify-center overflow-hidden section-wrapper"
       style={{ 
         margin: 0,
         padding: 0,
+        paddingTop: '10vh',
+        paddingBottom: '20vh',
         marginTop: '-2px',
         marginBottom: '-2px',
         position: 'relative',

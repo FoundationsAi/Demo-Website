@@ -22,8 +22,8 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = ({
       style={{ 
         margin: 0,
         padding: 0,
-        marginTop: '-2px', // Eliminate gap with previous section
-        marginBottom: '-2px', // Eliminate gap with next section
+        paddingTop: '4vh', // Add vertical spacing between sections
+        paddingBottom: '4vh', // Add vertical spacing between sections
         backgroundColor: '#000', // Maintain black background throughout
         position: 'relative',
         zIndex: 0
