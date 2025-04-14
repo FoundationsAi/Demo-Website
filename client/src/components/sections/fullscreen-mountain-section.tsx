@@ -6,7 +6,7 @@ import { ScrollReveal } from '@/components/scroll-reveal';
 
 interface FullscreenMountainSectionProps {
   id?: string;
-  title: string;
+  title?: string;
   subtitle?: string;
   backgroundImage: string;
   textPosition?: 'center' | 'left' | 'right';
@@ -75,6 +75,9 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
       {overlay && (
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent pointer-events-none" />
       )}
+      
+      {/* Add bottom gradient to flow into dark section */}
+      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#061022] to-transparent pointer-events-none z-10" />
       
       {/* Content Container */}
       <div className="relative z-10 h-full w-full max-w-screen-2xl mx-auto px-6 md:px-12 flex flex-col">

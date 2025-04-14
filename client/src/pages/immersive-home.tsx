@@ -67,20 +67,27 @@ export const ImmersiveHome: React.FC = () => {
         {/* 2. Cloud transition with animation */}
         <CloudTransitionSection />
         
-        {/* 3. Mountain section - cinematic */}
-        <FullscreenMountainSection
-          title="A NEW FRONTIER"
-          backgroundImage={mountainBg1}
-          textPosition="center"
-        >
-          <AnimatedText
-            text="VOICE AI"
-            as="h1"
-            animation="slide"
-            className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-wider text-white mt-4"
-            stagger={0.03}
+        {/* 3. Mountain section - cinematic with top text that scrolls behind mountains */}
+        <div className="relative">
+          {/* New "A new frontier in voice AI" text at the top that will scroll behind the mountain */}
+          <div className="absolute top-0 left-0 w-full z-10 pt-20 pb-12 text-center bg-gradient-to-b from-[#142448] to-transparent">
+            <AnimatedText
+              text="A NEW FRONTIER IN VOICE AI"
+              as="h1"
+              animation="slide"
+              className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-wider text-white"
+              stagger={0.03}
+            />
+          </div>
+          
+          {/* The mountain image with lower z-index to appear behind the text */}
+          <FullscreenMountainSection
+            title=""
+            backgroundImage={mountainBg1}
+            textPosition="center"
+            overlay={false}
           />
-        </FullscreenMountainSection>
+        </div>
         
         {/* 4. Description section */}
         <TextOverlaySection
