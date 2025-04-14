@@ -21,6 +21,66 @@ const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN || "placeholder_token";
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER || "+1234567890";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // 11Labs Conversational AI agent endpoint
+  app.post("/api/conversational-agent", async (req, res) => {
+    try {
+      const { message, agentId, history = [] } = req.body;
+      
+      if (!message || !agentId) {
+        return res.status(400).json({ error: "Missing required parameters" });
+      }
+      
+      const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
+      if (!ELEVENLABS_API_KEY) {
+        return res.status(500).json({ error: "Missing ElevenLabs API key" });
+      }
+      
+      // Prepare conversation history in the format expected by 11Labs API
+      const formattedHistory = history.map((msg: {role: string, content: string}) => ({
+        role: msg.role,
+        content: msg.content
+      }));
+      
+      // Call 11Labs Conversational AI API
+      const response = await fetch(`https://api.elevenlabs.io/v1/chat/conversations/${agentId}/messages`, {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "xi-api-key": ELEVENLABS_API_KEY
+        },
+        body: JSON.stringify({
+          text: message,
+          conversation_history: formattedHistory,
+          generate_audio: true,
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.75
+          }
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("ElevenLabs ConvAI error:", errorData);
+        return res.status(response.status).json({ 
+          error: "Failed to get agent response", 
+          details: errorData 
+        });
+      }
+      
+      const data = await response.json();
+      
+      // Return both text and audio to the client
+      res.json({ 
+        text: data.text || "I'm sorry, I didn't understand that. Could you rephrase?",
+        audio: data.audio || ""
+      });
+    } catch (error: any) {
+      console.error("Error in conversational agent:", error);
+      res.status(500).json({ error: error.message || "Unknown error occurred" });
+    }
+  });
   // Voice synthesis endpoint using 11Labs API
   app.post("/api/synthesize-speech", async (req, res) => {
     try {

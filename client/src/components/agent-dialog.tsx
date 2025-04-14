@@ -167,50 +167,50 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       const agentType = agent?.id || 'default';
       const gender = selectedGender || 'male';
       
-      // Use 11 Labs to generate and play speech
-      await import('@/lib/voiceService').then(({ generateAndPlaySpeech, setupAudioEventListeners }) => {
-        // Generate response text based on user's message
-        const responseText = getAIResponse(message, agent?.name || '');
-        
-        // Generate and play speech
-        generateAndPlaySpeech(responseText, agentType, gender)
-          .then(() => {
-            // Set up event listener for when audio playback ends
-            setupAudioEventListeners(
-              undefined, // onStart callback
-              () => {
-                // When audio finishes playing
-                setIsPlaying(false);
-                
-                // After a short delay, proceed to lead capture
-                setTimeout(() => {
-                  setStage('lead-capture');
-                }, 500);
-              },
-              (error) => {
-                // On error
-                console.error("Audio playback error:", error);
-                setIsPlaying(false);
-                toast({
-                  title: "Voice generation error",
-                  description: "There was an error generating the voice response. Please try again.",
-                  variant: "destructive"
-                });
-              }
-            );
-          })
-          .catch((error) => {
-            console.error("Failed to generate speech:", error);
-            setIsPlaying(false);
-            toast({
-              title: "Voice generation failed",
-              description: "We couldn't generate the voice response. Please try again later.",
-              variant: "destructive"
-            });
+      // Use 11 Labs Conversational AI agents
+      await import('@/lib/conversationalAIService').then(async ({ sendMessageToAgent, playAudio, setupAudioEventListeners }) => {
+        try {
+          // Send message to the appropriate Conversational AI agent
+          const response = await sendMessageToAgent(message, agentType, gender);
+          
+          // Play the audio response
+          await playAudio(response.audio);
+          
+          // Set up event listener for when audio playback ends
+          setupAudioEventListeners(
+            undefined, // onStart callback
+            () => {
+              // When audio finishes playing
+              setIsPlaying(false);
+              
+              // After a short delay, proceed to lead capture
+              setTimeout(() => {
+                setStage('lead-capture');
+              }, 500);
+            },
+            (error) => {
+              // On error
+              console.error("Audio playback error:", error);
+              setIsPlaying(false);
+              toast({
+                title: "Voice playback error",
+                description: "There was an error playing the audio response.",
+                variant: "destructive"
+              });
+            }
+          );
+        } catch (error) {
+          console.error("Failed to get agent response:", error);
+          setIsPlaying(false);
+          toast({
+            title: "Agent communication failed",
+            description: "We couldn't connect to the AI agent. Please try again later.",
+            variant: "destructive"
           });
+        }
       });
     } catch (error) {
-      console.error("Error in voice generation:", error);
+      console.error("Error in agent communication:", error);
       setIsPlaying(false);
       toast({
         title: "Error",
@@ -315,15 +315,6 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
     const userMessage = demoInput;
     setDemoInput('');
     
-    // Generate AI response based on user message
-    const aiResponseText = getAIResponse(userMessage, agent?.name || '');
-    
-    // Add AI message to chat immediately for better UX
-    setDemoMessages(prev => [...prev, {
-      sender: 'ai',
-      content: aiResponseText
-    }]);
-    
     // Set speaking state
     setIsPlaying(true);
     
@@ -332,42 +323,82 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       const agentType = agent?.id || 'default';
       const gender = selectedGender || 'male';
       
-      // Generate and play voice response using 11Labs
-      await import('@/lib/voiceService').then(async ({ generateAndPlaySpeech, setupAudioEventListeners }) => {
+      // Format previous messages for the AI history
+      const conversationHistory = demoMessages.map(msg => ({
+        role: msg.sender === 'user' ? 'user' : 'assistant',
+        content: msg.content
+      }));
+      
+      // Use 11 Labs Conversational AI agents
+      await import('@/lib/conversationalAIService').then(async ({ sendMessageToAgent, playAudio, setupAudioEventListeners }) => {
         try {
-          await generateAndPlaySpeech(aiResponseText, agentType, gender);
+          // Send message to the appropriate Conversational AI agent
+          const response = await sendMessageToAgent(userMessage, agentType, gender, conversationHistory);
           
-          // Set up listeners for audio events
-          setupAudioEventListeners(
-            undefined, // onStart
-            () => {
-              // When audio finishes
-              setIsPlaying(false);
-            },
-            (error) => {
-              // On error
-              console.error("Audio playback error:", error);
-              setIsPlaying(false);
-              toast({
-                title: "Voice playback error",
-                description: "There was an issue playing the audio response.",
-                variant: "destructive"
-              });
-            }
-          );
+          // Add AI response to chat
+          setDemoMessages(prev => [...prev, {
+            sender: 'ai',
+            content: response.text
+          }]);
+          
+          // Play the audio response
+          if (response.audio) {
+            await playAudio(response.audio);
+            
+            // Set up event listener for when audio playback ends
+            setupAudioEventListeners(
+              undefined, // onStart callback
+              () => {
+                // When audio finishes playing
+                setIsPlaying(false);
+              },
+              (error) => {
+                // On error
+                console.error("Audio playback error:", error);
+                setIsPlaying(false);
+                toast({
+                  title: "Voice playback error",
+                  description: "There was an error playing the audio response.",
+                  variant: "destructive"
+                });
+              }
+            );
+          } else {
+            // If no audio was returned, stop "speaking" state
+            setIsPlaying(false);
+            toast({
+              title: "No audio response",
+              description: "The AI agent responded but didn't provide audio. You can continue via text.",
+              variant: "default"
+            });
+          }
         } catch (error) {
-          console.error("Speech generation error:", error);
+          console.error("Failed to get agent response:", error);
           setIsPlaying(false);
+          
+          // Add a fallback response in case of error
+          const fallbackResponse = "I'm sorry, I'm having trouble connecting to my voice service. Please try again or continue our conversation via text.";
+          setDemoMessages(prev => [...prev, {
+            sender: 'ai',
+            content: fallbackResponse
+          }]);
+          
           toast({
-            title: "Voice generation error",
-            description: "We couldn't generate the voice response, but you can continue chatting via text.",
-            variant: "default"
+            title: "Agent communication failed",
+            description: "We couldn't connect to the AI agent. Please try again later.",
+            variant: "destructive"
           });
         }
       });
     } catch (error) {
-      console.error("Error in voice generation process:", error);
+      console.error("Error in agent communication:", error);
       setIsPlaying(false);
+      
+      // Add a fallback response
+      setDemoMessages(prev => [...prev, {
+        sender: 'ai',
+        content: "I apologize, but I'm experiencing a technical issue. Please try again in a moment."
+      }]);
     }
   };
 
