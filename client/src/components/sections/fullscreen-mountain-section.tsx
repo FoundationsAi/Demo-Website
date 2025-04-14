@@ -60,14 +60,17 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
     <section 
       id={id} 
       ref={sectionRef}
-      className="relative h-screen w-full overflow-hidden"
+      className="relative h-screen w-full overflow-hidden bg-black"
+      style={{ margin: 0, padding: 0 }}
     >
       {/* Parallax Background */}
       <motion.div 
-        className="absolute inset-0 w-full h-full"
+        className="absolute inset-0 w-full h-full will-change-transform"
         style={{
           ...bgStyle,
           y,
+          backfaceVisibility: 'hidden',
+          transform: 'translateZ(0)',
         }}
       />
       

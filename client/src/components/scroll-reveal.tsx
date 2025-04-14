@@ -1,50 +1,50 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useAnimation, useInView } from 'framer-motion';
 
-// Define available animation effects
+// Define available animation effects - simplified for better performance
 const animations = {
   fadeIn: {
     hidden: { opacity: 0 },
     visible: { opacity: 1 }
   },
   fadeInUp: {
-    hidden: { opacity: 0, y: 50 },
+    hidden: { opacity: 0, y: 30 },  // Reduced distance for better performance
     visible: { opacity: 1, y: 0 }
   },
   fadeInDown: {
-    hidden: { opacity: 0, y: -50 },
+    hidden: { opacity: 0, y: -30 }, // Reduced distance for better performance
     visible: { opacity: 1, y: 0 }
   },
   fadeInLeft: {
-    hidden: { opacity: 0, x: -50 },
+    hidden: { opacity: 0, x: -30 }, // Reduced distance for better performance
     visible: { opacity: 1, x: 0 }
   },
   fadeInRight: {
-    hidden: { opacity: 0, x: 50 },
+    hidden: { opacity: 0, x: 30 },  // Reduced distance for better performance
     visible: { opacity: 1, x: 0 }
   },
   zoomIn: {
-    hidden: { opacity: 0, scale: 0.95 },
+    hidden: { opacity: 0, scale: 0.97 }, // Reduced scale for better performance
     visible: { opacity: 1, scale: 1 }
   },
   zoomOut: {
-    hidden: { opacity: 0, scale: 1.05 },
+    hidden: { opacity: 0, scale: 1.03 }, // Reduced scale for better performance
     visible: { opacity: 1, scale: 1 }
   },
   slideUp: {
-    hidden: { y: 100 },
+    hidden: { y: 50 },               // Reduced distance for better performance
     visible: { y: 0 }
   },
   slideDown: {
-    hidden: { y: -100 },
+    hidden: { y: -50 },              // Reduced distance for better performance
     visible: { y: 0 }
   },
   slideLeft: {
-    hidden: { x: -100 },
+    hidden: { x: -50 },              // Reduced distance for better performance
     visible: { x: 0 }
   },
   slideRight: {
-    hidden: { x: 100 },
+    hidden: { x: 50 },               // Reduced distance for better performance
     visible: { x: 0 }
   },
   // Special one for staggered children
@@ -75,13 +75,13 @@ interface ScrollRevealProps {
 export const ScrollReveal: React.FC<ScrollRevealProps> = ({
   children,
   animation = 'fadeInUp',
-  duration = 0.5,
+  duration = 0.4, // Reduced for better performance
   delay = 0,
   ease = "easeOut",
-  threshold = 0.1,
+  threshold = 0.15, // Increased for earlier triggering
   className = "",
   once = true,
-  staggerChildren = 0.1,
+  staggerChildren = 0.05, // Reduced for better performance
   delayChildren = 0,
   customVariants
 }) => {
@@ -125,8 +125,13 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
       initial="hidden"
       animate={controls}
       variants={variants}
-      className={className}
+      className={`will-change-transform ${className}`}
       exit="hidden" // This helps with unmounting animations
+      style={{ 
+        willChange: "transform, opacity",
+        backfaceVisibility: "hidden",
+        transform: "translateZ(0)"
+      }}
     >
       {children}
     </motion.div>
@@ -137,7 +142,7 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
 export const ScrollRevealItem: React.FC<Omit<ScrollRevealProps, 'staggerChildren' | 'delayChildren'>> = ({
   children,
   animation = 'fadeInUp',
-  duration = 0.5,
+  duration = 0.4, // Reduced for better performance
   delay = 0,
   ease = "easeOut",
   className = "",
@@ -159,7 +164,12 @@ export const ScrollRevealItem: React.FC<Omit<ScrollRevealProps, 'staggerChildren
           }
         }
       }}
-      className={className}
+      className={`will-change-transform ${className}`}
+      style={{ 
+        willChange: "transform, opacity",
+        backfaceVisibility: "hidden",
+        transform: "translateZ(0)"
+      }}
     >
       {children}
     </motion.div>
