@@ -19,7 +19,7 @@ export const FullPageAgent: React.FC<FullPageAgentProps> = ({
   agentIcon = '🤖'
 }) => {
   const { toast } = useToast();
-  const [_, navigate] = useLocation();
+  const [, setLocation] = useLocation();
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [messages, setMessages] = useState<{role: 'user' | 'assistant', content: string}[]>([]);
@@ -203,7 +203,7 @@ export const FullPageAgent: React.FC<FullPageAgentProps> = ({
         <Button 
           variant="ghost" 
           size="icon"
-          onClick={() => navigate('/')}
+          onClick={() => setLocation('/')}
           className="text-gray-400 hover:text-white"
         >
           <X size={24} />

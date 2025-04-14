@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocation } from 'wouter';
 import { VoiceWave } from '@/components/voice-wave';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
@@ -651,12 +650,17 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                   size="lg"
                   className="h-auto py-4 px-8 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
                   onClick={() => {
-                    // Open the appropriate 11Labs agent in a new tab based on gender
-                    if (selectedGender === 'male') {
-                      window.open('https://elevenlabs.io/app/talk-to?agent_id=0Ako2MORgNjlSpGTU75E', '_blank');
-                    } else {
-                      window.open('https://elevenlabs.io/app/talk-to?agent_id=Jw7iQ8oXMG3MZeuyLfmH', '_blank');
-                    }
+                    // Get the agent ID based on gender
+                    const agentId = selectedGender === 'male' ? '0Ako2MORgNjlSpGTU75E' : 'Jw7iQ8oXMG3MZeuyLfmH';
+                    const agentName = selectedGender === 'male' ? maleName : femaleName;
+                    
+                    // Open our custom full-page agent experience
+                    const agentType = agent?.id || 'default';
+                    const url = `/agent-chat?agentId=${agentId}&gender=${selectedGender}&type=${agentType}&name=${agentName}`;
+                    
+                    // Close this dialog and open the full page experience
+                    onOpenChange(false);
+                    window.location.href = url;
                   }}
                 >
                   <div className="flex flex-col items-center gap-3">

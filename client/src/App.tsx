@@ -8,6 +8,7 @@ import ImmersiveHome from "@/pages/immersive-home";
 import Chat from "@/pages/chat";
 import Payment from "@/pages/payment";
 import Calendar from "@/pages/calendar";
+import AgentChat from "@/pages/agent-chat";
 
 function App() {
   const [location] = useLocation();
@@ -39,6 +40,7 @@ function App() {
             <AnimatedRoute path="/chat/:agentId" component={Chat} animation="slideHorizontal" />
             <AnimatedRoute path="/payment" component={Payment} animation="slideUp" />
             <AnimatedRoute path="/calendar" component={Calendar} animation="zoom" />
+            <AnimatedRoute path="/agent-chat" component={AgentChat} animation="fade" />
             <AnimatedRoute component={NotFound} animation="fade" />
           </Switch>
         </div>
