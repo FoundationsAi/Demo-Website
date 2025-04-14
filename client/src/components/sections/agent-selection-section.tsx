@@ -54,14 +54,10 @@ export const AgentSelectionSection: React.FC = () => {
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
           <ScrollReveal>
-            <AnimatedText
-              text="INTERACT WITH OUR AI"
-              as="h2"
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 tracking-wider"
-              animation="fade"
-              stagger={0.03}
-            />
-            <p className="text-base sm:text-lg md:text-xl text-blue-300 max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 tracking-wider">
+              INTERACT WITH OUR AI
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-blue-300 max-w-3xl mx-auto leading-relaxed px-4 sm:px-0 hyphens-auto">
               See your future agents in action. Select an agent with a distinct 
               personality, knowledge base and communication style to engage with.
             </p>

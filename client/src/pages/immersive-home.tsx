@@ -121,12 +121,14 @@ export const ImmersiveHome: React.FC = () => {
               </div>
               
               <div className="relative z-10">
-                <AnimatedText
-                  text="WHERE TECHNOLOGY MEETS EMOTION"
-                  as="h2"
-                  animation="slide"
-                  className="text-2xl md:text-4xl font-bold tracking-widest text-blue-200 mb-8 drop-shadow-[0_0_15px_rgba(100,200,255,0.5)]"
-                />
+                <div className="mb-8">
+                  <h2 className="text-2xl md:text-4xl font-bold tracking-widest text-blue-200 drop-shadow-[0_0_15px_rgba(100,200,255,0.5)] whitespace-nowrap sm:whitespace-normal">
+                    WHERE TECHNOLOGY MEETS
+                  </h2>
+                  <h2 className="text-2xl md:text-4xl font-bold tracking-widest text-blue-200 drop-shadow-[0_0_15px_rgba(100,200,255,0.5)]">
+                    EMOTION
+                  </h2>
+                </div>
                 
                 <div className="bg-gradient-to-r from-blue-900/30 to-indigo-900/30 backdrop-blur-sm p-8 rounded-xl border border-blue-500/20 shadow-[0_4px_30px_rgba(0,100,255,0.2)]">
                   <ScrollReveal animation="fadeInUp">

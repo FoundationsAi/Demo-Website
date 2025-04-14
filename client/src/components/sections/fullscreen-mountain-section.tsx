@@ -98,13 +98,14 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
         <div className={`flex flex-col max-w-2xl ${textPositionClass} h-full py-24`}>
           <div className="mt-auto mb-4">
             <ScrollReveal animation="fadeInUp" threshold={0.15}>
-              <AnimatedText
-                text={title}
-                as="h2"
-                className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 ${textColor}`}
-                animation="slide"
-                stagger={0.02} // Reduced for better performance
-              />
+              <h2 className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 ${textColor} px-4 text-center sm:text-center break-words`}>
+                {title.split(' ').map((word, i) => (
+                  <span key={i} className="inline-block">
+                    {word}
+                    {i < title.split(' ').length - 1 && ' '}
+                  </span>
+                ))}
+              </h2>
             </ScrollReveal>
             
             {subtitle && (
