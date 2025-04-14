@@ -66,6 +66,18 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [demoMessages]);
+  
+  // Add effect to embed widget when in full-demo stage
+  useEffect(() => {
+    if (stage === 'full-demo') {
+      // Short delay to ensure the container is rendered
+      const timer = setTimeout(() => {
+        embedWidget();
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [stage, selectedGender]);
 
   // Handle closing attempt
   const handleCloseAttempt = () => {
@@ -289,17 +301,41 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       description: "Preparing your personalized AI experience..."
     });
     
-    // Initialize the demo chat with a greeting message
-    const agentName = selectedGender === 'male' ? maleName : femaleName;
-    setDemoMessages([
-      {
-        sender: 'ai',
-        content: `Hi there! I'm ${agentName}, your AI ${agent?.name.replace('AI ', '')}. How can I assist you today?`
-      }
-    ]);
+    // Save lead data (in a real implementation, this would send to a CRM or database)
+    console.log("Lead data captured:", leadData);
     
     // Move to full demo stage
     setStage('full-demo');
+  };
+  
+  // Function to embed the 11Labs widget directly
+  const embedWidget = () => {
+    // Only perform this if we're in the browser
+    if (typeof window !== 'undefined') {
+      // Create the widget element
+      const widgetEl = document.createElement('elevenlabs-convai');
+      
+      // Set the agent ID based on selected gender
+      const agentId = selectedGender === 'male' ? '0Ako2MORgNjlSpGTU75E' : 'Jw7iQ8oXMG3MZeuyLfmH';
+      widgetEl.setAttribute('agent-id', agentId);
+      
+      // Find the widget container element
+      const container = document.getElementById('widget-container');
+      if (container) {
+        // Clear any existing content
+        container.innerHTML = '';
+        // Append the widget
+        container.appendChild(widgetEl);
+        
+        // Add the script if it doesn't exist yet
+        if (!document.querySelector('script[src="https://elevenlabs.io/convai-widget/index.js"]')) {
+          const scriptEl = document.createElement('script');
+          scriptEl.src = 'https://elevenlabs.io/convai-widget/index.js';
+          scriptEl.async = true;
+          document.body.appendChild(scriptEl);
+        }
+      }
+    }
   };
 
   // Handle demo message submission
@@ -601,52 +637,67 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               </div>
             </DialogHeader>
             
-            <div className="flex-1 py-8 px-4 flex flex-col items-center justify-center">
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-semibold mb-2">Voice Conversation</h3>
-                <p className="text-muted-foreground">
-                  Speak with {selectedGender === 'male' ? maleName : femaleName}, your AI {agent?.name.replace('AI ', '')}
-                </p>
-              </div>
-              
-              {/* Voice wave visualization */}
-              <div className="w-full max-w-md aspect-video bg-black/10 rounded-xl flex items-center justify-center mb-8 relative overflow-hidden backdrop-blur-sm">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-blue-900/20"></div>
+            <div className="flex-1 py-6 px-4 flex flex-col items-center justify-center">
+              <div className="w-full h-full flex flex-col items-center justify-center">
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-semibold mb-2">Voice Conversation with {selectedGender === 'male' ? maleName : femaleName}</h3>
+                  <p className="text-muted-foreground">
+                    Click the button below to begin speaking with your AI {agent?.name.replace('AI ', '')}
+                  </p>
+                </div>
                 
-                {isPlaying ? (
-                  <VoiceWave isActive={true} numBars={30} className="h-32 mx-auto z-10" />
-                ) : (
-                  <div className="text-center z-10">
-                    <p className="text-xl mb-2">{selectedGender === 'male' ? maleName : femaleName} is listening...</p>
-                    <p className="text-sm text-muted-foreground">Click the button below to speak</p>
+                <Button 
+                  size="lg"
+                  className="h-auto py-4 px-8 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
+                  onClick={() => {
+                    // Open the appropriate 11Labs agent in a new tab based on gender
+                    if (selectedGender === 'male') {
+                      window.open('https://elevenlabs.io/app/talk-to?agent_id=0Ako2MORgNjlSpGTU75E', '_blank');
+                    } else {
+                      window.open('https://elevenlabs.io/app/talk-to?agent_id=Jw7iQ8oXMG3MZeuyLfmH', '_blank');
+                    }
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-3">
+                    <Mic size={32} />
+                    <span className="text-lg">Start Voice Conversation</span>
                   </div>
-                )}
-              </div>
-              
-              {/* Control buttons */}
-              <div className="flex gap-4">
-                <Button
-                  size="lg"
-                  className="rounded-full h-16 w-16 flex items-center justify-center bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700"
-                >
-                  <Mic size={28} />
                 </Button>
                 
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="rounded-full h-16 w-16 flex items-center justify-center border-2"
-                  onClick={() => window.open('https://elevenlabs.io/speech-synthesis', '_blank')}
-                >
-                  <Volume2 size={28} />
-                </Button>
-              </div>
-              
-              <div className="text-center mt-8">
-                <p className="text-sm text-muted-foreground">
-                  You're in a 5-minute demo with {selectedGender === 'male' ? maleName : femaleName}.
-                  <br />Your conversation will be handled by 11Labs AI voice technology.
-                </p>
+                <div className="mt-8 text-center">
+                  <div className="mb-4">- or -</div>
+                  
+                  {/* Widget container for direct embedding */}
+                  <Button
+                    onClick={embedWidget}
+                    className="mb-6 bg-blue-600 hover:bg-blue-700"
+                  >
+                    Try Embedded Widget
+                  </Button>
+                  
+                  {/* Container for the 11Labs widget */}
+                  <div id="widget-container" className="w-full min-h-[200px] mb-4 rounded-lg overflow-hidden"></div>
+                  
+                  {/* Show the 11Labs widget embed code */}
+                  <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md max-w-md text-xs text-left overflow-x-auto mt-4">
+                    <pre>
+                      {selectedGender === 'male' 
+                        ? '<elevenlabs-convai agent-id="0Ako2MORgNjlSpGTU75E"></elevenlabs-convai>\n<script src="https://elevenlabs.io/convai-widget/index.js" async></script>'
+                        : '<elevenlabs-convai agent-id="Jw7iQ8oXMG3MZeuyLfmH"></elevenlabs-convai>\n<script src="https://elevenlabs.io/convai-widget/index.js" async></script>'
+                      }
+                    </pre>
+                  </div>
+                  
+                  <p className="text-sm text-muted-foreground mt-4">
+                    You can also embed this agent on your website using the code above.
+                  </p>
+                </div>
+                
+                <div className="text-center mt-6">
+                  <p className="text-sm text-muted-foreground">
+                    Powered by 11Labs realistic voice technology
+                  </p>
+                </div>
               </div>
             </div>
           </>
