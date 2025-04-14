@@ -133,12 +133,12 @@ export const CloudTransitionSection: React.FC<CloudTransitionSectionProps> = ({ 
             <AnimatedText
               text="BEYOND THE COSMOS"
               as="h2"
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-wider sm:tracking-widest text-white mb-8"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-wider sm:tracking-widest text-white mb-8 drop-shadow-[0_2px_10px_rgba(255,255,255,0.7)]"
               animation="slide"
               stagger={0.03}
             />
             
-            <div className="text-xl md:text-2xl text-blue-100 leading-relaxed max-w-2xl mx-auto">
+            <div className="text-xl md:text-2xl text-white leading-relaxed max-w-2xl mx-auto font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] bg-black/10 backdrop-blur-sm p-6 rounded-lg">
               <p>Where the vastness of space meets the beauty of Earth. Our journey continues through the clouds and beyond.</p>
             </div>
           </ScrollReveal>

@@ -26,9 +26,9 @@ export const MountainTextOverlaySection: React.FC<MountainTextOverlaySectionProp
       const scrollPosition = window.scrollY;
       const windowHeight = window.innerHeight;
       
-      // Show the text only when we're in the mountain section (between 1.75 and 2.75 screen heights)
-      const inMountainStart = windowHeight * 1.75;
-      const inMountainEnd = windowHeight * 2.75;
+      // Show the text only when we're in the mountain section - adjusted for better visibility
+      const inMountainStart = windowHeight * 1.5;
+      const inMountainEnd = windowHeight * 3;
       
       if (scrollPosition > inMountainStart && scrollPosition < inMountainEnd) {
         setVisibility({
@@ -76,10 +76,10 @@ export const MountainTextOverlaySection: React.FC<MountainTextOverlaySectionProp
         backfaceVisibility: "hidden"
       }}
     >
-      <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-wider text-white mb-4 drop-shadow-lg">
+      <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-wider text-white mb-4 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] animate-pulse-slow">
         A NEW FRONTIER
       </h2>
-      <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-blue-300 drop-shadow-lg">
+      <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-blue-300 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] bg-black/10 backdrop-blur-sm px-8 py-2 rounded-lg">
         VOICE AI
       </h3>
     </motion.div>
