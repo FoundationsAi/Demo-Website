@@ -49,6 +49,9 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
   // Full screen demo state (when user is in the full demo experience)
   const [demoMessages, setDemoMessages] = useState<{sender: 'user' | 'ai', content: string}[]>([]);
   const [demoInput, setDemoInput] = useState('');
+  
+  // Audio visualization state
+  const [audioIntensity, setAudioIntensity] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Reset states when dialog opens
@@ -75,6 +78,22 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       // User will click the "Start Your Demo" button
     }
   }, [stage, selectedGender]);
+  
+  // Subscribe to audio intensity changes
+  useEffect(() => {
+    // Only subscribe when the demo is active
+    if (stage === 'full-demo') {
+      // Set up listener for audio intensity changes
+      const unsubscribe = conversationalAIService.addIntensityListener((intensity) => {
+        setAudioIntensity(intensity);
+      });
+      
+      // Clean up when component unmounts or when stage changes
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [stage]);
 
   // Handle closing attempt
   const handleCloseAttempt = () => {
@@ -748,6 +767,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                           numBars={32}
                           className="h-24 w-64" 
                           mode={isPlaying ? "speaking" : "listening"}
+                          audioIntensity={audioIntensity}
                           analyzeAudio={true}
                           intensityThresholds={{ low: 0.2, medium: 0.5, high: 0.75 }}
                         />

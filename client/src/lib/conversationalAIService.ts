@@ -188,7 +188,27 @@ export const startConversation = async (agentType: AgentType): Promise<boolean> 
 export const stopConversation = async (): Promise<void> => {
   console.log('Attempting to stop conversation and clean up resources');
   
-  // Stop any audio playback first
+  // Stop microphone analysis interval first
+  if (microphoneAnalysisInterval) {
+    clearInterval(microphoneAnalysisInterval);
+    microphoneAnalysisInterval = null;
+    console.log('Microphone analysis interval cleared');
+  }
+  
+  // Close microphone audio context if it exists
+  if (microphoneAudioContext) {
+    try {
+      await microphoneAudioContext.close();
+      microphoneAudioContext = null;
+      microphoneAnalyser = null;
+      microphoneDataArray = null;
+      console.log('Microphone audio context closed and resources cleaned up');
+    } catch (micError) {
+      console.error('Error closing microphone audio context:', micError);
+    }
+  }
+  
+  // Stop any audio playback
   if (audioSource) {
     try {
       audioSource.stop();
@@ -200,16 +220,21 @@ export const stopConversation = async (): Promise<void> => {
     }
   }
   
-  // Close audio context
+  // Close playback audio context
   if (audioContext) {
     try {
       await audioContext.close();
       audioContext = null;
+      audioAnalyser = null;
+      analyserDataArray = null;
       console.log('Audio context closed');
     } catch (contextError) {
       console.error('Error closing audio context:', contextError);
     }
   }
+  
+  // Reset intensity to zero
+  updateIntensity(0);
   
   // Now stop the active conversation if it exists
   if (activeConversation) {
