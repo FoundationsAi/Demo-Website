@@ -157,20 +157,115 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
   };
 
   // Handle submit mini chat message
-  const handleSubmitMiniChat = () => {
+  const handleSubmitMiniChat = async () => {
     if (!message.trim()) return;
     
     setIsPlaying(true);
     
-    // Simulate voice playback (would be replaced with actual 11 Labs API call)
-    setTimeout(() => {
-      setIsPlaying(false);
+    try {
+      // Get agent type from agent id
+      const agentType = agent?.id || 'default';
+      const gender = selectedGender || 'male';
       
-      // After playback, show lead capture form
-      setTimeout(() => {
-        setStage('lead-capture');
-      }, 500);
-    }, 3000);
+      // Use 11 Labs to generate and play speech
+      await import('@/lib/voiceService').then(({ generateAndPlaySpeech, setupAudioEventListeners }) => {
+        // Generate response text based on user's message
+        const responseText = getAIResponse(message, agent?.name || '');
+        
+        // Generate and play speech
+        generateAndPlaySpeech(responseText, agentType, gender)
+          .then(() => {
+            // Set up event listener for when audio playback ends
+            setupAudioEventListeners(
+              undefined, // onStart callback
+              () => {
+                // When audio finishes playing
+                setIsPlaying(false);
+                
+                // After a short delay, proceed to lead capture
+                setTimeout(() => {
+                  setStage('lead-capture');
+                }, 500);
+              },
+              (error) => {
+                // On error
+                console.error("Audio playback error:", error);
+                setIsPlaying(false);
+                toast({
+                  title: "Voice generation error",
+                  description: "There was an error generating the voice response. Please try again.",
+                  variant: "destructive"
+                });
+              }
+            );
+          })
+          .catch((error) => {
+            console.error("Failed to generate speech:", error);
+            setIsPlaying(false);
+            toast({
+              title: "Voice generation failed",
+              description: "We couldn't generate the voice response. Please try again later.",
+              variant: "destructive"
+            });
+          });
+      });
+    } catch (error) {
+      console.error("Error in voice generation:", error);
+      setIsPlaying(false);
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+  
+  // Helper function to generate AI responses based on user input
+  const getAIResponse = (userMessage: string, agentName: string): string => {
+    // Simple response generation based on agent type and user message
+    const message = userMessage.toLowerCase();
+    const greetings = ["hi", "hello", "hey", "greetings"];
+    const questions = ["how", "what", "why", "when", "where", "who", "can", "could", "would"];
+    
+    // Default response templates
+    let responses = [
+      `Thank you for your message. I'm ${agentName} and I'd be happy to help you with that request.`,
+      `That's something I can definitely assist with. As an AI ${agentName.replace('AI ', '')}, I'm designed to handle these kinds of inquiries efficiently.`,
+      `Great question! I understand what you're asking about and can provide the information you need.`,
+      `I appreciate you sharing that. Let me think about the best way to help you with this request.`,
+      `I'm analyzing your question and can provide a detailed response. Would you like more specific information?`
+    ];
+    
+    // Customize based on agent type
+    if (agent?.id === "sales") {
+      if (message.includes("price") || message.includes("cost") || message.includes("pricing")) {
+        return `Our pricing is flexible and designed to meet your specific needs. We offer several tiers starting at $49/month for our basic package. I'd be happy to walk you through our options and find the best fit for your requirements.`;
+      } else if (message.includes("demo") || message.includes("try") || message.includes("test")) {
+        return `I'd be excited to set up a personalized demo for you! Our demos typically take about 30 minutes and can be customized to focus on the features most relevant to your business. When would be a good time for you?`;
+      }
+    } else if (agent?.id === "customer-service") {
+      if (message.includes("problem") || message.includes("issue") || message.includes("not working")) {
+        return `I'm sorry to hear you're experiencing an issue. Let's troubleshoot this together. Could you provide a few more details about what's happening? This will help me find the quickest resolution for you.`;
+      } else if (message.includes("refund") || message.includes("cancel") || message.includes("money back")) {
+        return `I understand you're interested in a refund or cancellation. I'm here to make this process as smooth as possible. Can you confirm which service or product this is regarding? I'll guide you through the next steps.`;
+      }
+    } else if (agent?.id === "healthcare") {
+      if (message.includes("appointment") || message.includes("schedule") || message.includes("book")) {
+        return `I'd be happy to help you schedule an appointment. We have openings this week on Tuesday afternoon and Thursday morning. Would either of those work for you? I can also check other availability if needed.`;
+      } else if (message.includes("symptom") || message.includes("pain") || message.includes("feeling")) {
+        return `Thank you for sharing that information about your symptoms. While I can't provide medical advice, I can help schedule you with the appropriate specialist who can properly assess your condition. Would you prefer an in-person or telehealth appointment?`;
+      }
+    }
+    
+    // Generic response handling based on message content
+    if (greetings.some(g => message.includes(g))) {
+      return `Hello! I'm your AI ${agentName.replace('AI ', '')}. How can I assist you today?`;
+    } else if (questions.some(q => message.startsWith(q))) {
+      return `That's a great question. As your AI assistant, I'd be happy to provide that information for you. Could you share a bit more about your specific needs so I can tailor my response?`;
+    }
+    
+    // If no specific pattern matched, use a random default response
+    return responses[Math.floor(Math.random() * responses.length)];
   };
 
   // Handle lead form submission
@@ -207,34 +302,73 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
   };
 
   // Handle demo message submission
-  const handleSendDemoMessage = () => {
+  const handleSendDemoMessage = async () => {
     if (!demoInput.trim()) return;
     
-    // Add user message
+    // Add user message to chat
     setDemoMessages(prev => [...prev, {
       sender: 'user',
       content: demoInput
     }]);
     
+    // Save user input and clear input field
+    const userMessage = demoInput;
     setDemoInput('');
     
-    // Simulate AI response (would be replaced with actual API call)
-    setTimeout(() => {
-      const responses = [
-        "I understand what you're looking for. Can you tell me more about your specific needs?",
-        "That's a great question. Based on your industry, I'd recommend our premium package.",
-        "I'd be happy to help with that. First, let me gather some more information.",
-        "I can definitely assist with that request. What timeline are you working with?",
-        "Thanks for sharing that. Would you like me to schedule a follow-up with one of our specialists?"
-      ];
+    // Generate AI response based on user message
+    const aiResponseText = getAIResponse(userMessage, agent?.name || '');
+    
+    // Add AI message to chat immediately for better UX
+    setDemoMessages(prev => [...prev, {
+      sender: 'ai',
+      content: aiResponseText
+    }]);
+    
+    // Set speaking state
+    setIsPlaying(true);
+    
+    try {
+      // Get agent type and gender
+      const agentType = agent?.id || 'default';
+      const gender = selectedGender || 'male';
       
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      
-      setDemoMessages(prev => [...prev, {
-        sender: 'ai',
-        content: randomResponse
-      }]);
-    }, 2000);
+      // Generate and play voice response using 11Labs
+      await import('@/lib/voiceService').then(async ({ generateAndPlaySpeech, setupAudioEventListeners }) => {
+        try {
+          await generateAndPlaySpeech(aiResponseText, agentType, gender);
+          
+          // Set up listeners for audio events
+          setupAudioEventListeners(
+            undefined, // onStart
+            () => {
+              // When audio finishes
+              setIsPlaying(false);
+            },
+            (error) => {
+              // On error
+              console.error("Audio playback error:", error);
+              setIsPlaying(false);
+              toast({
+                title: "Voice playback error",
+                description: "There was an issue playing the audio response.",
+                variant: "destructive"
+              });
+            }
+          );
+        } catch (error) {
+          console.error("Speech generation error:", error);
+          setIsPlaying(false);
+          toast({
+            title: "Voice generation error",
+            description: "We couldn't generate the voice response, but you can continue chatting via text.",
+            variant: "default"
+          });
+        }
+      });
+    } catch (error) {
+      console.error("Error in voice generation process:", error);
+      setIsPlaying(false);
+    }
   };
 
   // Render dialog content based on current stage

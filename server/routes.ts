@@ -8,7 +8,7 @@ import { randomUUID } from "crypto";
 // Initialize Stripe with fallback key for development
 const stripeKey = process.env.STRIPE_SECRET_KEY || "sk_test_placeholder";
 const stripe = new Stripe(stripeKey, {
-  apiVersion: "2023-10-16",
+  apiVersion: "2025-03-31.basil" as any,
 });
 
 // Initialize Elevenlabs API (with fallback key for development)
@@ -21,6 +21,92 @@ const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN || "placeholder_token";
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER || "+1234567890";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Voice synthesis endpoint using 11Labs API
+  app.post("/api/synthesize-speech", async (req, res) => {
+    try {
+      const { text, voiceId, optimizeStreamingLatency = 0 } = req.body;
+      
+      if (!text || !voiceId) {
+        return res.status(400).json({ error: "Missing required parameters" });
+      }
+      
+      const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
+      if (!ELEVENLABS_API_KEY) {
+        return res.status(500).json({ error: "Missing ElevenLabs API key" });
+      }
+      
+      const apiUrl = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`;
+      
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Accept": "audio/mpeg",
+          "Content-Type": "application/json",
+          "xi-api-key": ELEVENLABS_API_KEY
+        },
+        body: JSON.stringify({
+          text,
+          model_id: "eleven_monolingual_v1",
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.75
+          },
+          optimize_streaming_latency: optimizeStreamingLatency
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("ElevenLabs API error:", errorData);
+        return res.status(response.status).json({ 
+          error: "Failed to generate speech", 
+          details: errorData 
+        });
+      }
+      
+      // Get the audio data as an ArrayBuffer
+      const audioData = await response.arrayBuffer();
+      
+      // Convert to base64 for sending to the client
+      const base64Audio = Buffer.from(audioData).toString('base64');
+      
+      res.json({ 
+        audioContent: base64Audio,
+        contentType: "audio/mpeg"
+      });
+    } catch (error: any) {
+      console.error("Error in speech synthesis:", error);
+      res.status(500).json({ error: error.message || "Unknown error occurred" });
+    }
+  });
+  
+  // Endpoint to get available voices from 11Labs
+  app.get("/api/voices", async (req, res) => {
+    try {
+      const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
+      if (!ELEVENLABS_API_KEY) {
+        return res.status(500).json({ error: "Missing ElevenLabs API key" });
+      }
+      
+      const response = await fetch("https://api.elevenlabs.io/v1/voices", {
+        headers: {
+          "Accept": "application/json",
+          "xi-api-key": ELEVENLABS_API_KEY
+        }
+      });
+      
+      if (!response.ok) {
+        return res.status(response.status).json({ error: "Failed to fetch voices" });
+      }
+      
+      const voicesData = await response.json();
+      res.json(voicesData);
+    } catch (error: any) {
+      console.error("Error fetching voices:", error);
+      res.status(500).json({ error: error.message || "Unknown error occurred" });
+    }
+  });
+
   // Chat API endpoint
   app.post("/api/chat", async (req, res) => {
     try {
