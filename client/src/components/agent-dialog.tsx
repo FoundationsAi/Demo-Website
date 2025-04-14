@@ -68,15 +68,11 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [demoMessages]);
   
-  // Add effect to embed widget when in full-demo stage
+  // Add effect to start conversation when in full-demo stage
   useEffect(() => {
     if (stage === 'full-demo') {
-      // Short delay to ensure the container is rendered
-      const timer = setTimeout(() => {
-        embedWidget();
-      }, 500);
-      
-      return () => clearTimeout(timer);
+      // No need to auto-start the conversation
+      // User will click the "Start Your Demo" button
     }
   }, [stage, selectedGender]);
 
