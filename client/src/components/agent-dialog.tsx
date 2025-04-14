@@ -181,48 +181,45 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       const agentType = agent?.id || 'default';
       const gender = selectedGender || 'male';
       
-      // Use 11 Labs Conversational AI agents
-      await import('@/lib/conversationalAIService').then(async ({ sendMessageToAgent, playAudio, setupAudioEventListeners }) => {
-        try {
-          // Send message to the appropriate Conversational AI agent
-          const response = await sendMessageToAgent(message, agentType, gender);
-          
-          // Play the audio response
-          await playAudio(response.audio);
-          
-          // Set up event listener for when audio playback ends
-          setupAudioEventListeners(
-            undefined, // onStart callback
-            () => {
-              // When audio finishes playing
-              setIsPlaying(false);
-              
-              // After a short delay, proceed to lead capture
-              setTimeout(() => {
-                setStage('lead-capture');
-              }, 500);
-            },
-            (error) => {
-              // On error
-              console.error("Audio playback error:", error);
-              setIsPlaying(false);
-              toast({
-                title: "Voice playback error",
-                description: "There was an error playing the audio response.",
-                variant: "destructive"
-              });
-            }
-          );
-        } catch (error) {
-          console.error("Failed to get agent response:", error);
-          setIsPlaying(false);
-          toast({
-            title: "Agent communication failed",
-            description: "We couldn't connect to the AI agent. Please try again later.",
-            variant: "destructive"
-          });
-        }
-      });
+      try {
+        // Send message to the appropriate Conversational AI agent
+        const response = await conversationalAIService.sendMessageToAgent(message, agentType, gender);
+        
+        // Play the audio response
+        await conversationalAIService.playAudio(response.audio);
+        
+        // Set up event listener for when audio playback ends
+        conversationalAIService.setupAudioEventListeners(
+          undefined, // onStart callback
+          () => {
+            // When audio finishes playing
+            setIsPlaying(false);
+            
+            // After a short delay, proceed to lead capture
+            setTimeout(() => {
+              setStage('lead-capture');
+            }, 500);
+          },
+          (error: Error) => {
+            // On error
+            console.error("Audio playback error:", error);
+            setIsPlaying(false);
+            toast({
+              title: "Voice playback error",
+              description: "There was an error playing the audio response.",
+              variant: "destructive"
+            });
+          }
+        );
+      } catch (error) {
+        console.error("Failed to get agent response:", error);
+        setIsPlaying(false);
+        toast({
+          title: "Agent communication failed",
+          description: "We couldn't connect to the AI agent. Please try again later.",
+          variant: "destructive"
+        });
+      }
     } catch (error) {
       console.error("Error in agent communication:", error);
       setIsPlaying(false);
@@ -309,33 +306,52 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
     setStage('full-demo');
   };
   
-  // Function to embed the 11Labs widget directly
-  const embedWidget = () => {
-    // Only perform this if we're in the browser
-    if (typeof window !== 'undefined') {
-      // Create the widget element
-      const widgetEl = document.createElement('elevenlabs-convai');
+  // Start a direct conversation with the AI agent using the custom interface
+  const startCustomConversation = async () => {
+    try {
+      // Get agent type and gender
+      const agentType = selectedGender === 'male' ? 'STEVE' : 'SARAH';
       
-      // Set the agent ID based on selected gender
-      const agentId = selectedGender === 'male' ? '0Ako2MORgNjlSpGTU75E' : 'Jw7iQ8oXMG3MZeuyLfmH';
-      widgetEl.setAttribute('agent-id', agentId);
+      // Request microphone permission
+      await navigator.mediaDevices.getUserMedia({ audio: true });
       
-      // Find the widget container element
-      const container = document.getElementById('widget-container');
-      if (container) {
-        // Clear any existing content
-        container.innerHTML = '';
-        // Append the widget
-        container.appendChild(widgetEl);
-        
-        // Add the script if it doesn't exist yet
-        if (!document.querySelector('script[src="https://elevenlabs.io/convai-widget/index.js"]')) {
-          const scriptEl = document.createElement('script');
-          scriptEl.src = 'https://elevenlabs.io/convai-widget/index.js';
-          scriptEl.async = true;
-          document.body.appendChild(scriptEl);
-        }
+      // Start the conversation using our custom service
+      const success = await conversationalAIService.startConversation(agentType as any);
+      
+      if (success) {
+        toast({
+          title: "Connected",
+          description: "You can now speak with the AI assistant",
+          variant: "default"
+        });
+      } else {
+        toast({
+          title: "Connection failed",
+          description: "Could not connect to the AI assistant. Please try again.",
+          variant: "destructive"
+        });
       }
+    } catch (error) {
+      console.error("Failed to start conversation:", error);
+      toast({
+        title: "Error",
+        description: "Microphone permission is required for this demo.",
+        variant: "destructive"
+      });
+    }
+  };
+  
+  // Stop the active conversation
+  const stopCustomConversation = async () => {
+    try {
+      await conversationalAIService.stopConversation();
+      toast({
+        title: "Disconnected",
+        description: "The conversation has ended",
+        variant: "default"
+      });
+    } catch (error) {
+      console.error("Error stopping conversation:", error);
     }
   };
 
@@ -367,67 +383,64 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
         content: msg.content
       }));
       
-      // Use 11 Labs Conversational AI agents
-      await import('@/lib/conversationalAIService').then(async ({ sendMessageToAgent, playAudio, setupAudioEventListeners }) => {
-        try {
-          // Send message to the appropriate Conversational AI agent
-          const response = await sendMessageToAgent(userMessage, agentType, gender, conversationHistory);
+      try {
+        // Send message to the appropriate Conversational AI agent
+        const response = await conversationalAIService.sendMessageToAgent(userMessage, agentType, gender, conversationHistory);
+        
+        // Add AI response to chat
+        setDemoMessages(prev => [...prev, {
+          sender: 'ai',
+          content: response.text
+        }]);
+        
+        // Play the audio response
+        if (response.audio) {
+          await conversationalAIService.playAudio(response.audio);
           
-          // Add AI response to chat
-          setDemoMessages(prev => [...prev, {
-            sender: 'ai',
-            content: response.text
-          }]);
-          
-          // Play the audio response
-          if (response.audio) {
-            await playAudio(response.audio);
-            
-            // Set up event listener for when audio playback ends
-            setupAudioEventListeners(
-              undefined, // onStart callback
-              () => {
-                // When audio finishes playing
-                setIsPlaying(false);
-              },
-              (error) => {
-                // On error
-                console.error("Audio playback error:", error);
-                setIsPlaying(false);
-                toast({
-                  title: "Voice playback error",
-                  description: "There was an error playing the audio response.",
-                  variant: "destructive"
-                });
-              }
-            );
-          } else {
-            // If no audio was returned, stop "speaking" state
-            setIsPlaying(false);
-            toast({
-              title: "No audio response",
-              description: "The AI agent responded but didn't provide audio. You can continue via text.",
-              variant: "default"
-            });
-          }
-        } catch (error) {
-          console.error("Failed to get agent response:", error);
+          // Set up event listener for when audio playback ends
+          conversationalAIService.setupAudioEventListeners(
+            undefined, // onStart callback
+            () => {
+              // When audio finishes playing
+              setIsPlaying(false);
+            },
+            (error: Error) => {
+              // On error
+              console.error("Audio playback error:", error);
+              setIsPlaying(false);
+              toast({
+                title: "Voice playback error",
+                description: "There was an error playing the audio response.",
+                variant: "destructive"
+              });
+            }
+          );
+        } else {
+          // If no audio was returned, stop "speaking" state
           setIsPlaying(false);
-          
-          // Add a fallback response in case of error
-          const fallbackResponse = "I'm sorry, I'm having trouble connecting to my voice service. Please try again or continue our conversation via text.";
-          setDemoMessages(prev => [...prev, {
-            sender: 'ai',
-            content: fallbackResponse
-          }]);
-          
           toast({
-            title: "Agent communication failed",
-            description: "We couldn't connect to the AI agent. Please try again later.",
-            variant: "destructive"
+            title: "No audio response",
+            description: "The AI agent responded but didn't provide audio. You can continue via text.",
+            variant: "default"
           });
         }
-      });
+      } catch (error) {
+        console.error("Failed to get agent response:", error);
+        setIsPlaying(false);
+        
+        // Add a fallback response in case of error
+        const fallbackResponse = "I'm sorry, I'm having trouble connecting to my voice service. Please try again or continue our conversation via text.";
+        setDemoMessages(prev => [...prev, {
+          sender: 'ai',
+          content: fallbackResponse
+        }]);
+        
+        toast({
+          title: "Agent communication failed",
+          description: "We couldn't connect to the AI agent. Please try again later.",
+          variant: "destructive"
+        });
+      }
     } catch (error) {
       console.error("Error in agent communication:", error);
       setIsPlaying(false);
@@ -638,85 +651,125 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               </div>
             </DialogHeader>
             
-            <div className="flex-1 py-6 px-4 flex flex-col items-center justify-center">
-              <div className="w-full h-full flex flex-col items-center justify-center">
-                <div className="text-center mb-6">
-                  <h3 className="text-xl font-semibold mb-2">Voice Conversation with {selectedGender === 'male' ? maleName : femaleName}</h3>
-                  <p className="text-muted-foreground">
-                    Click the button below to begin speaking with your AI {agent?.name.replace('AI ', '')}
-                  </p>
-                </div>
-                
-                <Button 
-                  size="lg"
-                  className="h-auto py-4 px-8 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
-                  onClick={() => {
-                    // Get the agent ID and name based on gender
-                    const agentId = selectedGender === 'male' ? '0Ako2MORgNjlSpGTU75E' : 'Jw7iQ8oXMG3MZeuyLfmH';
-                    const agentName = selectedGender === 'male' ? maleName : femaleName;
-                    
-                    // Open our custom full-page agent experience
-                    const agentType = agent?.id || 'default';
-                    const url = `/agent-chat?agentId=${agentId}&gender=${selectedGender}&type=${agentType}&name=${agentName}`;
-                    
-                    // Close this dialog and open the full page experience with the voice agent
-                    onOpenChange(false);
-                    
-                    // Use setLocation from wouter for cleaner navigation without page reload
-                    try {
-                      window.location.href = url;
-                    } catch (error) {
-                      console.error("Navigation error:", error);
-                      toast({
-                        title: "Navigation error",
-                        description: "There was an error starting the voice experience. Please try again.",
-                        variant: "destructive"
-                      });
-                    }
-                  }}
-                >
-                  <div className="flex flex-col items-center gap-3">
-                    <Mic size={32} />
-                    <span className="text-lg">Start Voice Conversation</span>
-                  </div>
-                </Button>
-                
-                <div className="mt-8 text-center">
-                  <div className="mb-4">- or -</div>
-                  
-                  {/* Widget container for direct embedding */}
-                  <Button
-                    onClick={embedWidget}
-                    className="mb-6 bg-blue-600 hover:bg-blue-700"
-                  >
-                    Try Embedded Widget
-                  </Button>
-                  
-                  {/* Container for the 11Labs widget */}
-                  <div id="widget-container" className="w-full min-h-[200px] mb-4 rounded-lg overflow-hidden"></div>
-                  
-                  {/* Show the 11Labs widget embed code */}
-                  <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md max-w-md text-xs text-left overflow-x-auto mt-4">
-                    <pre>
-                      {selectedGender === 'male' 
-                        ? '<elevenlabs-convai agent-id="0Ako2MORgNjlSpGTU75E"></elevenlabs-convai>\n<script src="https://elevenlabs.io/convai-widget/index.js" async></script>'
-                        : '<elevenlabs-convai agent-id="Jw7iQ8oXMG3MZeuyLfmH"></elevenlabs-convai>\n<script src="https://elevenlabs.io/convai-widget/index.js" async></script>'
-                      }
-                    </pre>
+            <div className="flex-1 py-6 px-4 flex flex-col">
+              <div className="w-full">
+                {/* Connection status indicator */}
+                <div className="flex items-center justify-between mb-6 bg-slate-100 dark:bg-slate-800 p-3 rounded-md">
+                  <div className="flex items-center">
+                    <div className={`w-3 h-3 rounded-full mr-2 ${
+                      conversationalAIService.getConnectionStatus() === 'connected' 
+                        ? 'bg-green-500' 
+                        : conversationalAIService.getConnectionStatus() === 'connecting' 
+                        ? 'bg-yellow-500'
+                        : conversationalAIService.getConnectionStatus() === 'error'
+                        ? 'bg-red-500'
+                        : 'bg-slate-400'
+                    }`}></div>
+                    <span className="text-sm">
+                      {conversationalAIService.getConnectionStatus() === 'connected' 
+                        ? 'Connected' 
+                        : conversationalAIService.getConnectionStatus() === 'connecting' 
+                        ? 'Connecting...'
+                        : conversationalAIService.getConnectionStatus() === 'error'
+                        ? 'Connection Error'
+                        : 'Disconnected'}
+                    </span>
                   </div>
                   
-                  <p className="text-sm text-muted-foreground mt-4">
-                    You can also embed this agent on your website using the code above.
-                  </p>
+                  {isPlaying && (
+                    <div className="flex items-center">
+                      <VoiceWave isActive={true} numBars={5} className="mr-2" />
+                      <span className="text-sm">Speaking</span>
+                    </div>
+                  )}
                 </div>
                 
-                <div className="text-center mt-6">
-                  <p className="text-sm text-muted-foreground">
-                    Powered by 11Labs realistic voice technology
-                  </p>
+                {/* Demo messages */}
+                <div className="flex-1 min-h-[200px] max-h-[300px] overflow-y-auto mb-6 border rounded-md p-4">
+                  {demoMessages.length === 0 ? (
+                    <div className="h-full flex items-center justify-center text-muted-foreground">
+                      <p>Your conversation will appear here</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {demoMessages.map((msg, index) => (
+                        <div 
+                          key={index} 
+                          className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div 
+                            className={`max-w-[80%] p-3 rounded-lg ${
+                              msg.sender === 'user' 
+                                ? 'bg-blue-500 text-white rounded-tr-none' 
+                                : 'bg-gray-200 dark:bg-gray-700 rounded-tl-none'
+                            }`}
+                          >
+                            {msg.content}
+                          </div>
+                        </div>
+                      ))}
+                      <div ref={messagesEndRef}></div>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Demo controls */}
+                <div className="space-y-4">
+                  {!conversationalAIService.isConversationActive() ? (
+                    <Button 
+                      onClick={startCustomConversation}
+                      className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700"
+                      size="lg"
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <Mic size={24} />
+                        <span>Start Your Demo</span>
+                      </div>
+                    </Button>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <Input 
+                          value={demoInput} 
+                          onChange={(e) => setDemoInput(e.target.value)}
+                          placeholder="Type a message..."
+                          className="flex-1"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault();
+                              handleSendDemoMessage();
+                            }
+                          }}
+                        />
+                        <Button 
+                          onClick={handleSendDemoMessage} 
+                          className="bg-blue-600 hover:bg-blue-700"
+                          disabled={!demoInput.trim() || isPlaying}
+                        >
+                          <Send size={18} />
+                        </Button>
+                      </div>
+                      <div className="flex justify-center gap-2">
+                        <Button
+                          onClick={stopCustomConversation}
+                          variant="outline"
+                          className="flex items-center gap-2"
+                        >
+                          <MicOff size={16} />
+                          <span>End Conversation</span>
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
+            
+            <DialogFooter className="border-t pt-3">
+              <div className="text-sm text-center w-full text-muted-foreground">
+                Powered by 11Labs realistic voice technology
+              </div>
+            </DialogFooter>
           </>
         );
     }

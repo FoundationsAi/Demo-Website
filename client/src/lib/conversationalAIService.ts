@@ -103,7 +103,7 @@ export const startConversation = async (agentType: AgentType): Promise<boolean> 
     
     // Create and configure the conversation
     activeConversation = await Conversation.startSession({
-      url: signedUrl,
+      signedUrl: signedUrl,
       onConnect: () => {
         updateConnectionStatus('connected');
         console.log('Connected to conversational AI agent');
@@ -156,4 +156,124 @@ export const isConversationActive = (): boolean => {
 // Get the current connection status
 export const getConnectionStatus = (): ConnectionStatus => {
   return connectionStatus;
+};
+
+// Send a message to the agent
+export const sendMessageToAgent = async (
+  message: string, 
+  agentType: string, 
+  gender: string,
+  history: { role: string, content: string }[] = []
+): Promise<{ text: string, audio: string }> => {
+  try {
+    // Make API call to our backend endpoint
+    const response = await fetch('/api/conversational-agent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message,
+        agentId: gender === 'male' ? AGENTS.STEVE : AGENTS.SARAH,
+        history
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to get agent response');
+    }
+
+    const data = await response.json();
+    return {
+      text: data.text,
+      audio: data.audio
+    };
+  } catch (error) {
+    console.error('Error sending message to agent:', error);
+    throw error;
+  }
+};
+
+// Audio handling
+let audioContext: AudioContext | null = null;
+let audioSource: AudioBufferSourceNode | null = null;
+
+// Play audio from base64 string
+export const playAudio = async (base64Audio: string): Promise<void> => {
+  try {
+    if (!base64Audio) {
+      throw new Error('No audio content provided');
+    }
+    
+    // Close any existing audio context to avoid multiple sounds
+    if (audioContext) {
+      await audioContext.close();
+      audioContext = null;
+    }
+    
+    // Convert base64 to array buffer
+    const binaryString = window.atob(base64Audio);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    
+    // Create new audio context
+    audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    
+    // Decode the audio data
+    const audioBuffer = await audioContext.decodeAudioData(bytes.buffer);
+    
+    // Create a source node
+    audioSource = audioContext.createBufferSource();
+    audioSource.buffer = audioBuffer;
+    
+    // Connect to the destination
+    audioSource.connect(audioContext.destination);
+    
+    // Start playing
+    audioSource.start(0);
+    
+    return new Promise((resolve) => {
+      if (audioSource) {
+        audioSource.onended = () => {
+          resolve();
+        };
+      }
+    });
+  } catch (error) {
+    console.error('Error playing audio:', error);
+    throw error;
+  }
+};
+
+// Set up event listeners for audio
+export const setupAudioEventListeners = (
+  onStart?: () => void,
+  onEnd?: () => void,
+  onError?: (error: Error) => void
+): void => {
+  if (audioSource) {
+    // Use event listeners instead of direct assignment
+    if (onStart) {
+      // Can't use onplay directly, but could use a setTimeout to simulate start event
+      setTimeout(onStart, 100);
+    }
+    
+    if (onEnd) {
+      audioSource.onended = onEnd;
+    }
+  }
+  
+  // Use global error handler for audio context errors
+  if (onError) {
+    const handleAudioError = () => {
+      onError(new Error('Audio playback error'));
+    };
+    
+    // Clean up any previous listeners to avoid duplicates
+    window.removeEventListener('error', handleAudioError);
+    window.addEventListener('error', handleAudioError);
+  }
 };
