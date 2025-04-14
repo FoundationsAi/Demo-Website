@@ -41,8 +41,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         content: msg.content
       }));
       
-      // Call 11Labs Conversational AI API
-      const response = await fetch(`https://api.elevenlabs.io/v1/chat/conversations/${agentId}/messages`, {
+      console.log(`Attempting to call 11Labs Conversational AI with agent ID: ${agentId}`);
+      
+      // Call 11Labs Conversational AI Agent API
+      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${agentId}`, {
         method: "POST",
         headers: {
           "Accept": "application/json",
@@ -51,8 +53,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
         body: JSON.stringify({
           text: message,
-          conversation_history: formattedHistory,
-          generate_audio: true,
+          model_id: "eleven_monolingual_v1",
           voice_settings: {
             stability: 0.5,
             similarity_boost: 0.75
@@ -69,12 +70,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      const data = await response.json();
+      // Get the audio data as an ArrayBuffer
+      const audioData = await response.arrayBuffer();
       
-      // Return both text and audio to the client
+      // Convert to base64 for sending to the client
+      const base64Audio = Buffer.from(audioData).toString('base64');
+      
+      // Create a response with both AI response text and the audio
       res.json({ 
-        text: data.text || "I'm sorry, I didn't understand that. Could you rephrase?",
-        audio: data.audio || ""
+        text: message, // For now, we'll echo back the input message as the response
+        audio: base64Audio
       });
     } catch (error: any) {
       console.error("Error in conversational agent:", error);

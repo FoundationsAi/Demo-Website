@@ -47,14 +47,18 @@ export async function sendMessageToAgent(
   history: Array<{role: string, content: string}> = []
 ): Promise<{text: string, audio: string}> {
   try {
-    // Get the appropriate agent ID
-    const agentMap = CONVERSATIONAL_AGENTS[agentType] || CONVERSATIONAL_AGENTS.default;
-    const agentId = gender === 'male' ? agentMap.male : agentMap.female;
+    console.log(`Sending message to ${agentType} agent, gender: ${gender}`);
     
-    // Call our API endpoint that connects to 11 Labs Conversational AI
+    // Get the appropriate voice ID from our agent map
+    const agentMap = CONVERSATIONAL_AGENTS[agentType] || CONVERSATIONAL_AGENTS.default;
+    const voiceId = gender === 'male' ? agentMap.male : agentMap.female;
+    
+    console.log(`Using voice ID: ${voiceId}`);
+    
+    // Call our API endpoint that connects to 11 Labs Voice API
     const response = await apiRequest("POST", "/api/conversational-agent", {
       message,
-      agentId,
+      agentId: voiceId,
       history
     });
     
