@@ -28,19 +28,20 @@ export const SpaceIntroSection: React.FC = () => {
     setCanvasSize();
     window.addEventListener('resize', setCanvasSize);
     
-    // Create stars
+    // Create stars - optimized for better performance
     const stars: { x: number; y: number; radius: number; speed: number; opacity: number }[] = [];
     const generateStars = () => {
       stars.length = 0; // Clear any existing stars
-      const starCount = Math.min(Math.floor(window.innerWidth * window.innerHeight / 1000), 500);
+      // Reduced star count for better performance
+      const starCount = Math.min(Math.floor(window.innerWidth * window.innerHeight / 1500), 300);
       
       for (let i = 0; i < starCount; i++) {
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          radius: Math.random() * 1.5,
-          speed: Math.random() * 0.05,
-          opacity: Math.random() * 0.8 + 0.2
+          radius: Math.random() * 1.2, // Slightly smaller stars for better performance
+          speed: Math.random() * 0.03, // Slower for better performance
+          opacity: Math.random() * 0.7 + 0.2
         });
       }
     };
@@ -56,24 +57,16 @@ export const SpaceIntroSection: React.FC = () => {
       ctx.fillStyle = 'rgb(0, 0, 0)'; // Pure black for true space
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      // Draw stars with more dramatic movement
+      // Draw stars with optimized rendering for better performance
       stars.forEach(star => {
         ctx.beginPath();
         ctx.globalAlpha = star.opacity;
         
-        // Make some stars larger with glow
-        if (star.radius > 1.2) {
-          // Add glow effect for larger stars
-          const gradient = ctx.createRadialGradient(
-            star.x, star.y, 0,
-            star.x, star.y, star.radius * 4
-          );
-          gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
-          gradient.addColorStop(0.5, 'rgba(210, 230, 255, 0.3)');
-          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-          
-          ctx.fillStyle = gradient;
-          ctx.arc(star.x, star.y, star.radius * 4, 0, Math.PI * 2);
+        // Only apply glow effect to a small percentage of stars for better performance
+        if (star.radius > 1.1 && Math.random() > 0.7) {
+          // Simplified glow effect for better performance
+          ctx.fillStyle = 'rgba(210, 230, 255, 0.3)';
+          ctx.arc(star.x, star.y, star.radius * 2, 0, Math.PI * 2);
           ctx.fill();
         }
         
@@ -83,29 +76,27 @@ export const SpaceIntroSection: React.FC = () => {
         ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
         ctx.fill();
         
-        // More dynamic movement - some stars move diagonally
-        star.x += star.speed * (Math.random() > 0.5 ? 0.2 : -0.2);
+        // More efficient movement calculation
+        star.x += star.speed * (star.x % 2 === 0 ? 0.1 : -0.1);
         star.y += star.speed;
         
         // If star moves off screen, reset it
         if (star.y > canvas.height || star.x < 0 || star.x > canvas.width) {
           star.y = 0;
-          star.x = Math.random() * canvas.width;
-          // Randomly vary the speed for more natural movement
-          star.speed = Math.random() * 0.08 + 0.02;
+          star.x = Math.floor(Math.random() * canvas.width);
+          // Fixed speed values for better performance
+          star.speed = 0.03;
         }
       });
       
-      // Create more frequent twinkling effect
-      if (Math.random() > 0.95) {
-        const randomStar = stars[Math.floor(Math.random() * stars.length)];
+      // Less frequent twinkling effect for better performance
+      if (Math.random() > 0.98) {
+        const randomIndex = Math.floor(Math.random() * stars.length);
+        const randomStar = stars[randomIndex];
         if (randomStar) {
           randomStar.opacity = 1;
-          randomStar.radius *= 1.3; // Briefly expand
-          setTimeout(() => {
-            randomStar.opacity = Math.random() * 0.8 + 0.2;
-            randomStar.radius /= 1.3; // Return to normal size
-          }, 100 + Math.random() * 200);
+          // Avoid expensive DOM access in animation loop with setTimeout
+          randomStar.opacity = Math.random() * 0.7 + 0.3;
         }
       }
       
@@ -126,13 +117,17 @@ export const SpaceIntroSection: React.FC = () => {
     <div 
       ref={containerRef}
       className="space-intro min-h-screen w-full relative overflow-hidden flex flex-col items-center justify-center"
-      style={{ cursor: 'default' }}
+      style={{ cursor: 'default', marginBottom: '-1px' }} // Ensure no gap between sections
     >
       {/* Stars canvas background */}
       <canvas 
         ref={canvasRef} 
         className="absolute inset-0 z-0 w-full h-full"
-        style={{ pointerEvents: 'none' }}
+        style={{ 
+          pointerEvents: 'none',
+          transform: 'translateZ(0)', // Apply hardware acceleration
+          willChange: 'transform',
+        }}
       />
       
       {/* Content overlay */}

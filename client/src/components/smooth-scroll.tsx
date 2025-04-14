@@ -43,7 +43,7 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children, options })
     document.body.style.background = '#000';
     document.documentElement.style.background = '#000';
     
-    // Ensure all sections flow seamlessly together
+    // Ensure all sections flow seamlessly together and optimize performance
     const style = document.createElement('style');
     style.innerHTML = `
       section {
@@ -52,15 +52,18 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children, options })
         padding-bottom: 0 !important;
       }
       
-      /* Optimize for better performance */
-      .parallax-element, .animated-element {
-        will-change: transform;
+      /* Optimize for better performance - apply hardware acceleration only where needed */
+      .parallax-element, .animated-element, .motion-div {
+        will-change: transform, opacity;
         transform: translateZ(0);
+        backface-visibility: hidden;
       }
       
       /* Optimize images and heavy elements */
       img, video, canvas, iframe {
         will-change: transform;
+        backface-visibility: hidden;
+        filter: translateZ(0);
       }
       
       /* Ensure mouse cursor remains visible */
@@ -71,6 +74,21 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children, options })
       /* Prevent scrollbar jumps */
       html {
         scrollbar-gutter: stable;
+        overflow-x: hidden;
+      }
+      
+      /* Better touch scrolling for mobile */
+      body {
+        -webkit-overflow-scrolling: touch;
+        overflow-x: hidden;
+      }
+      
+      /* Reduce animation workload */
+      @media (prefers-reduced-motion: reduce) {
+        *, ::before, ::after {
+          animation-duration: 0.01s !important;
+          transition-duration: 0.01s !important;
+        }
       }
     `;
     document.head.appendChild(style);
@@ -107,9 +125,9 @@ export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
   children,
   onEnter,
   onExit,
-  threshold = 0.1,
-  rootMargin = "0px",
-  once = false,
+  threshold = 0.15, // Increased threshold for better performance
+  rootMargin = "10px", // Added margin for earlier triggering
+  once = true, // Default to once for better performance
   className = "",
   id
 }) => {

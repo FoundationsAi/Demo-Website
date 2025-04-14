@@ -64,36 +64,62 @@ export const CloudTransitionSection: React.FC<CloudTransitionSectionProps> = ({ 
       className="relative min-h-screen w-full overflow-hidden"
       style={{ 
         background: 'linear-gradient(to bottom, #000000, #111a30, #1a2f59, #243882, #2e42ab)',
+        marginTop: '-1px', // Ensure seamless connection with previous section
+        marginBottom: '-1px', // Ensure seamless connection with next section
       }}
     >
-      {/* Top cloud layer (fast moving) */}
+      {/* Top cloud layer (fast moving) - reduced count for better performance */}
       <motion.div 
         className="absolute inset-0 z-10"
-        style={{ opacity, y: topCloudY }}
+        style={{ 
+          opacity, 
+          y: topCloudY,
+          willChange: "transform, opacity",
+          transform: "translateZ(0)",
+          backfaceVisibility: "hidden" 
+        }}
       >
-        {createClouds(5, 'cloud-fast')}
+        {createClouds(3, 'cloud-fast')}
       </motion.div>
       
-      {/* Middle cloud layer (medium speed) */}
+      {/* Middle cloud layer (medium speed) - reduced count for better performance */}
       <motion.div 
         className="absolute inset-0 z-20"
-        style={{ opacity, y: middleCloudY }}
+        style={{ 
+          opacity, 
+          y: middleCloudY,
+          willChange: "transform, opacity",
+          transform: "translateZ(0)",
+          backfaceVisibility: "hidden"
+        }}
       >
-        {createClouds(8, 'cloud-medium')}
+        {createClouds(5, 'cloud-medium')}
       </motion.div>
       
-      {/* Bottom cloud layer (slow moving) */}
+      {/* Bottom cloud layer (slow moving) - reduced count for better performance */}
       <motion.div 
         className="absolute inset-0 z-30"
-        style={{ opacity, y: bottomCloudY }}
+        style={{ 
+          opacity, 
+          y: bottomCloudY,
+          willChange: "transform, opacity",
+          transform: "translateZ(0)",
+          backfaceVisibility: "hidden"
+        }}
       >
-        {createClouds(6, 'cloud-slow')}
+        {createClouds(4, 'cloud-slow')}
       </motion.div>
       
-      {/* Text content */}
+      {/* Text content - with hardware acceleration */}
       <motion.div 
         className="relative z-40 flex items-center justify-center min-h-screen"
-        style={{ opacity, y: textY }}
+        style={{ 
+          opacity, 
+          y: textY,
+          willChange: "transform, opacity",
+          transform: "translateZ(0)",
+          backfaceVisibility: "hidden"
+        }}
       >
         <div className="text-center max-w-4xl mx-auto px-6">
           <ScrollReveal>
