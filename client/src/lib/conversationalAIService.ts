@@ -236,12 +236,41 @@ export const stopConversation = async (): Promise<void> => {
   // Reset intensity to zero
   updateIntensity(0);
   
-  // Now stop the active conversation if it exists
+  // Now explicitly terminate the active conversation if it exists
   if (activeConversation) {
     try {
+      // First mark as not listening to prevent any new audio processing
       isListening = false;
-      await activeConversation.stopSession();
-      console.log('Conversation session stopped successfully');
+      
+      // Forcefully close the WebSocket connection first
+      if (activeConversation.connection && 
+          typeof activeConversation.connection.close === 'function') {
+        activeConversation.connection.close(1000, 'User terminated conversation');
+        console.log('WebSocket connection forcefully closed');
+      }
+      
+      // Then attempt the normal stopSession call
+      try {
+        await activeConversation.stopSession();
+        console.log('Conversation session stopped successfully via stopSession()');
+      } catch (stopError) {
+        console.error('Error in stopSession call, continuing with cleanup:', stopError);
+      }
+      
+      // Also hit the server endpoint to notify 11Labs that the conversation is over
+      try {
+        const agentId = activeConversation.agentId || 
+                        (activeConversation.config && activeConversation.config.agentId);
+                        
+        if (agentId) {
+          await fetch(`/api/elevenlabs/end-conversation?agentId=${agentId}`, {
+            method: 'POST',
+          });
+          console.log('Server notified about conversation end');
+        }
+      } catch (serverError) {
+        console.error('Error notifying server about conversation end:', serverError);
+      }
     } catch (error: any) {
       console.error('Error stopping conversation session:', error);
     } finally {
