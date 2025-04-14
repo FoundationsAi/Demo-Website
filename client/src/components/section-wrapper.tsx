@@ -22,9 +22,11 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = ({
       style={{ 
         margin: 0,
         padding: 0,
-        marginTop: '-1px', // Eliminate gap with previous section
-        marginBottom: '-1px', // Eliminate gap with next section
-        backgroundColor: '#000' // Maintain black background throughout
+        marginTop: '-2px', // Eliminate gap with previous section
+        marginBottom: '-2px', // Eliminate gap with next section
+        backgroundColor: '#000', // Maintain black background throughout
+        position: 'relative',
+        zIndex: 0
       }}
     >
       {children}

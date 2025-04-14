@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface MountainTextOverlaySectionProps {
   id?: string;
@@ -9,41 +9,62 @@ interface MountainTextOverlaySectionProps {
 /**
  * MountainTextOverlaySection - Shows the "A NEW FRONTIER" and "VOICE AI" text
  * as a fixed overlay that appears when the mountain section comes into view
+ * and disappears when scrolling past it
  */
 export const MountainTextOverlaySection: React.FC<MountainTextOverlaySectionProps> = ({ 
   id,
   targetRef
 }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [visibility, setVisibility] = useState({
+    isVisible: false,
+    inMountainSection: false
+  });
   
   // Watch window scroll to determine when we're at the mountain section
   useEffect(() => {
     const handleScroll = () => {
-      // When we reach about 75% of the first screen height, show the text
       const scrollPosition = window.scrollY;
       const windowHeight = window.innerHeight;
       
-      // Show the text when we've scrolled about 1.75 screen heights
-      if (scrollPosition > windowHeight * 1.75) {
-        setIsVisible(true);
+      // Show the text only when we're in the mountain section (between 1.75 and 2.75 screen heights)
+      const inMountainStart = windowHeight * 1.75;
+      const inMountainEnd = windowHeight * 2.75;
+      
+      if (scrollPosition > inMountainStart && scrollPosition < inMountainEnd) {
+        setVisibility({
+          isVisible: true,
+          inMountainSection: true
+        });
       } else {
-        setIsVisible(false);
+        setVisibility({
+          isVisible: false,
+          inMountainSection: scrollPosition >= inMountainStart && scrollPosition <= inMountainEnd
+        });
       }
     };
     
     window.addEventListener('scroll', handleScroll);
+    // Initial check
+    handleScroll();
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
   
+  // Don't render at all if we're past the mountain section to avoid interference
+  if (!visibility.inMountainSection && !visibility.isVisible) {
+    return null;
+  }
+  
   return (
     <motion.div
       id={id}
-      className="fixed top-32 left-0 w-full z-30 flex flex-col items-center justify-center text-center pointer-events-none"
+      className="fixed top-24 left-0 w-full z-30 flex flex-col items-center justify-center text-center pointer-events-none"
+      initial={{ opacity: 0, y: 50 }}
       animate={{ 
-        opacity: isVisible ? 1 : 0,
-        y: isVisible ? 0 : 50,
+        opacity: visibility.isVisible ? 1 : 0,
+        y: visibility.isVisible ? 0 : 50,
       }}
       transition={{
         opacity: { duration: 0.5, ease: 'easeInOut' },

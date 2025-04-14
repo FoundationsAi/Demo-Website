@@ -64,8 +64,10 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
       style={{ 
         margin: 0, 
         padding: 0,
-        marginTop: '-1px', // Ensure seamless connection with previous section
-        marginBottom: '-1px' // Ensure seamless connection with next section
+        marginTop: '-2px', // Ensure seamless connection with previous section
+        marginBottom: '-2px', // Ensure seamless connection with next section
+        position: 'relative', // Ensure proper position context
+        zIndex: 1 // Maintain proper stacking order
       }}
     >
       {/* Parallax Background */}
@@ -76,6 +78,9 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
           y,
           backfaceVisibility: 'hidden',
           transform: 'translateZ(0)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
         }}
       />
       
