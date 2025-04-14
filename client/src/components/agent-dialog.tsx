@@ -731,75 +731,36 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               </div>
             </DialogHeader>
             
-            <div className="flex-1 py-6 px-4 flex flex-col">
+            <div className="flex-1 py-6 px-4 flex flex-col bg-slate-50">
               <div className="w-full">
                 {/* Removed connection status indicator for cleaner UI */}
                 
-                {/* Voice demo interface */}
+                {/* Simplified Voice Demo Interface */}
                 <div className="flex-1 min-h-[280px] mb-6 flex flex-col items-center justify-center">
                   {!conversationalAIService.isConversationActive() ? (
                     <div className="h-full w-full flex flex-col items-center justify-center">
-                      <div className="rounded-full bg-white hover:bg-slate-50 shadow-lg p-16 mb-6 transition-all duration-300 ease-in-out">
-                        <Mic size={64} className="text-blue-500" />
-                      </div>
-                      <p className="text-slate-600 dark:text-slate-300 text-center mb-8 text-lg">
-                        Click the button below to begin your conversation
-                      </p>
-                      <Button 
+                      {/* Single button to start demo */}
+                      <div 
                         onClick={startCustomConversation}
-                        className="w-full max-w-md py-3 bg-blue-600 hover:bg-blue-700 rounded-full shadow-md transition-all duration-300"
-                        size="lg"
+                        className="rounded-full bg-white shadow-md hover:shadow-lg p-10 mb-6 cursor-pointer transition-all duration-300 ease-in-out"
                       >
-                        <div className="flex items-center justify-center gap-2">
-                          <Mic size={18} />
-                          <span className="text-base font-medium">Start Your Demo</span>
-                        </div>
-                      </Button>
+                        <Mic size={48} className="text-blue-500" />
+                      </div>
+                      <p className="text-slate-700 text-center font-medium text-lg">
+                        Start Your Demo
+                      </p>
                     </div>
                   ) : (
                     <div className="h-full w-full flex flex-col items-center justify-center">
-                      {/* Main microphone visualization - animates when active */}
-                      <div className={`relative mb-8 ${isPlaying ? '' : 'cursor-pointer'}`}>
-                        <div className="rounded-full bg-white shadow-lg p-16 relative z-10">
-                          <Mic size={64} className={isPlaying ? "text-purple-500" : "text-blue-500"} />
-                        </div>
-                        
-                        {/* Animated rings when speaking or listening */}
-                        {Array.from({ length: 3 }).map((_, i) => (
-                          <div 
-                            key={`ring-${i}`}
-                            className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full border ${
-                              isPlaying ? 'border-purple-300' : 'border-blue-300'
-                            } opacity-0 ${
-                              (isPlaying || !isPlaying) ? 'animate-ping' : ''
-                            }`}
-                            style={{
-                              width: `${180 + i * 40}px`,
-                              height: `${180 + i * 40}px`,
-                              animationDelay: `${i * 0.3}s`,
-                              animationDuration: '2s'
-                            }}
-                          />
-                        ))}
-                      </div>
-                      
-                      {/* Enhanced Voice Wave Visualization */}
+                      {/* Simple Voice Visualization */}
                       <div className="mb-4">
                         <VoiceWave 
                           isActive={true} 
-                          numBars={32}
-                          className="h-24 w-64" 
+                          numBars={18}
+                          className="h-16 w-64" 
                           mode={isPlaying ? "speaking" : "listening"}
-                          audioIntensity={audioIntensity}
-                          analyzeAudio={true}
-                          intensityThresholds={{ low: 0.2, medium: 0.5, high: 0.75 }}
                         />
                       </div>
-                      
-                      {/* Status Text */}
-                      <p className="text-slate-600 dark:text-slate-300 text-center mb-6 text-lg">
-                        {isPlaying ? "AI is speaking..." : "Listening for your voice..."}
-                      </p>
                       
                       {/* End conversation button */}
                       <Button

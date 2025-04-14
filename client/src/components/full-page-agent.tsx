@@ -249,7 +249,7 @@ export const FullPageAgent: React.FC<FullPageAgentProps> = ({
           ) : isListening ? (
             <div className="mb-6 text-center">
               <div className="mb-2 text-white">Listening...</div>
-              <VoiceWave isActive={true} numBars={24} barClassName="bg-blue-500" className="h-12 mx-auto" />
+              <VoiceWave isActive={true} numBars={24} className="h-12 mx-auto text-blue-500" />
             </div>
           ) : (
             <div className="mb-6 text-center">
