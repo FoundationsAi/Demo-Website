@@ -191,40 +191,103 @@ export const SpaceIntroSection: React.FC = () => {
             ))}
           </motion.div>
           
-          {/* Main Title with Split Letter Animation */}
-          <div className="relative z-10 mb-8">
-            {["F", "O", "U", "N", "D", "A", "T", "I", "O", "N", "S", " ", "A", "I"].map((letter, index) => (
-              <motion.span
-                key={index}
-                className="inline-block text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-blue-300 to-blue-600 filter drop-shadow-lg"
-                initial={{ 
-                  y: -150, 
-                  opacity: 0,
-                  rotateY: 90,
-                  scale: letter === " " ? 1 : 0.3
-                }}
-                animate={{ 
-                  y: 0, 
-                  opacity: 1,
-                  rotateY: 0,
-                  scale: 1
-                }}
-                transition={{ 
-                  type: "spring", 
-                  damping: 12,
-                  stiffness: 200,
-                  delay: 0.8 + index * 0.1,
-                  duration: 0.8
-                }}
-                style={{
-                  textShadow: '0 0 15px rgba(100, 200, 255, 0.7)',
-                  marginLeft: letter === " " ? "0.5rem" : "-0.05em",
-                  WebkitBackgroundClip: "text",
-                }}
-              >
-                {letter === " " ? "\u00A0" : letter}
-              </motion.span>
-            ))}
+          {/* Main Title with Matrix-style Loading Animation */}
+          <div className="relative z-10 mb-10 overflow-hidden">
+            <motion.div
+              initial={{ opacity: 0, scale: 2 }}
+              animate={{ opacity: [0, 0.2, 0], scale: 2.5 }}
+              transition={{ duration: 2, delay: 0.2 }}
+              className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full"
+            />
+            
+            {/* Matrix-style random characters that transform into actual letters */}
+            <div className="flex justify-center overflow-hidden">
+              {["F", "O", "U", "N", "D", "A", "T", "I", "O", "N", "S", " ", "A", "I"].map((letter, index) => (
+                <div key={index} className="relative">
+                  {/* Background glow pulse for each letter */}
+                  <motion.div
+                    className="absolute inset-0 rounded-full bg-blue-500/10 blur-lg"
+                    initial={{ scale: 0 }}
+                    animate={{ 
+                      scale: letter === " " ? 0 : [0, 1.2, 1],
+                      opacity: letter === " " ? 0 : [0, 0.8, 0]
+                    }}
+                    transition={{
+                      duration: 2,
+                      delay: 0.3 + index * 0.1,
+                      ease: "easeOut"
+                    }}
+                  />
+                  
+                  {/* Random character scramble effect */}
+                  <motion.div 
+                    className="relative"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.1, delay: 0.5 + index * 0.1 }}
+                  >
+                    {letter !== " " && (
+                      <motion.div
+                        className="absolute top-0 left-0 w-full h-full flex justify-center items-center"
+                        initial={{ opacity: 1 }}
+                        animate={{ opacity: 0 }}
+                        transition={{ duration: 1.5, delay: 0.7 + index * 0.15 }}
+                      >
+                        {Array.from({ length: 8 }).map((_, i) => (
+                          <motion.span
+                            key={i}
+                            className="absolute text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-black text-blue-500/80"
+                            initial={{ opacity: 0 }}
+                            animate={{ 
+                              opacity: [0, 1, 0],
+                              display: i === 7 ? "none" : "block"
+                            }}
+                            transition={{
+                              duration: 0.2,
+                              delay: 0.5 + index * 0.1 + i * 0.05,
+                              ease: "easeInOut"
+                            }}
+                          >
+                            {String.fromCharCode(65 + Math.floor(Math.random() * 26))}
+                          </motion.span>
+                        ))}
+                      </motion.div>
+                    )}
+                    
+                    {/* Actual letter with cool 3D flip and glow */}
+                    <motion.span
+                      className="inline-block text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-blue-300 to-blue-600"
+                      initial={{ 
+                        opacity: 0,
+                        rotateX: 90,
+                        y: letter === " " ? 0 : 20
+                      }}
+                      animate={{ 
+                        opacity: 1,
+                        rotateX: 0,
+                        y: 0
+                      }}
+                      transition={{ 
+                        type: "spring", 
+                        damping: 15,
+                        stiffness: 150,
+                        delay: 0.9 + index * 0.15,
+                        duration: 1
+                      }}
+                      style={{
+                        textShadow: '0 0 15px rgba(100, 200, 255, 0.7)',
+                        marginLeft: letter === " " ? "0.5rem" : "-0.05em",
+                        WebkitBackgroundClip: "text",
+                        transformStyle: "preserve-3d",
+                        backfaceVisibility: "hidden"
+                      }}
+                    >
+                      {letter === " " ? "\u00A0" : letter}
+                    </motion.span>
+                  </motion.div>
+                </div>
+              ))}
+            </div>
           </div>
           
           {/* Subtitle with Typing Effect */}
@@ -272,13 +335,13 @@ export const SpaceIntroSection: React.FC = () => {
           className="mt-12"
         >
           {/* Cosmic glow effect behind button */}
-          <div className="relative group">
-            {/* Button glow effect */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-blue-400 to-blue-600 rounded-full opacity-70 group-hover:opacity-100 blur-lg group-hover:blur-xl transition-all duration-1000 animate-pulse-slow"></div>
+          <div className="relative inline-block">
+            {/* Button glow effect - Fixed size and position */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 via-blue-400 to-blue-600 rounded-full opacity-70 hover:opacity-100 blur-md transition-all duration-1000 animate-pulse-slow"></div>
             
-            {/* Animated particles around button */}
-            <div className="absolute inset-0">
-              {Array.from({ length: 8 }).map((_, i) => (
+            {/* Animated particles around button - Fixed positioning */}
+            <div className="absolute inset-0 w-full h-full">
+              {Array.from({ length: 6 }).map((_, i) => (
                 <motion.div
                   key={i}
                   className="absolute w-1 h-1 rounded-full bg-blue-400"
@@ -286,8 +349,8 @@ export const SpaceIntroSection: React.FC = () => {
                   animate={{ 
                     scale: [0, 1.5, 0],
                     opacity: [0, 0.8, 0],
-                    x: [0, (Math.random() * 80 - 40)],
-                    y: [0, (Math.random() * 80 - 40)]
+                    x: [0, (Math.random() * 60 - 30)],
+                    y: [0, (Math.random() * 60 - 30)]
                   }}
                   transition={{ 
                     repeat: Infinity,
@@ -296,16 +359,16 @@ export const SpaceIntroSection: React.FC = () => {
                     repeatDelay: Math.random()
                   }}
                   style={{
-                    left: `${50 + (i * 30) % 100}%`,
-                    top: `${50 + ((i * 20) % 100) - 50}%`
+                    left: `${20 + (i * 12)}%`,
+                    top: `${50}%`
                   }}
                 />
               ))}
             </div>
             
-            {/* Actual button with hover effects */}
+            {/* Actual button with hover effects - Fixed width */}
             <motion.button 
-              className="relative px-10 py-4 bg-black/20 backdrop-blur-sm border-2 border-blue-400 text-blue-200 rounded-full text-lg font-medium group-hover:text-white z-10"
+              className="relative px-8 py-3 bg-black/20 backdrop-blur-sm border-2 border-blue-400 text-blue-200 rounded-full text-lg font-medium hover:text-white z-10 w-auto"
               whileHover={{ 
                 scale: 1.05,
                 boxShadow: "0 0 25px rgba(66, 153, 225, 0.5)"
@@ -313,7 +376,7 @@ export const SpaceIntroSection: React.FC = () => {
               whileTap={{ scale: 0.98 }}
               aria-label="Begin your journey"
             >
-              <span className="relative z-10 flex items-center justify-center gap-2">
+              <span className="relative z-10 flex items-center justify-center gap-2 whitespace-nowrap">
                 <span className="tracking-wide">Begin Your Journey</span>
                 <motion.span
                   animate={{ x: [0, 5, 0] }}
@@ -327,9 +390,9 @@ export const SpaceIntroSection: React.FC = () => {
                 </motion.span>
               </span>
               
-              {/* Button shine effect */}
+              {/* Button shine effect - Fixed width */}
               <motion.div 
-                className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-blue-400/20 to-transparent"
+                className="absolute inset-0 w-full h-full overflow-hidden bg-gradient-to-r from-transparent via-blue-400/20 to-transparent"
                 initial={{ x: '-100%' }}
                 animate={{ x: '200%' }}
                 transition={{ 
