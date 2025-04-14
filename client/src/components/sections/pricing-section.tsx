@@ -50,7 +50,6 @@ const pricingTiers: PricingTier[] = [
     overageFee: "$0.30/minute",
     hasTrial: true,
     trialDays: 7,
-    isPopular: true,
     icon: "⭐"
   },
   {
@@ -69,6 +68,7 @@ const pricingTiers: PricingTier[] = [
     overageFee: "$0.25/minute",
     hasTrial: true,
     trialDays: 7,
+    isPopular: true,
     icon: "📈"
   },
   {
