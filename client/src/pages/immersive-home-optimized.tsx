@@ -78,13 +78,16 @@ export const ImmersiveHome: React.FC = () => {
       />
       
       {/* 1. Space intro section with stars */}
-      <SpaceIntroSection />
+      <div className="relative">
+        <SpaceIntroSection />
+        {/* Special connector between space and mountain - no visible separation */}
+        <div className="absolute bottom-0 left-0 right-0 h-[50vh] w-full bg-gradient-to-b from-transparent via-transparent to-[#070f24] z-10 pointer-events-none"></div>
+      </div>
       
-      {/* Direct transition from space to mountains (skipping clouds) */}
-      {/* 3. Mountain section - cinematic with top text that scrolls behind mountains */}
-      <div className="relative min-h-screen" id="mountain-section">
-        {/* Subtle gradient transition from space to mountains */}
-        <div className="absolute top-0 left-0 right-0 h-40 w-full bg-gradient-to-b from-[#000000] via-[#070f24] to-transparent z-10 pointer-events-none"></div>
+      {/* Mountain section starts BEFORE space section ends for seamless overlap */}
+      <div className="relative min-h-screen -mt-[50vh]" id="mountain-section">
+        {/* Subtle connection that overlaps with the previous section */}
+        <div className="absolute top-0 left-0 right-0 h-[50vh] w-full bg-gradient-to-b from-[#070f24] to-transparent z-5 pointer-events-none"></div>
         
         {/* "A NEW FRONTIER IN VOICE AI" text at the top that will scroll behind the mountain */}
         <div 
@@ -118,58 +121,87 @@ export const ImmersiveHome: React.FC = () => {
         </div>
       </div>
       
-      {/* 4. Description section - made lighter to improve transition */}
-      <TextOverlaySection
-        backgroundColor="#0a1528"
-        textColor="text-white"
-        textPosition="center"
-      >
-        <div className="max-w-3xl mx-auto py-24 text-center">
-          <AnimatedText
-            text="WHERE TECHNOLOGY MEETS EMOTION"
-            as="h2"
-            animation="slide"
-            className="text-2xl md:text-3xl font-light tracking-widest text-blue-200 mb-8"
-          />
-          
-          <ScrollReveal animation="fadeInUp">
-            <p className="text-xl md:text-2xl leading-relaxed mb-12">
-              Our revolutionary approach to voice AI transcends mere functionality.
-              We've created a system that understands context, emotion, and the 
-              subtle nuances of human communication, delivering responses that 
-              feel genuinely human.
-            </p>
-          </ScrollReveal>
-        </div>
-      </TextOverlaySection>
+      {/* 4. Description section - with seamless transition */}
+      <div className="relative -mt-24"> {/* Negative margin to overlap with previous section */}
+        {/* Gradient connector to previous section */}
+        <div className="absolute top-0 left-0 right-0 h-24 w-full bg-gradient-to-b from-transparent to-[#0a1528] z-10 pointer-events-none"></div>
+        
+        <TextOverlaySection
+          backgroundColor="#0a1528"
+          textColor="text-white"
+          textPosition="center"
+        >
+          <div className="max-w-3xl mx-auto py-24 text-center">
+            <AnimatedText
+              text="WHERE TECHNOLOGY MEETS EMOTION"
+              as="h2"
+              animation="slide"
+              className="text-2xl md:text-3xl font-light tracking-widest text-blue-200 mb-8"
+            />
+            
+            <ScrollReveal animation="fadeInUp">
+              <p className="text-xl md:text-2xl leading-relaxed mb-12">
+                Our revolutionary approach to voice AI transcends mere functionality.
+                We've created a system that understands context, emotion, and the 
+                subtle nuances of human communication, delivering responses that 
+                feel genuinely human.
+              </p>
+            </ScrollReveal>
+          </div>
+        </TextOverlaySection>
+      </div>
       
-      {/* 5. Mountain with stat */}
-      <LargeNumberSection
-        number="11"
-        backgroundColor="#0a1528"
-        textPosition="right"
-        title="DISTINCTIVE VOICES"
-        description="Our system offers 11 distinct AI personalities, each with unique traits, speaking styles, and knowledge bases that adapt to different contexts and user preferences."
-      />
+      {/* 5. Mountain with stat - with seamless transition */}
+      <div className="relative -mt-12">
+        {/* Gradient connector to previous section */}
+        <div className="absolute top-0 left-0 right-0 h-24 w-full bg-gradient-to-b from-[#0a1528] to-[#0a1528] z-10 pointer-events-none"></div>
+        
+        <LargeNumberSection
+          number="11"
+          backgroundColor="#0a1528"
+          textPosition="right"
+          title="DISTINCTIVE VOICES"
+          description="Our system offers 11 distinct AI personalities, each with unique traits, speaking styles, and knowledge bases that adapt to different contexts and user preferences."
+        />
+      </div>
       
-      {/* 6. Interactive Agent selection with 11 Labs */}
-      <AgentSelectionSection />
+      {/* 6. Interactive Agent selection with 11 Labs - with seamless transition */}
+      <div className="relative -mt-12">
+        {/* Gradient connector to previous section */}
+        <div className="absolute top-0 left-0 right-0 h-24 w-full bg-gradient-to-b from-[#0a1528] to-transparent z-10 pointer-events-none"></div>
       
-      {/* 7. Mountain transition to pricing */}
-      <FullscreenMountainSection
-        backgroundImage={mountainBg3}
-        title="TRANSFORMING POSSIBILITIES"
-        subtitle="Discover how our voice AI can elevate your business"
-        textPosition="center"
-        actionLabel="VIEW PRICING"
-        actionLink="#pricing"
-      />
+        <AgentSelectionSection />
+      </div>
       
-      {/* 8. Pricing section */}
-      <PricingSection />
+      {/* 7. Mountain transition to pricing - with seamless transition */}
+      <div className="relative -mt-12">
+        {/* Gradient connector to previous section */}
+        <div className="absolute top-0 left-0 right-0 h-24 w-full bg-gradient-to-b from-transparent to-transparent z-10 pointer-events-none"></div>
+        
+        <FullscreenMountainSection
+          backgroundImage={mountainBg3}
+          title="TRANSFORMING POSSIBILITIES"
+          subtitle="Discover how our voice AI can elevate your business"
+          textPosition="center"
+          actionLabel="VIEW PRICING"
+          actionLink="#pricing"
+        />
+      </div>
       
-      {/* 9. Footer/Contact */}
-      <section className="bg-black py-16 text-white">
+      {/* 8. Pricing section - with seamless transition */}
+      <div className="relative -mt-24">
+        {/* Gradient connector to previous section */}
+        <div className="absolute top-0 left-0 right-0 h-32 w-full bg-gradient-to-b from-transparent to-[#0f172a] z-10 pointer-events-none"></div>
+        
+        <PricingSection />
+      </div>
+      
+      {/* 9. Footer/Contact - with seamless transition */}
+      <div className="relative -mt-12">
+        {/* Gradient connector to previous section */}
+        <div className="absolute top-0 left-0 right-0 h-24 w-full bg-gradient-to-b from-[#0f172a] to-black z-10 pointer-events-none"></div>
+        
+        <section className="bg-black py-16 text-white">
         <div className="container mx-auto px-6">
           <div className="max-w-5xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -238,6 +270,7 @@ export const ImmersiveHome: React.FC = () => {
           </div>
         </div>
       </section>
+      </div>
     </div>
   );
 };
