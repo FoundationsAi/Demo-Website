@@ -3,10 +3,8 @@ import { motion, useScroll } from 'framer-motion';
 import { SmoothScroll } from '@/components/smooth-scroll';
 import { SectionWrapper } from '@/components/section-wrapper';
 import { SpaceIntroSection } from '@/components/sections/space-intro-section';
-import { CloudTransitionSection } from '@/components/sections/cloud-transition-section';
 import { FullscreenMountainSection } from '@/components/sections/fullscreen-mountain-section';
 import { MountainTextOverlaySection } from '@/components/sections/mountain-text-overlay-section';
-import { TextOverlaySection } from '@/components/sections/text-overlay-section';
 import { LargeNumberSection } from '@/components/sections/large-number-section';
 import { AgentSelectionSection } from '@/components/sections/agent-selection-section';
 import { PricingSection } from '@/components/sections/pricing-section';
@@ -69,96 +67,63 @@ export const ImmersiveHome: React.FC = () => {
           <SpaceIntroSection />
         </SectionWrapper>
         
-        {/* 2. Cloud transition with animation */}
-        <SectionWrapper>
-          <CloudTransitionSection />
-        </SectionWrapper>
-        
-        {/* 3. Mountain section - empty title, we'll use the overlay instead */}
+        {/* 2. Mountain section with "WHERE TECHNOLOGY MEETS EMOTION" content */}
         <SectionWrapper>
           <div ref={mountainSectionRef}>
             <FullscreenMountainSection
               title="" // Empty title is required by the component props
               backgroundImage={mountainBg1}
               textPosition="center"
-            />
+            >
+              {/* Technology meets emotion content now in the mountain section */}
+              <div className="max-w-4xl mx-auto text-center relative">
+                {/* Background visual effects */}
+                <div className="absolute inset-0 opacity-30 pointer-events-none overflow-hidden">
+                  <div className="absolute top-0 left-1/4 w-64 h-64 rounded-full bg-blue-600/30 blur-3xl"></div>
+                  <div className="absolute bottom-20 right-1/4 w-72 h-72 rounded-full bg-indigo-600/20 blur-3xl"></div>
+                  <div className="absolute top-40 right-10 w-32 h-32 rounded-full bg-purple-600/30 blur-2xl"></div>
+                </div>
+                
+                <div className="relative z-10">
+                  <div className="mb-8">
+                    <h2 className="text-2xl md:text-4xl font-bold tracking-widest text-blue-200 drop-shadow-[0_0_15px_rgba(100,200,255,0.5)] whitespace-nowrap sm:whitespace-normal">
+                      WHERE TECHNOLOGY MEETS
+                    </h2>
+                    <h2 className="text-2xl md:text-4xl font-bold tracking-widest text-blue-200 drop-shadow-[0_0_15px_rgba(100,200,255,0.5)]">
+                      EMOTION
+                    </h2>
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-blue-900/30 to-indigo-900/30 backdrop-blur-sm p-8 rounded-xl border border-blue-500/20 shadow-[0_4px_30px_rgba(0,100,255,0.2)]">
+                    <ScrollReveal animation="fadeInUp">
+                      <p className="text-xl md:text-2xl leading-relaxed mb-8 text-white">
+                        Our revolutionary approach to voice AI transcends mere functionality.
+                        We've created a system that understands context, emotion, and the 
+                        subtle nuances of human communication, delivering responses that 
+                        feel genuinely human.
+                      </p>
+                      
+                      <div className="flex flex-wrap justify-center gap-8 mt-10">
+                        <div className="w-full md:w-1/3 bg-blue-800/20 p-5 rounded-lg border border-blue-400/20">
+                          <div className="text-blue-300 text-4xl mb-3">🧠</div>
+                          <h3 className="text-xl font-semibold text-blue-100 mb-2">Contextual Understanding</h3>
+                          <p className="text-blue-200 opacity-80">Grasps nuanced meanings beyond words alone</p>
+                        </div>
+                        <div className="w-full md:w-1/3 bg-indigo-800/20 p-5 rounded-lg border border-indigo-400/20">
+                          <div className="text-indigo-300 text-4xl mb-3">💫</div>
+                          <h3 className="text-xl font-semibold text-indigo-100 mb-2">Emotional Intelligence</h3>
+                          <p className="text-indigo-200 opacity-80">Perceives and responds to emotional states</p>
+                        </div>
+                      </div>
+                    </ScrollReveal>
+                  </div>
+                </div>
+              </div>
+            </FullscreenMountainSection>
           </div>
         </SectionWrapper>
         
-        {/* 4. Description section */}
-        <SectionWrapper>
-          <TextOverlaySection
-            backgroundColor="#061022"
-            textColor="text-white"
-            textPosition="center"
-          >
-            <div className="max-w-4xl mx-auto py-24 text-center relative">
-              {/* Background visual effects */}
-              <div className="absolute inset-0 opacity-30 pointer-events-none overflow-hidden">
-                <div className="absolute top-0 left-1/4 w-64 h-64 rounded-full bg-blue-600/30 blur-3xl"></div>
-                <div className="absolute bottom-20 right-1/4 w-72 h-72 rounded-full bg-indigo-600/20 blur-3xl"></div>
-                <div className="absolute top-40 right-10 w-32 h-32 rounded-full bg-purple-600/30 blur-2xl"></div>
-              </div>
-              
-              {/* Animated waveform lines in background */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
-                <svg width="100%" height="200" viewBox="0 0 1200 200" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M0,100 Q300,180 600,100 T1200,100" fill="none" stroke="rgba(130,170,255,0.5)" strokeWidth="2">
-                    <animate attributeName="d" dur="10s" repeatCount="indefinite" values="
-                      M0,100 Q300,180 600,100 T1200,100;
-                      M0,100 Q300,20 600,100 T1200,100;
-                      M0,100 Q300,180 600,100 T1200,100
-                    "/>
-                  </path>
-                  <path d="M0,100 Q300,20 600,100 T1200,100" fill="none" stroke="rgba(100,200,255,0.3)" strokeWidth="3">
-                    <animate attributeName="d" dur="15s" repeatCount="indefinite" values="
-                      M0,100 Q300,20 600,100 T1200,100;
-                      M0,100 Q300,180 600,100 T1200,100;
-                      M0,100 Q300,20 600,100 T1200,100
-                    "/>
-                  </path>
-                </svg>
-              </div>
-              
-              <div className="relative z-10">
-                <div className="mb-8">
-                  <h2 className="text-2xl md:text-4xl font-bold tracking-widest text-blue-200 drop-shadow-[0_0_15px_rgba(100,200,255,0.5)] whitespace-nowrap sm:whitespace-normal">
-                    WHERE TECHNOLOGY MEETS
-                  </h2>
-                  <h2 className="text-2xl md:text-4xl font-bold tracking-widest text-blue-200 drop-shadow-[0_0_15px_rgba(100,200,255,0.5)]">
-                    EMOTION
-                  </h2>
-                </div>
-                
-                <div className="bg-gradient-to-r from-blue-900/30 to-indigo-900/30 backdrop-blur-sm p-8 rounded-xl border border-blue-500/20 shadow-[0_4px_30px_rgba(0,100,255,0.2)]">
-                  <ScrollReveal animation="fadeInUp">
-                    <p className="text-xl md:text-2xl leading-relaxed mb-8 text-white">
-                      Our revolutionary approach to voice AI transcends mere functionality.
-                      We've created a system that understands context, emotion, and the 
-                      subtle nuances of human communication, delivering responses that 
-                      feel genuinely human.
-                    </p>
-                    
-                    <div className="flex flex-wrap justify-center gap-8 mt-10">
-                      <div className="w-full md:w-1/3 bg-blue-800/20 p-5 rounded-lg border border-blue-400/20">
-                        <div className="text-blue-300 text-4xl mb-3">🧠</div>
-                        <h3 className="text-xl font-semibold text-blue-100 mb-2">Contextual Understanding</h3>
-                        <p className="text-blue-200 opacity-80">Grasps nuanced meanings beyond words alone</p>
-                      </div>
-                      <div className="w-full md:w-1/3 bg-indigo-800/20 p-5 rounded-lg border border-indigo-400/20">
-                        <div className="text-indigo-300 text-4xl mb-3">💫</div>
-                        <h3 className="text-xl font-semibold text-indigo-100 mb-2">Emotional Intelligence</h3>
-                        <p className="text-indigo-200 opacity-80">Perceives and responds to emotional states</p>
-                      </div>
-                    </div>
-                  </ScrollReveal>
-                </div>
-              </div>
-            </div>
-          </TextOverlaySection>
-        </SectionWrapper>
-        
-        {/* 5. Mountain with stat */}
+        {/* 3. Large number section with 11 Voices */}
         <SectionWrapper>
           <LargeNumberSection
             number="11 Voices"
@@ -169,12 +134,12 @@ export const ImmersiveHome: React.FC = () => {
           />
         </SectionWrapper>
         
-        {/* 6. Interactive Agent selection with 11 Labs */}
+        {/* 4. Interactive Agent selection with 11 Labs */}
         <SectionWrapper>
           <AgentSelectionSection />
         </SectionWrapper>
         
-        {/* 7. Mountain transition to pricing */}
+        {/* 5. Mountain transition to pricing */}
         <SectionWrapper>
           <FullscreenMountainSection
             backgroundImage={mountainBg3}
@@ -186,7 +151,7 @@ export const ImmersiveHome: React.FC = () => {
           />
         </SectionWrapper>
         
-        {/* 8. Pricing section */}
+        {/* 6. Pricing section */}
         <SectionWrapper>
           <PricingSection />
         </SectionWrapper>

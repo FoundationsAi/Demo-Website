@@ -26,9 +26,10 @@ export const MountainTextOverlaySection: React.FC<MountainTextOverlaySectionProp
       const scrollPosition = window.scrollY;
       const windowHeight = window.innerHeight;
       
-      // Show the text only when we're in the mountain section - adjusted for better visibility
-      const inMountainStart = windowHeight * 1.5;
-      const inMountainEnd = windowHeight * 3;
+      // Show the text only when we're in the mountain section - adjusted for visibility after our layout changes
+      // Since mountain section is now the second page, we adjust the values
+      const inMountainStart = windowHeight * 0.75; // Show once we're almost at the mountain section
+      const inMountainEnd = windowHeight * 2.5; // Hide after we're past it
       
       if (scrollPosition > inMountainStart && scrollPosition < inMountainEnd) {
         setVisibility({
