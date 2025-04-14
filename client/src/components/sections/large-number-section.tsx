@@ -55,6 +55,10 @@ export const LargeNumberSection: React.FC<LargeNumberSectionProps> = ({
         backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
+        margin: 0,
+        padding: 0,
+        marginTop: '-1px', // Ensure seamless connection with previous section
+        marginBottom: '-1px', // Ensure seamless connection with next section
       }}
     >
       {/* Background overlay */}

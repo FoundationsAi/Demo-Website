@@ -4,6 +4,7 @@ import { SmoothScroll } from '@/components/smooth-scroll';
 import { SpaceIntroSection } from '@/components/sections/space-intro-section';
 import { CloudTransitionSection } from '@/components/sections/cloud-transition-section';
 import { FullscreenMountainSection } from '@/components/sections/fullscreen-mountain-section';
+import { MountainTextOverlaySection } from '@/components/sections/mountain-text-overlay-section';
 import { TextOverlaySection, TextCard } from '@/components/sections/text-overlay-section';
 import { LargeNumberSection, SideInfoCard } from '@/components/sections/large-number-section';
 import { AgentSelectionSection } from '@/components/sections/agent-selection-section';
@@ -65,20 +66,15 @@ export const ImmersiveHome: React.FC = () => {
         {/* 2. Cloud transition with animation */}
         <CloudTransitionSection />
         
-        {/* 3. Mountain section - cinematic */}
+        {/* 3. Mountain section with empty title (text will be in overlay) */}
         <FullscreenMountainSection
-          title="A NEW FRONTIER"
+          title="" // Empty title, text moved to overlay
           backgroundImage={mountainBg1}
           textPosition="center"
-        >
-          <AnimatedText
-            text="VOICE AI"
-            as="h1"
-            animation="slide"
-            className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-wider text-white mt-4"
-            stagger={0.03}
-          />
-        </FullscreenMountainSection>
+        />
+        
+        {/* Text overlay for mountain section with "A NEW FRONTIER" and "VOICE AI" */}
+        <MountainTextOverlaySection />
         
         {/* 4. Description section */}
         <TextOverlaySection

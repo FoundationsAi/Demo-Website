@@ -68,6 +68,10 @@ export const TextOverlaySection: React.FC<TextOverlaySectionProps> = ({
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
+        margin: 0,
+        padding: 0,
+        marginTop: '-1px', // Ensure seamless connection with previous section
+        marginBottom: '-1px', // Ensure seamless connection with next section
       }}
     >
       {/* Optional overlay for better text contrast if using background image */}
