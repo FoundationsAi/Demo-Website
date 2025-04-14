@@ -832,13 +832,13 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                       {/* Single button to start demo */}
                       <div 
                         onClick={startCustomConversation}
-                        className="rounded-full bg-gradient-to-br from-blue-600 to-indigo-800 shadow-lg hover:shadow-blue-900/50 p-10 mb-6 cursor-pointer transition-all duration-300 ease-in-out relative group overflow-hidden"
+                        className="rounded-full bg-gradient-to-br from-blue-600 to-indigo-800 shadow-lg hover:shadow-blue-900/50 p-6 xs:p-8 sm:p-10 mb-4 sm:mb-6 cursor-pointer transition-all duration-300 ease-in-out relative group overflow-hidden"
                       >
                         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gMTAgMCBMIDAgMCAwIDEwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiIHN0cm9rZS13aWR0aD0iMC41Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
                         <div className="animate-pulse absolute inset-0 bg-blue-500/20 rounded-full blur-xl"></div>
-                        <Mic size={48} className="text-white relative z-10" />
+                        <Mic size={36} className="text-white relative z-10 xs:w-10 xs:h-10 sm:w-12 sm:h-12" />
                       </div>
-                      <p className="text-blue-100 text-center font-medium text-lg">
+                      <p className="text-blue-100 text-center font-medium text-base xs:text-lg">
                         Start Your Demo
                       </p>
                     </div>
@@ -1008,8 +1008,8 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
         }
       }}>
         <DialogContent className={`
-          ${stage === 'full-demo' ? 'sm:max-w-[600px] sm:h-[600px] flex flex-col' : 'sm:max-w-[500px]'}
-          ${stage === 'lead-capture' ? 'sm:max-w-[600px]' : ''}
+          ${stage === 'full-demo' ? 'max-w-[95vw] xs:max-w-[90vw] sm:max-w-[600px] h-[90vh] sm:h-[600px] flex flex-col' : 'max-w-[95vw] xs:max-w-[90vw] sm:max-w-[500px]'}
+          ${stage === 'lead-capture' ? 'max-w-[95vw] xs:max-w-[90vw] sm:max-w-[600px]' : ''}
           bg-[#0f1729] text-white border-[#304060] shadow-xl shadow-blue-900/20
           data-[state=open]:animate-in data-[state=closed]:animate-out
           data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0
