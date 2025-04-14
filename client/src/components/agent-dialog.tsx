@@ -91,6 +91,65 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
     setShowConfirmClose(false);
   };
 
+  // Get appropriate voice names based on agent type
+  const getVoiceNames = () => {
+    // Default fallback names
+    let maleName = "Michael";
+    let femaleName = "Sarah";
+    
+    // Customize based on agent type
+    switch (agent?.id) {
+      case "customer-service":
+        maleName = "Chris";
+        femaleName = "Emily";
+        break;
+      case "sales":
+        maleName = "Steve";
+        femaleName = "Rachel";
+        break;
+      case "receptionist":
+        maleName = "Robert";
+        femaleName = "Jessica";
+        break;
+      case "mortgage":
+        maleName = "Thomas";
+        femaleName = "Amanda";
+        break;
+      case "healthcare":
+        maleName = "David";
+        femaleName = "Sophia";
+        break;
+      case "concierge":
+        maleName = "James";
+        femaleName = "Victoria";
+        break;
+      case "technical-support":
+        maleName = "Alex";
+        femaleName = "Nicole";
+        break;
+      case "travel":
+        maleName = "Daniel";
+        femaleName = "Olivia";
+        break;
+      case "educator":
+        maleName = "Mark";
+        femaleName = "Julia";
+        break;
+      case "personal-assistant":
+        maleName = "Paul";
+        femaleName = "Emma";
+        break;
+      case "creative":
+        maleName = "Ryan";
+        femaleName = "Lily";
+        break;
+    }
+    
+    return { maleName, femaleName };
+  };
+  
+  const { maleName, femaleName } = getVoiceNames();
+
   // Handle gender selection
   const handleSelectGender = (gender: 'male' | 'female') => {
     setSelectedGender(gender);
@@ -135,7 +194,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
     });
     
     // Initialize the demo chat with a greeting message
-    const agentName = selectedGender === 'male' ? 'Steve' : 'Sarah';
+    const agentName = selectedGender === 'male' ? maleName : femaleName;
     setDemoMessages([
       {
         sender: 'ai',
@@ -204,7 +263,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                   className="h-auto py-6 flex flex-col items-center gap-3 bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700"
                 >
                   <Volume2 size={24} />
-                  <div className="text-lg font-medium">Steve (Male)</div>
+                  <div className="text-lg font-medium">{maleName} (Male)</div>
                 </Button>
                 
                 <Button 
@@ -212,7 +271,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                   className="h-auto py-6 flex flex-col items-center gap-3 bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700"
                 >
                   <Volume2 size={24} />
-                  <div className="text-lg font-medium">Sarah (Female)</div>
+                  <div className="text-lg font-medium">{femaleName} (Female)</div>
                 </Button>
               </div>
             </div>
@@ -224,7 +283,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
           <>
             <DialogHeader>
               <DialogTitle className="text-2xl">
-                Talk to {selectedGender === 'male' ? 'Steve' : 'Sarah'}
+                Talk to {selectedGender === 'male' ? maleName : femaleName}
               </DialogTitle>
               <DialogDescription>
                 Type a short message to hear how the AI agent responds with their voice
@@ -252,7 +311,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               {isPlaying && (
                 <div className="mb-4">
                   <div className="mb-2 text-sm text-center text-muted-foreground">
-                    {selectedGender === 'male' ? 'Steve' : 'Sarah'} is speaking...
+                    {selectedGender === 'male' ? maleName : femaleName} is speaking...
                   </div>
                   <VoiceWave isActive={true} numBars={20} className="h-12 mx-auto" />
                 </div>
@@ -392,7 +451,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                 </div>
                 <div>
                   <DialogTitle className="text-xl">
-                    {selectedGender === 'male' ? 'Steve' : 'Sarah'} ({agent?.name})
+                    {selectedGender === 'male' ? maleName : femaleName} ({agent?.name})
                   </DialogTitle>
                   <DialogDescription>
                     AI {agent?.name.replace('AI ', '')}
@@ -443,7 +502,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                 </Button>
               </div>
               <div className="text-xs text-center mt-3 text-muted-foreground">
-                You're in a 5-minute demo with {selectedGender === 'male' ? 'Steve' : 'Sarah'}.
+                You're in a 5-minute demo with {selectedGender === 'male' ? maleName : femaleName}.
                 You can exit anytime to try a different agent.
               </div>
             </div>
