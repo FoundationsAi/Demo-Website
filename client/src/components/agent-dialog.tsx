@@ -715,70 +715,77 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="lastName" className="text-blue-200">Last Name <span className="text-red-400">*</span></Label>
                   <Input 
                     id="lastName" 
                     value={leadData.lastName}
                     onChange={(e) => setLeadData({...leadData, lastName: e.target.value})}
                     required
+                    className="bg-[#1a253a] border-[#304060] focus:border-blue-500 text-white placeholder:text-blue-300/50"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="email" className="text-blue-200">Email <span className="text-red-400">*</span></Label>
                   <Input 
                     id="email" 
                     type="email"
                     value={leadData.email}
                     onChange={(e) => setLeadData({...leadData, email: e.target.value})}
                     required
+                    className="bg-[#1a253a] border-[#304060] focus:border-blue-500 text-white placeholder:text-blue-300/50"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="phone" className="text-blue-200">Phone Number <span className="text-red-400">*</span></Label>
                   <Input 
                     id="phone" 
                     type="tel"
                     value={leadData.phone}
                     onChange={(e) => setLeadData({...leadData, phone: e.target.value})}
                     required
+                    className="bg-[#1a253a] border-[#304060] focus:border-blue-500 text-white placeholder:text-blue-300/50"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="businessName">Business Name</Label>
+                  <Label htmlFor="businessName" className="text-blue-200">Business Name</Label>
                   <Input 
                     id="businessName" 
                     value={leadData.businessName}
                     onChange={(e) => setLeadData({...leadData, businessName: e.target.value})}
+                    className="bg-[#1a253a] border-[#304060] focus:border-blue-500 text-white placeholder:text-blue-300/50"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="industry">Industry</Label>
+                  <Label htmlFor="industry" className="text-blue-200">Industry</Label>
                   <Input 
                     id="industry" 
                     value={leadData.industry}
                     onChange={(e) => setLeadData({...leadData, industry: e.target.value})}
+                    className="bg-[#1a253a] border-[#304060] focus:border-blue-500 text-white placeholder:text-blue-300/50"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="employees">Number of Employees</Label>
+                  <Label htmlFor="employees" className="text-blue-200">Number of Employees</Label>
                   <Input 
                     id="employees" 
                     value={leadData.employees}
                     onChange={(e) => setLeadData({...leadData, employees: e.target.value})}
+                    className="bg-[#1a253a] border-[#304060] focus:border-blue-500 text-white placeholder:text-blue-300/50"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="budget">AI Technology Budget</Label>
+                  <Label htmlFor="budget" className="text-blue-200">AI Technology Budget</Label>
                   <Input 
                     id="budget" 
                     value={leadData.budget}
                     onChange={(e) => setLeadData({...leadData, budget: e.target.value})}
+                    className="bg-[#1a253a] border-[#304060] focus:border-blue-500 text-white placeholder:text-blue-300/50"
                   />
                 </div>
               </div>
