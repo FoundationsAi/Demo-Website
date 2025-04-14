@@ -411,7 +411,7 @@ export const SpaceIntroSection: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 5.5, duration: 1 }}
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
+          className="mt-20 mb-4"
         >
           <motion.div 
             className="flex flex-col items-center"
@@ -424,7 +424,7 @@ export const SpaceIntroSection: React.FC = () => {
           >
             {/* Animated reveal text */}
             <motion.p 
-              className="text-sm font-light tracking-widest mb-2 relative overflow-hidden"
+              className="text-sm sm:text-base font-medium tracking-widest mb-3 relative overflow-hidden"
               initial={{ width: 0, opacity: 0 }}
               animate={{ 
                 width: "auto", 
@@ -436,7 +436,7 @@ export const SpaceIntroSection: React.FC = () => {
               
               {/* Animated underline */}
               <motion.span 
-                className="absolute bottom-0 left-0 h-px w-0 bg-gradient-to-r from-transparent via-blue-400 to-transparent"
+                className="absolute bottom-0 left-0 h-[2px] w-0 bg-gradient-to-r from-transparent via-blue-500 to-transparent"
                 initial={{ width: "0%" }}
                 animate={{ width: "100%" }}
                 transition={{ delay: 6.3, duration: 1.5 }}
@@ -449,12 +449,12 @@ export const SpaceIntroSection: React.FC = () => {
               <div className="absolute inset-0 rounded-full bg-blue-500/20 filter blur-md animate-pulse-slow"></div>
               
               {/* Mouse body */}
-              <div className="w-6 h-10 border border-blue-400 bg-blue-900/20 backdrop-blur-sm rounded-full flex justify-center items-start p-1 relative overflow-hidden">
+              <div className="w-7 h-12 border-2 border-blue-400 bg-blue-900/20 backdrop-blur-sm rounded-full flex justify-center items-start p-1 relative overflow-hidden">
                 {/* Mouse wheel dot */}
                 <motion.div 
-                  className="w-1.5 h-3 bg-blue-300 rounded-full"
+                  className="w-2 h-4 bg-blue-300 rounded-full"
                   animate={{ 
-                    y: [0, 15, 0],
+                    y: [0, 18, 0],
                     background: [
                       "rgba(147, 197, 253, 0.7)", 
                       "rgba(255, 255, 255, 0.9)",
@@ -487,7 +487,7 @@ export const SpaceIntroSection: React.FC = () => {
                 {[0, 1, 2].map((index) => (
                   <motion.div
                     key={index}
-                    className="w-1 h-1 border-r border-b border-blue-300 transform rotate-45 mb-0.5"
+                    className="w-1.5 h-1.5 border-r-2 border-b-2 border-blue-300 transform rotate-45 mb-1"
                     animate={{
                       opacity: [0, 1, 0],
                       y: [-(index * 3), 3 + (index * 3)]
