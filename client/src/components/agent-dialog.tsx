@@ -834,7 +834,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                           }
                         }}
                         variant="outline"
-                        className="flex items-center gap-2 border-red-300 hover:bg-red-50 hover:text-red-600 mt-4 rounded-full"
+                        className="flex items-center gap-2 border-slate-300 hover:bg-slate-100 mt-4 rounded-full"
                         size="lg"
                       >
                         <MicOff size={16} />

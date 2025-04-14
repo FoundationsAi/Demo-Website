@@ -378,8 +378,7 @@ export const AgentSelectionSection: React.FC = () => {
                       <VoiceWave 
                         isActive={isPlaying && selectedAgent === agent.id}
                         numBars={6}
-                        className="h-10"
-                        barClassName={selectedAgent === agent.id ? "bg-blue-400" : "bg-blue-600"}
+                        className={`h-10 ${selectedAgent === agent.id ? "text-blue-400" : "text-blue-600"}`}
                       />
                       
                       {/* Glow effect for active voice */}
@@ -509,7 +508,7 @@ export const AgentSelectionSection: React.FC = () => {
                   transition={{ delay: 0.4, duration: 0.4 }}
                 >
                   <div className="relative">
-                    <VoiceWave isActive={isPlaying} numBars={8} className="h-10 w-28" barClassName="bg-blue-400" />
+                    <VoiceWave isActive={isPlaying} numBars={8} className="h-10 w-28 text-blue-400" />
                     {isPlaying && (
                       <div className="absolute inset-0 bg-blue-500/10 rounded-md filter blur-md animation-pulse-slow" />
                     )}
