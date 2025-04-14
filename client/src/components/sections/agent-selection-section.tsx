@@ -62,7 +62,7 @@ export const AgentSelectionSection: React.FC = () => {
               stagger={0.03}
             />
             <p className="text-base sm:text-lg md:text-xl text-blue-300 max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
-              Experience the future of voice AI technology. Select an agent with a distinct 
+              See your future agents in action. Select an agent with a distinct 
               personality, knowledge base and communication style to engage with.
             </p>
           </ScrollReveal>
