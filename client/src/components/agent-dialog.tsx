@@ -625,7 +625,8 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               <div className="grid grid-cols-2 gap-6 mt-6">
                 <Button 
                   onClick={() => handleSelectGender('male')}
-                  className="h-auto py-6 flex flex-col items-center gap-3 bg-blue-800/60 border border-blue-500/40 shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-all"
+                  className="h-auto py-6 flex flex-col items-center gap-3 bg-blue-800/60 border border-blue-500/40 shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-all cursor-pointer"
+                  type="button"
                 >
                   <Volume2 size={24} className="text-blue-300" />
                   <div className="text-lg font-light tracking-wide text-white">{maleName} (Male)</div>
@@ -633,7 +634,8 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                 
                 <Button 
                   onClick={() => handleSelectGender('female')}
-                  className="h-auto py-6 flex flex-col items-center gap-3 bg-purple-800/60 border border-purple-500/40 shadow-[0_0_15px_rgba(147,51,234,0.3)] hover:shadow-[0_0_20px_rgba(147,51,234,0.5)] transition-all"
+                  className="h-auto py-6 flex flex-col items-center gap-3 bg-purple-800/60 border border-purple-500/40 shadow-[0_0_15px_rgba(147,51,234,0.3)] hover:shadow-[0_0_20px_rgba(147,51,234,0.5)] transition-all cursor-pointer"
+                  type="button"
                 >
                   <Volume2 size={24} className="text-purple-300" />
                   <div className="text-lg font-light tracking-wide text-white">{femaleName} (Female)</div>
@@ -797,7 +799,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               <div className="flex justify-center relative z-10">
                 <Button 
                   type="submit"
-                  className="w-full max-w-md py-6 bg-blue-600/80 border border-blue-500/40 shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] rounded-full transition-all duration-300"
+                  className="w-full max-w-md py-6 bg-blue-600/80 border border-blue-500/40 shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] rounded-full transition-all duration-300 cursor-pointer"
                   size="lg"
                 >
                   <div className="flex items-center justify-center gap-2">
@@ -835,12 +837,13 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                   {!conversationalAIService.isConversationActive() ? (
                     <div className="h-full w-full flex flex-col items-center justify-center">
                       {/* Single button to start demo */}
-                      <div 
+                      <Button 
                         onClick={startCustomConversation}
+                        type="button"
                         className="rounded-full bg-blue-900/30 border border-blue-500/40 shadow-[0_0_25px_rgba(59,130,246,0.4)] hover:shadow-[0_0_35px_rgba(59,130,246,0.6)] p-16 mb-6 cursor-pointer transition-all duration-300 ease-in-out"
                       >
                         <Mic size={48} className="text-blue-300" />
-                      </div>
+                      </Button>
                       <p className="text-blue-100 text-center font-light tracking-wide text-lg">
                         Start Your Demo
                       </p>
