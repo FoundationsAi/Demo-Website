@@ -61,7 +61,12 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
       id={id} 
       ref={sectionRef}
       className="relative h-screen w-full overflow-hidden bg-black"
-      style={{ margin: 0, padding: 0 }}
+      style={{ 
+        margin: 0, 
+        padding: 0,
+        marginTop: '-1px', // Ensure seamless connection with previous section
+        marginBottom: '-1px' // Ensure seamless connection with next section
+      }}
     >
       {/* Parallax Background */}
       <motion.div 
@@ -83,18 +88,18 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
       <div className="relative z-10 h-full w-full max-w-screen-2xl mx-auto px-6 md:px-12 flex flex-col">
         <div className={`flex flex-col max-w-2xl ${textPositionClass} h-full py-24`}>
           <div className="mt-auto mb-4">
-            <ScrollReveal animation="fadeInUp">
+            <ScrollReveal animation="fadeInUp" threshold={0.15}>
               <AnimatedText
                 text={title}
                 as="h2"
                 className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 ${textColor}`}
                 animation="slide"
-                stagger={0.03}
+                stagger={0.02} // Reduced for better performance
               />
             </ScrollReveal>
             
             {subtitle && (
-              <ScrollReveal animation="fadeInUp" delay={0.2}>
+              <ScrollReveal animation="fadeInUp" delay={0.15} threshold={0.15}> {/* Reduced delay for better performance */}
                 <p className={`text-lg md:text-xl opacity-90 mt-4 ${textColor}`}>
                   {subtitle}
                 </p>
@@ -102,7 +107,7 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
             )}
             
             {children && (
-              <ScrollReveal animation="fadeInUp" delay={0.4}>
+              <ScrollReveal animation="fadeInUp" delay={0.25} threshold={0.15}> {/* Reduced delay for better performance */}
                 <div className="mt-6 max-w-prose">
                   {children}
                 </div>
@@ -110,7 +115,7 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
             )}
             
             {actionLabel && (
-              <ScrollReveal animation="fadeInUp" delay={0.6}>
+              <ScrollReveal animation="fadeInUp" delay={0.35} threshold={0.15}> {/* Reduced delay for better performance */}
                 <div className="mt-8">
                   <a 
                     href={actionLink || "#"}

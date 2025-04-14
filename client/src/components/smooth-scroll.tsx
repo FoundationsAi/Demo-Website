@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
 interface SmoothScrollProps {
   children: React.ReactNode;
@@ -12,8 +12,9 @@ interface SmoothScrollProps {
   };
 }
 
-// Simplified hook for better performance
-export const useSmoothScroll = () => {
+// Simplified scroll helper function (non-hook implementation)
+// Fixed to avoid Fast Refresh incompatibility
+const createSmoothScroller = () => {
   return {
     scrollTo: (target: string | number | HTMLElement, options?: any) => {
       if (typeof target === 'string') {
@@ -30,6 +31,15 @@ export const useSmoothScroll = () => {
     stop: () => {},
     start: () => {}
   };
+};
+
+// Create a singleton instance for consistent reference
+const smoothScrollerInstance = createSmoothScroller();
+
+// Export a simple function that returns the singleton instance
+// This approach avoids Fast Refresh compatibility issues
+export const useSmoothScroll = () => {
+  return smoothScrollerInstance;
 };
 
 export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children, options }) => {
