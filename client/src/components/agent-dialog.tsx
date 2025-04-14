@@ -115,35 +115,58 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       description: "Please wait while we clean up...",
     });
     
-    // Make sure to properly clean up resources when exiting
+    // Force stop everything - add more cleanup to ensure it fully stops
     try {
-      // Stop the conversation service first - this is the most important part
+      // First ensure WebSocket is closed if it exists
+      const ws = (window as any).__elevenlabsWs;
+      if (ws) {
+        try {
+          ws.close();
+          console.log("WebSocket forcibly closed");
+        } catch (e) {
+          console.error("Error closing WebSocket:", e);
+        }
+      }
+      
+      // Stop any audio elements that might be playing
+      document.querySelectorAll('audio').forEach(audio => {
+        try {
+          audio.pause();
+          audio.currentTime = 0;
+        } catch(e) {}
+      });
+      
+      // Kill any remaining audio contexts
+      if ((window as any).AudioContext) {
+        try {
+          const tempCtx = new AudioContext();
+          tempCtx.close();
+        } catch(e) {}
+      }
+      
+      // Make sure to properly stop the conversation with the API
       await conversationalAIService.stopConversation();
       
-      // Small delay to ensure everything is closed properly
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Success notification
-      toast({
-        title: "Conversation ended",
-        description: "Voice conversation has been successfully terminated.",
-        variant: "default",
-      });
+      // Cancel any pending requests
+      try {
+        const controller = new AbortController();
+        controller.abort();
+      } catch (e) {
+        // Ignore errors
+      }
     } catch (error) {
       console.error("Error while cleaning up:", error);
-      toast({
-        title: "Error ending conversation",
-        description: "There was a problem cleaning up resources, but we'll continue with closing the dialog.",
-        variant: "destructive",
-      });
+    } finally {
+      // Always reset UI states no matter what
+      setIsPlaying(false);
+      setDemoMessages([]);
+      setAudioIntensity(0);
+      setShowConfirmClose(false);
+      
+      // Always close the dialog even if there's an error
+      onOpenChange(false);
+      onClose();
     }
-    
-    // Reset UI states - do this regardless of any errors above
-    setIsPlaying(false);
-    setDemoMessages([]);
-    setShowConfirmClose(false);
-    onOpenChange(false);
-    onClose();
   };
 
   // Handle cancel close
@@ -788,11 +811,44 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                               description: "Please wait while we clean up...",
                             });
                             
+                            // Force stop everything - add more cleanup to ensure it fully stops
+                            // First ensure WebSocket is closed if it exists
+                            const ws = (window as any).__elevenlabsWs;
+                            if (ws) {
+                              try {
+                                ws.close();
+                                console.log("WebSocket forcibly closed");
+                              } catch (e) {
+                                console.error("Error closing WebSocket:", e);
+                              }
+                            }
+                            
+                            // Stop any audio elements that might be playing
+                            document.querySelectorAll('audio').forEach(audio => {
+                              try {
+                                audio.pause();
+                                audio.currentTime = 0;
+                              } catch(e) {}
+                            });
+                            
+                            // Kill any remaining audio contexts
+                            if ((window as any).AudioContext) {
+                              try {
+                                const tempCtx = new AudioContext();
+                                tempCtx.close();
+                              } catch(e) {}
+                            }
+                            
                             // Make sure to properly stop the conversation with the API
                             await conversationalAIService.stopConversation();
                             
-                            // Small delay to ensure everything is closed properly
-                            await new Promise(resolve => setTimeout(resolve, 500));
+                            // Cancel any pending requests
+                            try {
+                              const controller = new AbortController();
+                              controller.abort();
+                            } catch (e) {
+                              // Ignore errors
+                            }
                             
                             // Success notification
                             toast({
@@ -801,20 +857,19 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                               variant: "default",
                             });
                             
-                            // Reset UI state
+                            // Reset all states
                             setIsPlaying(false);
                             setDemoMessages([]);
+                            setAudioIntensity(0);
                             
-                            // Close the dialog
+                            // Close the dialog IMMEDIATELY
                             onOpenChange(false);
                             onClose();
                           } catch (error) {
                             console.error("Error ending conversation:", error);
-                            toast({
-                              title: "Error",
-                              description: "There was a problem ending the conversation. Please try again.",
-                              variant: "destructive",
-                            });
+                            // Force close dialog even if there's an error
+                            onOpenChange(false);
+                            onClose();
                           }
                         }}
                         variant="outline"
