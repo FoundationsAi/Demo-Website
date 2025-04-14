@@ -116,8 +116,20 @@ export const SpaceIntroSection: React.FC = () => {
   return (
     <div 
       ref={containerRef}
-      className="space-intro min-h-screen w-full relative overflow-hidden flex flex-col items-center justify-center"
-      style={{ cursor: 'default', marginBottom: '-1px' }} // Ensure no gap between sections
+      className="space-intro min-h-screen w-full relative overflow-hidden flex flex-col items-center justify-center section-wrapper"
+      style={{ 
+        cursor: 'default', 
+        margin: 0,
+        padding: 0,
+        marginTop: '-2px',
+        marginBottom: '-2px',
+        position: 'relative',
+        zIndex: 1,
+        transformStyle: 'preserve-3d',
+        transform: 'translateZ(0)',
+        backfaceVisibility: 'hidden',
+        backgroundColor: '#000000'
+      }}
     >
       {/* Stars canvas background */}
       <canvas 

@@ -61,11 +61,18 @@ export const CloudTransitionSection: React.FC<CloudTransitionSectionProps> = ({ 
     <section 
       id={id}
       ref={sectionRef}
-      className="relative min-h-screen w-full overflow-hidden"
+      className="relative min-h-screen w-full overflow-hidden section-wrapper"
       style={{ 
         background: 'linear-gradient(to bottom, #000000, #111a30, #1a2f59, #243882, #2e42ab)',
-        marginTop: '-1px', // Ensure seamless connection with previous section
-        marginBottom: '-1px', // Ensure seamless connection with next section
+        margin: 0,
+        padding: 0,
+        marginTop: '-2px', // Ensure seamless connection with previous section
+        marginBottom: '-2px', // Ensure seamless connection with next section
+        position: 'relative',
+        zIndex: 1,
+        transformStyle: 'preserve-3d', // Fix for potential Safari issues
+        transform: 'translateZ(0)', // Hardware acceleration
+        backfaceVisibility: 'hidden' // Prevent rendering artifacts
       }}
     >
       {/* Top cloud layer (fast moving) - reduced count for better performance */}
