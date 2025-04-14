@@ -147,13 +147,13 @@ export const SpaceIntroSection: React.FC = () => {
             text="FOUNDATIONS AI" 
             as="h1" 
             animation="fade"
-            className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-wider text-white mb-8 leading-tight"
+            className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-extrabold tracking-wider text-white mb-8 leading-tight"
             stagger={0.05}
             delay={0.5}
           />
           
           <ParallaxEffect speed={0.2} direction="up">
-            <div className="text-xl md:text-2xl lg:text-3xl font-light text-blue-200 mb-12 max-w-3xl mx-auto">
+            <div className="text-base sm:text-lg md:text-2xl lg:text-3xl font-light text-blue-200 mb-8 sm:mb-12 max-w-3xl mx-auto px-4 sm:px-0">
               <AnimatedText 
                 text="Voice AI reimagined for the future" 
                 as="div" 

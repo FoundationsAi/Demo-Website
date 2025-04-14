@@ -76,12 +76,12 @@ export const TextOverlaySection: React.FC<TextOverlaySectionProps> = ({
       )}
       
       {/* Content wrapper */}
-      <div className={`relative z-10 container mx-auto px-6 md:px-12 flex flex-col ${fullHeight ? 'min-h-screen' : 'h-full'} ${containerPositionClass}`}>
+      <div className={`relative z-10 container mx-auto px-4 sm:px-6 md:px-12 flex flex-col ${fullHeight ? 'min-h-screen' : 'h-full'} ${containerPositionClass}`}>
         <div className={`max-w-3xl ${textAlignmentClass} py-12`}>
           <ScrollReveal animation="fadeInUp">
             {title && (
               <motion.h2
-                className={`text-3xl md:text-5xl font-bold mb-6 ${textColor}`}
+                className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 ${textColor}`}
                 variants={fadeUpVariants}
               >
                 {title}
@@ -90,7 +90,7 @@ export const TextOverlaySection: React.FC<TextOverlaySectionProps> = ({
             
             {subtitle && (
               <motion.p
-                className={`text-xl md:text-2xl font-light mb-8 ${textColor} opacity-90`}
+                className={`text-base sm:text-lg md:text-xl lg:text-2xl font-light mb-8 ${textColor} opacity-90`}
                 variants={fadeUpVariants}
               >
                 {subtitle}

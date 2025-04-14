@@ -46,11 +46,11 @@ export const AgentSelectionSection: React.FC = () => {
             <AnimatedText
               text="INTERACT WITH OUR AI"
               as="h2"
-              className="text-4xl md:text-5xl font-bold mb-6 tracking-wider"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 tracking-wider"
               animation="fade"
               stagger={0.03}
             />
-            <p className="text-xl text-blue-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-blue-300 max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
               Experience the future of voice AI technology. Select an agent with a distinct 
               personality, knowledge base and communication style to engage with.
             </p>
@@ -76,8 +76,8 @@ export const AgentSelectionSection: React.FC = () => {
                       <VoiceWave isActive={isPlaying && selectedAgent === agent.id} numBars={4} className="h-10" />
                     </div>
                     
-                    <h3 className="text-2xl font-bold mb-2">{agent.name}</h3>
-                    <p className="text-blue-100 mb-4">{agent.description}</p>
+                    <h3 className="text-xl sm:text-2xl font-bold mb-2">{agent.name}</h3>
+                    <p className="text-sm sm:text-base text-blue-100 mb-4">{agent.description}</p>
                     
                     <div className="mt-auto">
                       <div className="flex flex-wrap gap-2">
