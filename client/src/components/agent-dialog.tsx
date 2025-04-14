@@ -587,7 +587,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
           <>
             <DialogHeader className="border-b pb-4">
               <div className="flex items-center">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center mr-3">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center mr-3">
                   <span className="text-lg">{agent?.icon || '🤖'}</span>
                 </div>
                 <div>
@@ -601,50 +601,52 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               </div>
             </DialogHeader>
             
-            <div className="flex-1 overflow-y-auto py-4 px-2 max-h-[400px] min-h-[300px]">
-              {demoMessages.map((msg, i) => (
-                <div 
-                  key={i}
-                  className={`flex mb-4 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div 
-                    className={`px-4 py-3 rounded-2xl max-w-[80%] ${
-                      msg.sender === 'user' 
-                        ? 'bg-blue-600 text-white rounded-tr-none' 
-                        : 'bg-gray-800 text-white rounded-tl-none'
-                    }`}
-                  >
-                    {msg.content}
+            <div className="flex-1 py-8 px-4 flex flex-col items-center justify-center">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-semibold mb-2">Voice Conversation</h3>
+                <p className="text-muted-foreground">
+                  Speak with {selectedGender === 'male' ? maleName : femaleName}, your AI {agent?.name.replace('AI ', '')}
+                </p>
+              </div>
+              
+              {/* Voice wave visualization */}
+              <div className="w-full max-w-md aspect-video bg-black/10 rounded-xl flex items-center justify-center mb-8 relative overflow-hidden backdrop-blur-sm">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-blue-900/20"></div>
+                
+                {isPlaying ? (
+                  <VoiceWave isActive={true} numBars={30} className="h-32 mx-auto z-10" />
+                ) : (
+                  <div className="text-center z-10">
+                    <p className="text-xl mb-2">{selectedGender === 'male' ? maleName : femaleName} is listening...</p>
+                    <p className="text-sm text-muted-foreground">Click the button below to speak</p>
                   </div>
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-            
-            <div className="border-t pt-4">
-              <div className="flex gap-2">
-                <Input
-                  value={demoInput}
-                  onChange={(e) => setDemoInput(e.target.value)}
-                  placeholder="Type your message..."
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSendDemoMessage();
-                    }
-                  }}
-                />
-                <Button 
-                  onClick={handleSendDemoMessage}
-                  disabled={!demoInput.trim()}
-                  className="shrink-0"
+                )}
+              </div>
+              
+              {/* Control buttons */}
+              <div className="flex gap-4">
+                <Button
+                  size="lg"
+                  className="rounded-full h-16 w-16 flex items-center justify-center bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700"
                 >
-                  <Send size={18} />
+                  <Mic size={28} />
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="rounded-full h-16 w-16 flex items-center justify-center border-2"
+                  onClick={() => window.open('https://elevenlabs.io/speech-synthesis', '_blank')}
+                >
+                  <Volume2 size={28} />
                 </Button>
               </div>
-              <div className="text-xs text-center mt-3 text-muted-foreground">
-                You're in a 5-minute demo with {selectedGender === 'male' ? maleName : femaleName}.
-                You can exit anytime to try a different agent.
+              
+              <div className="text-center mt-8">
+                <p className="text-sm text-muted-foreground">
+                  You're in a 5-minute demo with {selectedGender === 'male' ? maleName : femaleName}.
+                  <br />Your conversation will be handled by 11Labs AI voice technology.
+                </p>
               </div>
             </div>
           </>
