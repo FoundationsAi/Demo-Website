@@ -3,57 +3,46 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 
 interface MountainTextOverlaySectionProps {
   id?: string;
+  targetRef?: React.RefObject<HTMLElement>;
 }
 
 /**
  * MountainTextOverlaySection - Shows the "A NEW FRONTIER" and "VOICE AI" text
- * at the top of the mountain section, with scroll-based animation
+ * as a pure overlay with no screen height consumption
  */
 export const MountainTextOverlaySection: React.FC<MountainTextOverlaySectionProps> = ({ 
-  id 
+  id,
+  targetRef
 }) => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  
-  // Create scroll-based animations
+  // Create scroll-based animations using the provided target or the document
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
+    target: targetRef,
+    offset: ["start", "end start"]
   });
   
-  // Transform values for text animations
-  const opacity = useTransform(scrollYProgress, [0.1, 0.2, 0.4, 0.5], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0.1, 0.2, 0.4, 0.5], [50, 0, 0, -50]);
+  // Transform values for text animations - start at top and fade out as we scroll
+  const opacity = useTransform(scrollYProgress, [0, 0.1, 0.3, 0.4], [0, 1, 1, 0]);
+  const y = useTransform(scrollYProgress, [0, 0.1, 0.3, 0.4], [50, 0, 0, -50]);
   
   return (
-    <section
+    <motion.div
       id={id}
-      ref={sectionRef}
-      className="relative min-h-screen w-full overflow-hidden"
+      className="fixed top-32 left-0 w-full z-30 flex flex-col items-center justify-center text-center pointer-events-none"
       style={{ 
-        marginTop: '-1px',
-        marginBottom: '-1px',
-        zIndex: 10, // Ensure this is above the mountain section
-        pointerEvents: 'none' // Make this section non-interactive so users can interact with content below
+        opacity,
+        y,
+        willChange: "transform, opacity",
+        transform: "translateZ(0)",
+        backfaceVisibility: "hidden"
       }}
     >
-      <motion.div
-        className="fixed top-1/4 left-0 w-full flex flex-col items-center justify-center text-center"
-        style={{ 
-          opacity,
-          y,
-          willChange: "transform, opacity",
-          transform: "translateZ(0)",
-          backfaceVisibility: "hidden"
-        }}
-      >
-        <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-wider text-white mb-4">
-          A NEW FRONTIER
-        </h2>
-        <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-blue-300">
-          VOICE AI
-        </h3>
-      </motion.div>
-    </section>
+      <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-wider text-white mb-4 drop-shadow-lg">
+        A NEW FRONTIER
+      </h2>
+      <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-blue-300 drop-shadow-lg">
+        VOICE AI
+      </h3>
+    </motion.div>
   );
 };
 

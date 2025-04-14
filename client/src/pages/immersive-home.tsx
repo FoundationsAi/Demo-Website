@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useScroll } from 'framer-motion';
 import { SmoothScroll } from '@/components/smooth-scroll';
+import { SectionWrapper } from '@/components/section-wrapper';
 import { SpaceIntroSection } from '@/components/sections/space-intro-section';
 import { CloudTransitionSection } from '@/components/sections/cloud-transition-section';
 import { FullscreenMountainSection } from '@/components/sections/fullscreen-mountain-section';
@@ -61,73 +62,89 @@ export const ImmersiveHome: React.FC = () => {
         />
         
         {/* 1. Space intro section with stars */}
-        <SpaceIntroSection />
+        <SectionWrapper>
+          <SpaceIntroSection />
+        </SectionWrapper>
         
         {/* 2. Cloud transition with animation */}
-        <CloudTransitionSection />
+        <SectionWrapper>
+          <CloudTransitionSection />
+        </SectionWrapper>
         
-        {/* 3. Mountain section with empty title (text will be in overlay) */}
-        <FullscreenMountainSection
-          title="" // Empty title, text moved to overlay
-          backgroundImage={mountainBg1}
-          textPosition="center"
-        />
-        
-        {/* Text overlay for mountain section with "A NEW FRONTIER" and "VOICE AI" */}
-        <MountainTextOverlaySection />
+        {/* 3. Mountain section with text overlay */}
+        <SectionWrapper>
+          <FullscreenMountainSection
+            title="" // Empty title is required by the component props
+            backgroundImage={mountainBg1}
+            textPosition="center"
+          />
+          {/* Mountain text overlay - will appear as the user scrolls to this section */}
+          <MountainTextOverlaySection />
+        </SectionWrapper>
         
         {/* 4. Description section */}
-        <TextOverlaySection
-          backgroundColor="#061022"
-          textColor="text-white"
-          textPosition="center"
-        >
-          <div className="max-w-3xl mx-auto py-24 text-center">
-            <AnimatedText
-              text="WHERE TECHNOLOGY MEETS EMOTION"
-              as="h2"
-              animation="slide"
-              className="text-2xl md:text-3xl font-light tracking-widest text-blue-200 mb-8"
-            />
-            
-            <ScrollReveal animation="fadeInUp">
-              <p className="text-xl md:text-2xl leading-relaxed mb-12">
-                Our revolutionary approach to voice AI transcends mere functionality.
-                We've created a system that understands context, emotion, and the 
-                subtle nuances of human communication, delivering responses that 
-                feel genuinely human.
-              </p>
-            </ScrollReveal>
-          </div>
-        </TextOverlaySection>
+        <SectionWrapper>
+          <TextOverlaySection
+            backgroundColor="#061022"
+            textColor="text-white"
+            textPosition="center"
+          >
+            <div className="max-w-3xl mx-auto py-24 text-center">
+              <AnimatedText
+                text="WHERE TECHNOLOGY MEETS EMOTION"
+                as="h2"
+                animation="slide"
+                className="text-2xl md:text-3xl font-light tracking-widest text-blue-200 mb-8"
+              />
+              
+              <ScrollReveal animation="fadeInUp">
+                <p className="text-xl md:text-2xl leading-relaxed mb-12">
+                  Our revolutionary approach to voice AI transcends mere functionality.
+                  We've created a system that understands context, emotion, and the 
+                  subtle nuances of human communication, delivering responses that 
+                  feel genuinely human.
+                </p>
+              </ScrollReveal>
+            </div>
+          </TextOverlaySection>
+        </SectionWrapper>
         
         {/* 5. Mountain with stat */}
-        <LargeNumberSection
-          number="11"
-          backgroundColor="#0a1528"
-          textPosition="right"
-          title="DISTINCTIVE VOICES"
-          description="Our system offers 11 distinct AI personalities, each with unique traits, speaking styles, and knowledge bases that adapt to different contexts and user preferences."
-        />
+        <SectionWrapper>
+          <LargeNumberSection
+            number="11"
+            backgroundColor="#0a1528"
+            textPosition="right"
+            title="DISTINCTIVE VOICES"
+            description="Our system offers 11 distinct AI personalities, each with unique traits, speaking styles, and knowledge bases that adapt to different contexts and user preferences."
+          />
+        </SectionWrapper>
         
         {/* 6. Interactive Agent selection with 11 Labs */}
-        <AgentSelectionSection />
+        <SectionWrapper>
+          <AgentSelectionSection />
+        </SectionWrapper>
         
         {/* 7. Mountain transition to pricing */}
-        <FullscreenMountainSection
-          backgroundImage={mountainBg3}
-          title="TRANSFORMING POSSIBILITIES"
-          subtitle="Discover how our voice AI can elevate your business"
-          textPosition="center"
-          actionLabel="VIEW PRICING"
-          actionLink="#pricing"
-        />
+        <SectionWrapper>
+          <FullscreenMountainSection
+            backgroundImage={mountainBg3}
+            title="TRANSFORMING POSSIBILITIES"
+            subtitle="Discover how our voice AI can elevate your business"
+            textPosition="center"
+            actionLabel="VIEW PRICING"
+            actionLink="#pricing"
+          />
+        </SectionWrapper>
         
         {/* 8. Pricing section */}
-        <PricingSection />
+        <SectionWrapper>
+          <PricingSection />
+        </SectionWrapper>
         
         {/* 9. Footer/Contact */}
-        <section className="bg-black py-16 text-white">
+        <SectionWrapper>
+          <section className="bg-black py-16 text-white">
           <div className="container mx-auto px-6">
             <div className="max-w-5xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -195,7 +212,8 @@ export const ImmersiveHome: React.FC = () => {
               </div>
             </div>
           </div>
-        </section>
+          </section>
+        </SectionWrapper>
       </div>
     </SmoothScroll>
   );
