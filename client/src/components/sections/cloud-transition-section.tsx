@@ -130,18 +130,15 @@ export const CloudTransitionSection: React.FC<CloudTransitionSectionProps> = ({ 
       >
         <div className="text-center max-w-4xl mx-auto px-6">
           <ScrollReveal>
-            <div className="bg-black/80 backdrop-blur-lg p-6 rounded-xl border border-blue-500/30 shadow-[0_0_50px_rgba(0,0,0,0.7)] mb-8">
-              <AnimatedText
-                text="BEYOND THE COSMOS"
-                as="h2"
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-wider sm:tracking-widest text-blue-100 mb-2 drop-shadow-[0_0_20px_rgba(100,200,255,0.9)]"
-                animation="slide"
-                stagger={0.03}
-              />
+            {/* Completely opaque black background with bright text */}
+            <div className="bg-black p-8 rounded-xl border-4 border-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.5)] mb-8">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-wider sm:tracking-widest text-white mb-2" style={{ textShadow: "0 0 10px #ffffff, 0 0 20px #4f8fff" }}>
+                BEYOND THE COSMOS
+              </h2>
             </div>
             
-            <div className="text-xl md:text-2xl text-white leading-relaxed max-w-2xl mx-auto font-medium bg-black/80 backdrop-blur-lg p-8 rounded-xl border border-blue-500/20 shadow-[0_0_50px_rgba(0,0,0,0.8)]">
-              <p className="drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">Where the vastness of space meets the beauty of Earth. Our journey continues through the clouds and beyond.</p>
+            <div className="text-xl md:text-2xl text-white leading-relaxed max-w-2xl mx-auto font-bold bg-black p-8 rounded-xl border-2 border-blue-500">
+              <p>Where the vastness of space meets the beauty of Earth. Our journey continues through the clouds and beyond.</p>
             </div>
           </ScrollReveal>
         </div>
