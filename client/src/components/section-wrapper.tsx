@@ -18,7 +18,7 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = ({
   return (
     <div 
       id={id}
-      className={`relative ${className}`}
+      className={`relative section-wrapper ${className}`}
       style={{ 
         margin: 0,
         padding: 0,

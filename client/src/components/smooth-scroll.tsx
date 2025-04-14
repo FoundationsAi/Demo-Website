@@ -56,10 +56,33 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children, options })
     // Ensure all sections flow seamlessly together and optimize performance
     const style = document.createElement('style');
     style.innerHTML = `
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 100% !important;
+        overflow-x: hidden !important;
+        background-color: #000 !important;
+      }
+      
       section {
         margin: 0 !important;
         padding-top: 0 !important;
         padding-bottom: 0 !important;
+        margin-top: -2px !important;
+        margin-bottom: -2px !important;
+        position: relative;
+        z-index: 1;
+      }
+      
+      /* Fix for full-page sections to eliminate any gaps */
+      .section-wrapper {
+        margin: 0 !important;
+        padding: 0 !important;
+        margin-top: -2px !important;
+        margin-bottom: -2px !important;
+        position: relative;
+        overflow: hidden;
+        background-color: #000;
       }
       
       /* Optimize for better performance - apply hardware acceleration only where needed */
