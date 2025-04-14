@@ -493,32 +493,39 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       case 'widget-fallback':
         return (
           <>
-            <DialogHeader>
-              <DialogTitle className="text-2xl">
-                Talk to {selectedGender === 'male' ? maleName : femaleName}
-              </DialogTitle>
-              <DialogDescription>
-                Chat with our AI voice assistant
-              </DialogDescription>
+            <DialogHeader className="border-b pb-4">
+              <div className="text-center">
+                <DialogTitle className="text-2xl font-medium">
+                  {selectedGender === 'male' ? maleName : femaleName}
+                </DialogTitle>
+                <DialogDescription>
+                  AI Voice Assistant
+                </DialogDescription>
+              </div>
             </DialogHeader>
             
             <div className="py-6">
               <div className="flex justify-center items-center min-h-[300px]">
                 <div className="text-center">
-                  <p className="mb-4">Our voice assistant is currently undergoing maintenance.</p>
-                  <p className="mb-4">You can try again later or contact support for assistance:</p>
+                  <div className="rounded-full bg-white hover:bg-slate-50 shadow-lg p-16 mb-6 transition-all duration-300 ease-in-out mx-auto">
+                    <Volume2 size={64} className="text-blue-500" />
+                  </div>
+                  <p className="mb-6 text-slate-600">Our voice assistant is currently undergoing maintenance.</p>
+                  <p className="mb-8 text-slate-600">You can try again later or contact support for assistance:</p>
                   <Button 
-                    className="gap-2 bg-blue-600 hover:bg-blue-700"
+                    className="px-8 py-2 bg-blue-600 hover:bg-blue-700 rounded-full shadow-md transition-all duration-300"
                     onClick={() => window.open('/contact', '_blank')}
                   >
-                    <Volume2 size={18} />
-                    <span>Contact Support</span>
+                    <div className="flex items-center justify-center gap-2">
+                      <Volume2 size={18} />
+                      <span>Contact Support</span>
+                    </div>
                   </Button>
                 </div>
               </div>
             </div>
             
-            <DialogFooter>
+            <DialogFooter className="border-t pt-3">
               <div className="text-sm text-center w-full text-muted-foreground">
                 Powered by advanced AI voice technology
               </div>
@@ -529,10 +536,15 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       case 'lead-capture':
         return (
           <>
-            <DialogHeader>
-              <DialogTitle className="text-xl sm:text-2xl text-center">
-                Want to try a full demo conversation tailored to your use case—for free?
-              </DialogTitle>
+            <DialogHeader className="border-b pb-4">
+              <div className="text-center">
+                <DialogTitle className="text-2xl font-medium">
+                  Voice Demo Request
+                </DialogTitle>
+                <DialogDescription>
+                  Try a personalized AI voice conversation tailored to your use case
+                </DialogDescription>
+              </div>
             </DialogHeader>
             
             <form onSubmit={handleSubmitLead} className="py-6">
@@ -619,9 +631,12 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               <div className="flex justify-center">
                 <Button 
                   type="submit"
-                  className="w-full md:w-auto px-8 py-2 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700"
+                  className="w-full max-w-md py-3 bg-blue-600 hover:bg-blue-700 rounded-full shadow-md transition-all duration-300"
+                  size="lg"
                 >
-                  Submit and Start Demo
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-base font-medium">Submit and Start Your Demo</span>
+                  </div>
                 </Button>
               </div>
             </form>
@@ -632,122 +647,78 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
         return (
           <>
             <DialogHeader className="border-b pb-4">
-              <div className="flex items-center">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center mr-3">
-                  <span className="text-lg">{agent?.icon || '🤖'}</span>
-                </div>
-                <div>
-                  <DialogTitle className="text-xl">
-                    {selectedGender === 'male' ? maleName : femaleName} ({agent?.name})
-                  </DialogTitle>
-                  <DialogDescription>
-                    AI {agent?.name.replace('AI ', '')}
-                  </DialogDescription>
-                </div>
+              <div className="text-center">
+                <DialogTitle className="text-2xl font-medium">
+                  {selectedGender === 'male' ? maleName : femaleName}
+                </DialogTitle>
+                <DialogDescription>
+                  AI Voice Assistant
+                </DialogDescription>
               </div>
             </DialogHeader>
             
             <div className="flex-1 py-6 px-4 flex flex-col">
               <div className="w-full">
-                {/* Connection status indicator */}
-                <div className="flex items-center justify-between mb-6 bg-slate-100 dark:bg-slate-800 p-3 rounded-md">
-                  <div className="flex items-center">
-                    <div className={`w-3 h-3 rounded-full mr-2 ${
-                      conversationalAIService.getConnectionStatus() === 'connected' 
-                        ? 'bg-green-500' 
-                        : conversationalAIService.getConnectionStatus() === 'connecting' 
-                        ? 'bg-yellow-500'
-                        : conversationalAIService.getConnectionStatus() === 'error'
-                        ? 'bg-red-500'
-                        : 'bg-slate-400'
-                    }`}></div>
-                    <span className="text-sm">
-                      {conversationalAIService.getConnectionStatus() === 'connected' 
-                        ? 'Connected' 
-                        : conversationalAIService.getConnectionStatus() === 'connecting' 
-                        ? 'Connecting...'
-                        : conversationalAIService.getConnectionStatus() === 'error'
-                        ? 'Connection Error'
-                        : 'Disconnected'}
-                    </span>
-                  </div>
-                  
-                  {isPlaying && (
-                    <div className="flex items-center">
-                      <VoiceWave isActive={true} numBars={5} className="mr-2" />
-                      <span className="text-sm">Speaking</span>
-                    </div>
-                  )}
-                </div>
+                {/* Removed connection status indicator for cleaner UI */}
                 
-                {/* Audio visualization */}
+                {/* Voice demo interface */}
                 <div className="flex-1 min-h-[280px] mb-6 flex flex-col items-center justify-center">
                   {!conversationalAIService.isConversationActive() ? (
                     <div className="h-full w-full flex flex-col items-center justify-center">
-                      <div className="rounded-full bg-slate-100 dark:bg-slate-800 p-8 mb-6">
-                        <Mic size={48} className="text-slate-500" />
+                      <div className="rounded-full bg-white hover:bg-slate-50 shadow-lg p-16 mb-6 transition-all duration-300 ease-in-out">
+                        <Mic size={64} className="text-blue-500" />
                       </div>
-                      <p className="text-muted-foreground text-center mb-8">
-                        Click "Start Voice Demo" to begin your conversation
+                      <p className="text-slate-600 dark:text-slate-300 text-center mb-8 text-lg">
+                        Click the button below to begin your conversation
                       </p>
                       <Button 
                         onClick={startCustomConversation}
-                        className="w-3/4 py-6 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700"
+                        className="w-full max-w-md py-3 bg-blue-600 hover:bg-blue-700 rounded-full shadow-md transition-all duration-300"
                         size="lg"
                       >
-                        <div className="flex flex-col items-center gap-2">
-                          <Mic size={24} />
-                          <span className="text-lg">Start Voice Demo</span>
+                        <div className="flex items-center justify-center gap-2">
+                          <Mic size={18} />
+                          <span className="text-base font-medium">Start Your Demo</span>
                         </div>
                       </Button>
                     </div>
                   ) : (
-                    <div className="h-full w-full flex flex-col items-center justify-between py-6">
-                      {/* Input audio visualization - visible when user is speaking */}
-                      <div className="mb-8 w-full">
-                        <p className="text-center mb-4 text-sm">Your Voice</p>
-                        <div className="flex justify-center items-end h-16 gap-1">
-                          {Array.from({ length: 12 }).map((_, i) => (
-                            <div
-                              key={`in-${i}`}
-                              className={`w-2 bg-blue-500 rounded-full transition-all duration-150 ease-in-out ${
-                                Math.random() > 0.5 ? 'h-8' : Math.random() > 0.7 ? 'h-12' : 'h-4'
-                              }`}
-                              style={{
-                                height: isPlaying ? '4px' : `${Math.random() * 64}px`, 
-                                opacity: isPlaying ? 0.3 : 0.9
-                              }}
-                            />
-                          ))}
+                    <div className="h-full w-full flex flex-col items-center justify-center">
+                      {/* Main microphone visualization - animates when active */}
+                      <div className={`relative mb-8 ${isPlaying ? '' : 'cursor-pointer'}`}>
+                        <div className="rounded-full bg-white shadow-lg p-16 relative z-10">
+                          <Mic size={64} className={isPlaying ? "text-purple-500" : "text-blue-500"} />
                         </div>
+                        
+                        {/* Animated rings when speaking or listening */}
+                        {Array.from({ length: 3 }).map((_, i) => (
+                          <div 
+                            key={`ring-${i}`}
+                            className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full border ${
+                              isPlaying ? 'border-purple-300' : 'border-blue-300'
+                            } opacity-0 ${
+                              (isPlaying || !isPlaying) ? 'animate-ping' : ''
+                            }`}
+                            style={{
+                              width: `${180 + i * 40}px`,
+                              height: `${180 + i * 40}px`,
+                              animationDelay: `${i * 0.3}s`,
+                              animationDuration: '2s'
+                            }}
+                          />
+                        ))}
                       </div>
                       
-                      {/* Output audio visualization - visible when AI is speaking */}
-                      <div className="mb-8 w-full">
-                        <p className="text-center mb-4 text-sm">AI Voice</p>
-                        <div className="flex justify-center items-end h-16 gap-1">
-                          {Array.from({ length: 12 }).map((_, i) => (
-                            <div
-                              key={`out-${i}`}
-                              className={`w-2 bg-purple-500 rounded-full transition-all duration-150 ease-in-out ${
-                                isPlaying ? (
-                                  Math.random() > 0.5 ? 'h-12' : Math.random() > 0.7 ? 'h-16' : 'h-8'
-                                ) : 'h-4'
-                              }`}
-                              style={{
-                                height: isPlaying ? `${Math.random() * 64}px` : '4px', 
-                                opacity: isPlaying ? 0.9 : 0.3
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
+                      {/* Status Text */}
+                      <p className="text-slate-600 dark:text-slate-300 text-center mb-6 text-lg">
+                        {isPlaying ? "AI is speaking..." : "Listening for your voice..."}
+                      </p>
                       
                       {/* End conversation button */}
                       <Button
                         onClick={stopCustomConversation}
                         variant="outline"
-                        className="flex items-center gap-2 border-red-300 hover:bg-red-50 hover:text-red-600 mt-8"
+                        className="flex items-center gap-2 border-red-300 hover:bg-red-50 hover:text-red-600 mt-4 rounded-full"
                         size="lg"
                       >
                         <MicOff size={16} />
