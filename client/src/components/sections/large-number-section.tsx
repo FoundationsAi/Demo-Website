@@ -68,7 +68,7 @@ export const LargeNumberSection: React.FC<LargeNumberSectionProps> = ({
         className="absolute inset-0 flex items-center justify-center"
         style={{ opacity: numberOpacity }}
       >
-        <h2 className="text-white text-[15rem] md:text-[20rem] lg:text-[30rem] font-bold opacity-40">
+        <h2 className="text-white text-[8rem] sm:text-[12rem] md:text-[20rem] lg:text-[30rem] font-bold opacity-40">
           {number}
         </h2>
       </motion.div>
@@ -86,7 +86,7 @@ export const LargeNumberSection: React.FC<LargeNumberSectionProps> = ({
       
       {/* Text content */}
       <motion.div 
-        className={`absolute z-20 bottom-24 ${textPositionClasses} max-w-sm md:max-w-md`}
+        className={`absolute z-20 bottom-12 sm:bottom-16 md:bottom-24 ${textPositionClasses} max-w-xs sm:max-w-sm md:max-w-md px-4 sm:px-0`}
         style={{ opacity: contentOpacity, y }}
       >
         <ScrollReveal>
@@ -129,7 +129,9 @@ export const SideInfoCard: React.FC<SideInfoCardProps> = ({
   children,
   position = 'right'
 }) => {
-  const positionClass = position === 'left' ? 'left-8 md:left-16' : 'right-8 md:right-16';
+  const positionClass = position === 'left' 
+    ? 'left-4 sm:left-8 md:left-16' 
+    : 'right-4 sm:right-8 md:right-16';
   
   return (
     <ScrollReveal animation="fadeInUp">

@@ -77,7 +77,7 @@ export const ImmersiveHome: React.FC = () => {
             text="VOICE AI"
             as="h1"
             animation="slide"
-            className="text-8xl md:text-9xl font-extrabold tracking-wider text-white mt-4"
+            className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-wider text-white mt-4"
             stagger={0.03}
           />
         </FullscreenMountainSection>

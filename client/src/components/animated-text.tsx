@@ -146,7 +146,7 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
 
   return (
     <Component
-      className={`animated-text-container overflow-hidden relative ${className} ${gradientClass}`}
+      className={`animated-text-container overflow-hidden relative break-words hyphens-auto ${className} ${gradientClass}`}
       style={{ color: color }}
     >
       {/* Original text for SEO (hidden visually) */}

@@ -94,7 +94,7 @@ export const CloudTransitionSection: React.FC<CloudTransitionSectionProps> = ({ 
             <AnimatedText
               text="BEYOND THE COSMOS"
               as="h2"
-              className="text-4xl md:text-6xl font-extrabold tracking-widest text-white mb-8"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-wider sm:tracking-widest text-white mb-8"
               animation="slide"
               stagger={0.03}
             />

@@ -84,7 +84,7 @@ export const FullscreenMountainSection: React.FC<FullscreenMountainSectionProps>
               <AnimatedText
                 text={title}
                 as="h2"
-                className={`text-5xl md:text-7xl font-bold leading-tight mb-4 ${textColor}`}
+                className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 ${textColor}`}
                 animation="slide"
                 stagger={0.03}
               />
