@@ -71,7 +71,7 @@ export const PricingSection: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   
   return (
-    <section id="pricing" className="relative min-h-screen py-32 pb-48 pt-40 bg-gradient-to-b from-[#0a1528] to-[#061022] text-white overflow-hidden">
+    <section id="pricing" className="relative min-h-screen py-32 pb-48 pt-48 bg-gradient-to-b from-[#0a1528] to-[#061022] text-white overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-blue-900/10 to-transparent" />
@@ -250,13 +250,13 @@ export const PricingSection: React.FC = () => {
         </div>
         
         {/* CTA section */}
-        <div className="mt-24 text-center">
+        <div className="mt-32 text-center pb-12">
           <ScrollReveal>
             <h3 className="text-3xl font-bold mb-6">Ready to transform your voice AI experience?</h3>
             <p className="text-xl text-blue-300 mb-10 max-w-3xl mx-auto">
               Join thousands of businesses already using Foundations AI to enhance their customer interactions.
             </p>
-            <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white text-lg font-medium rounded-full transition transform hover:scale-105">
+            <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white text-lg font-medium rounded-full transition transform hover:scale-105 shadow-lg shadow-blue-600/30">
               Get Started Now
             </button>
           </ScrollReveal>
