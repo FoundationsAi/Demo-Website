@@ -36,7 +36,7 @@ function App() {
         <div key={location} className="page-wrapper">
           <Switch location={location}>
             <AnimatedRoute path="/" component={ImmersiveHome} animation="fade" />
-            <AnimatedRoute path="/chat/:agentId" component={Chat} animation="slideHorizontal" />
+            <AnimatedRoute path="/chat/:agentId?" component={Chat} animation="slideHorizontal" />
             <AnimatedRoute path="/payment" component={Payment} animation="slideUp" />
             <AnimatedRoute path="/calendar" component={Calendar} animation="zoom" />
             <AnimatedRoute component={NotFound} animation="fade" />
