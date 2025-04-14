@@ -1,0 +1,70 @@
+Website Pricing Section Content
+Pricing Header
+"Find the Perfect Plan for Your Solar Business"
+Grow your solar sales with our AI voice agents—unlimited agents, flexible plans, and no limits on your potential. Start small or scale big, with plans designed to fit every need. Try risk-free with our 5-day trial on Essential and Basic, or contact us for custom Enterprise solutions.
+
+Tier 1: Starter
+Price: $49.99/month
+Description: Perfect for startups and small solar businesses dipping their toes into AI voice automation. Test the waters with our powerful platform and see how easy it is to qualify leads and book appointments.
+What’s Included:
+* 50 minutes of AI usage per month (testing minutes count as half: 1 minute of testing = 0.5 billable minutes)
+* Unlimited AI agents—create as many as you need (e.g., Steve, Josh, Dakota)
+* 5 concurrent calls—handle multiple conversations at once
+* Core features: Voice API, LLM, transcriber costs, API integrations, real-time booking, human transfer, community support Overage Fee: $0.35/minute CTA Button: "Start Testing Now"
+
+Tier 2: Essential
+Price: $299.99/month
+Description: Ideal for small to medium solar businesses with low call volumes. Use it as a reliable answering service to capture leads and handle inquiries, with enough minutes to keep things humming. Upgrade when you’re ready for more.
+What’s Included:
+* 500 minutes of AI usage per month
+* Unlimited AI agents—deploy tailored voices for every campaign
+* 10 concurrent calls—manage busier call flows
+* All Starter features Overage Fee: $0.30/minute Trial: 7-day free trial CTA Button: "Try Essential Free"
+
+Tier 3: Basic
+Price: $749.99/month
+Description: Built for growing solar businesses with moderate call volumes. Ramp up your outreach and lead qualification with more minutes and concurrency, plus team support to streamline operations. The next step to scaling your sales.
+What’s Included:
+* 1,250 minutes of AI usage per month
+* Unlimited AI agents—unleash your full campaign potential
+* 25 concurrent calls—tackle peak call times with ease
+* All Essential features, plus team access and support via ticketing Overage Fee: $0.25/minute Trial: 7-day free trial CTA Button: "Try Basic Free"
+
+Tier 4: Pro
+Price: $1,499.99/month
+Description: For established solar businesses with high call volumes. Power through leads with ample minutes and concurrency, designed to maximize your sales pipeline. When you’re ready for enterprise-level solutions, we’ve got you covered.
+What’s Included:
+* 2,100 minutes of AI usage per month
+* Unlimited AI agents—run unlimited campaigns seamlessly
+* 50 concurrent calls—handle the busiest call schedules
+* All Basic features Overage Fee: $0.20/minute CTA Button: "Get Pro Now"
+
+Tier 5: Enterprise
+Price: Custom Pricing—Contact Us
+Description: For large solar businesses and agencies with massive call volumes or unique needs. Get a tailored plan with custom minutes, concurrency, and white-label options to take your sales to the next level.
+What’s Included:
+* Custom minutes of AI usage
+* Unlimited AI agents
+* Custom concurrent calls
+* All Pro features, plus white-label platform and unlimited subaccounts Overage Fee: Custom rates CTA Button: "Contact Sales"
+
+Additional Details
+* Setup Fee: $3,000 one-time (waived for annual contracts)
+* Annual Discount: Save 10% when you pay upfront for a year (e.g., Essential drops from $299.99 to $269.99/month)
+* Risk-Free Guarantee: Try any plan for 3 months—if your sales don’t increase by 5%, we’ll refund you.
+
+Notes for Your Web Designer
+1. Visual Design:
+    * Use a clean pricing table with columns for each tier, highlighting Starter’s $49.99 price and free trials for Essential and Basic.
+    * Add a “Most Popular” badge to the Basic tier to draw attention—it’s the sweet spot for growing businesses.
+    * Include a prominent “Contact Us” button for Enterprise, with a form to capture leads.
+2. Feature Breakdown:
+    * List features under each tier clearly (e.g., minutes, concurrent calls, team access).
+    * Emphasize “Unlimited AI Agents” as a headline feature across all tiers—make it bold or highlighted.
+3. Call-to-Action:
+    * Buttons should be vibrant and clickable (e.g., green for “Try Free,” blue for “Get Now”).
+    * Add a secondary CTA below the table: “Not sure which plan? Chat with us!” linking to a contact form.
+4. Additional Sections:
+    * FAQ: Include questions like “What happens if I go over my minutes?” (Answer: Pay the overage fee listed for your plan.) and “How does testing work on Starter?” (Answer: Testing minutes count as half, so 1 minute of testing uses 0.5 minutes.)
+    * Testimonial Placeholder: Reserve space for customer quotes (e.g., “Cut our lead gen time in half!”) to build trust.
+5. Mobile Optimization: Ensure the pricing table is responsive, collapsing into a stacked view on mobile with expandable details for each tier.
