@@ -68,13 +68,22 @@
     transform: translate3d(0, 0, 0);
   }
   
-  /* Reduce animation load */
+  /* Control animation load - commented out to ensure animations work */
+  /*
   @media (prefers-reduced-motion: reduce) {
     * {
       animation-duration: 0.01ms !important;
       transition-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
     }
+  }
+  */
+  
+  /* Use this class to disable animations manually if needed */
+  .reduce-motion {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 
   :root {
