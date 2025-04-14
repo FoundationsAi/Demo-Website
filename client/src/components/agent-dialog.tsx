@@ -498,21 +498,21 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                 Talk to {selectedGender === 'male' ? maleName : femaleName}
               </DialogTitle>
               <DialogDescription>
-                Chat with our AI agent using the 11Labs widget
+                Chat with our AI voice assistant
               </DialogDescription>
             </DialogHeader>
             
             <div className="py-6">
               <div className="flex justify-center items-center min-h-[300px]">
                 <div className="text-center">
-                  <p className="mb-4">Our embedded AI agent is currently undergoing maintenance.</p>
-                  <p className="mb-4">You can also try our 11Labs widget experience:</p>
+                  <p className="mb-4">Our voice assistant is currently undergoing maintenance.</p>
+                  <p className="mb-4">You can try again later or contact support for assistance:</p>
                   <Button 
                     className="gap-2 bg-blue-600 hover:bg-blue-700"
-                    onClick={() => window.open('https://elevenlabs.io/speech-synthesis', '_blank')}
+                    onClick={() => window.open('/contact', '_blank')}
                   >
                     <Volume2 size={18} />
-                    <span>Try 11Labs Widget</span>
+                    <span>Contact Support</span>
                   </Button>
                 </div>
               </div>
@@ -520,7 +520,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
             
             <DialogFooter>
               <div className="text-sm text-center w-full text-muted-foreground">
-                Powered by 11Labs realistic voice technology
+                Powered by advanced AI voice technology
               </div>
             </DialogFooter>
           </>
@@ -680,81 +680,79 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                   )}
                 </div>
                 
-                {/* Demo messages */}
-                <div className="flex-1 min-h-[200px] max-h-[300px] overflow-y-auto mb-6 border rounded-md p-4">
-                  {demoMessages.length === 0 ? (
-                    <div className="h-full flex items-center justify-center text-muted-foreground">
-                      <p>Your conversation will appear here</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {demoMessages.map((msg, index) => (
-                        <div 
-                          key={index} 
-                          className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                        >
-                          <div 
-                            className={`max-w-[80%] p-3 rounded-lg ${
-                              msg.sender === 'user' 
-                                ? 'bg-blue-500 text-white rounded-tr-none' 
-                                : 'bg-gray-200 dark:bg-gray-700 rounded-tl-none'
-                            }`}
-                          >
-                            {msg.content}
-                          </div>
-                        </div>
-                      ))}
-                      <div ref={messagesEndRef}></div>
-                    </div>
-                  )}
-                </div>
-                
-                {/* Demo controls */}
-                <div className="space-y-4">
+                {/* Audio visualization */}
+                <div className="flex-1 min-h-[280px] mb-6 flex flex-col items-center justify-center">
                   {!conversationalAIService.isConversationActive() ? (
-                    <Button 
-                      onClick={startCustomConversation}
-                      className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700"
-                      size="lg"
-                    >
-                      <div className="flex flex-col items-center gap-2">
-                        <Mic size={24} />
-                        <span>Start Your Demo</span>
+                    <div className="h-full w-full flex flex-col items-center justify-center">
+                      <div className="rounded-full bg-slate-100 dark:bg-slate-800 p-8 mb-6">
+                        <Mic size={48} className="text-slate-500" />
                       </div>
-                    </Button>
+                      <p className="text-muted-foreground text-center mb-8">
+                        Click "Start Voice Demo" to begin your conversation
+                      </p>
+                      <Button 
+                        onClick={startCustomConversation}
+                        className="w-3/4 py-6 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700"
+                        size="lg"
+                      >
+                        <div className="flex flex-col items-center gap-2">
+                          <Mic size={24} />
+                          <span className="text-lg">Start Voice Demo</span>
+                        </div>
+                      </Button>
+                    </div>
                   ) : (
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2">
-                        <Input 
-                          value={demoInput} 
-                          onChange={(e) => setDemoInput(e.target.value)}
-                          placeholder="Type a message..."
-                          className="flex-1"
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                              e.preventDefault();
-                              handleSendDemoMessage();
-                            }
-                          }}
-                        />
-                        <Button 
-                          onClick={handleSendDemoMessage} 
-                          className="bg-blue-600 hover:bg-blue-700"
-                          disabled={!demoInput.trim() || isPlaying}
-                        >
-                          <Send size={18} />
-                        </Button>
+                    <div className="h-full w-full flex flex-col items-center justify-between py-6">
+                      {/* Input audio visualization - visible when user is speaking */}
+                      <div className="mb-8 w-full">
+                        <p className="text-center mb-4 text-sm">Your Voice</p>
+                        <div className="flex justify-center items-end h-16 gap-1">
+                          {Array.from({ length: 12 }).map((_, i) => (
+                            <div
+                              key={`in-${i}`}
+                              className={`w-2 bg-blue-500 rounded-full transition-all duration-150 ease-in-out ${
+                                Math.random() > 0.5 ? 'h-8' : Math.random() > 0.7 ? 'h-12' : 'h-4'
+                              }`}
+                              style={{
+                                height: isPlaying ? '4px' : `${Math.random() * 64}px`, 
+                                opacity: isPlaying ? 0.3 : 0.9
+                              }}
+                            />
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex justify-center gap-2">
-                        <Button
-                          onClick={stopCustomConversation}
-                          variant="outline"
-                          className="flex items-center gap-2"
-                        >
-                          <MicOff size={16} />
-                          <span>End Conversation</span>
-                        </Button>
+                      
+                      {/* Output audio visualization - visible when AI is speaking */}
+                      <div className="mb-8 w-full">
+                        <p className="text-center mb-4 text-sm">AI Voice</p>
+                        <div className="flex justify-center items-end h-16 gap-1">
+                          {Array.from({ length: 12 }).map((_, i) => (
+                            <div
+                              key={`out-${i}`}
+                              className={`w-2 bg-purple-500 rounded-full transition-all duration-150 ease-in-out ${
+                                isPlaying ? (
+                                  Math.random() > 0.5 ? 'h-12' : Math.random() > 0.7 ? 'h-16' : 'h-8'
+                                ) : 'h-4'
+                              }`}
+                              style={{
+                                height: isPlaying ? `${Math.random() * 64}px` : '4px', 
+                                opacity: isPlaying ? 0.9 : 0.3
+                              }}
+                            />
+                          ))}
+                        </div>
                       </div>
+                      
+                      {/* End conversation button */}
+                      <Button
+                        onClick={stopCustomConversation}
+                        variant="outline"
+                        className="flex items-center gap-2 border-red-300 hover:bg-red-50 hover:text-red-600 mt-8"
+                        size="lg"
+                      >
+                        <MicOff size={16} />
+                        <span>End Voice Conversation</span>
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -763,7 +761,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
             
             <DialogFooter className="border-t pt-3">
               <div className="text-sm text-center w-full text-muted-foreground">
-                Powered by 11Labs realistic voice technology
+                Powered by advanced AI voice technology
               </div>
             </DialogFooter>
           </>
