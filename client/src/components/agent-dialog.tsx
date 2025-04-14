@@ -679,8 +679,8 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               </div>
             </div>
             
-            <DialogFooter className="border-t pt-3">
-              <div className="text-sm text-center w-full text-muted-foreground">
+            <DialogFooter className="border-t border-[#304060] pt-3">
+              <div className="text-sm text-center w-full text-blue-300 opacity-80 font-medium">
                 Powered by Foundations AI
               </div>
             </DialogFooter>
@@ -704,12 +704,13 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
             <form onSubmit={handleSubmitLead} className="py-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="firstName" className="text-blue-200">First Name <span className="text-red-400">*</span></Label>
                   <Input 
                     id="firstName" 
                     value={leadData.firstName}
                     onChange={(e) => setLeadData({...leadData, firstName: e.target.value})}
                     required
+                    className="bg-[#1a253a] border-[#304060] focus:border-blue-500 text-white placeholder:text-blue-300/50"
                   />
                 </div>
                 
@@ -785,10 +786,12 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               <div className="flex justify-center">
                 <Button 
                   type="submit"
-                  className="w-full max-w-md py-3 bg-blue-600 hover:bg-blue-700 rounded-full shadow-md transition-all duration-300"
+                  className="w-full max-w-md py-3 rounded-full shadow-lg transition-all duration-300 relative group overflow-hidden border-0 bg-gradient-to-br from-blue-600 to-indigo-800 hover:from-blue-500 hover:to-indigo-700"
                   size="lg"
                 >
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gMTAgMCBMIDAgMCAwIDEwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiIHN0cm9rZS13aWR0aD0iMC41Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-30"></div>
+                  <div className="animate-pulse absolute inset-0 bg-blue-500/10 rounded-full blur-md group-hover:bg-blue-500/20"></div>
+                  <div className="flex items-center justify-center gap-2 relative z-10">
                     <span className="text-base font-medium">Submit and Start Your Demo</span>
                   </div>
                 </Button>
@@ -977,8 +980,8 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
               </div>
             </div>
             
-            <DialogFooter className="border-t pt-3">
-              <div className="text-sm text-center w-full text-muted-foreground">
+            <DialogFooter className="border-t border-[#304060] pt-3">
+              <div className="text-sm text-center w-full text-blue-300 opacity-80 font-medium">
                 Powered by Foundations AI
               </div>
             </DialogFooter>
