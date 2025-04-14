@@ -603,35 +603,40 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       case 'gender-selection':
         return (
           <>
-            <DialogHeader>
-              <DialogTitle className="text-2xl text-center sm:text-left">
+            <DialogHeader className="border-b border-blue-900/30 pb-4">
+              <DialogTitle className="text-2xl text-center text-white font-light tracking-wide">
                 {agent?.name}
               </DialogTitle>
-              <DialogDescription className="text-center sm:text-left mt-2">
+              <DialogDescription className="text-center text-blue-200 mt-2">
                 {agent?.description}
               </DialogDescription>
             </DialogHeader>
             
-            <div className="py-6">
-              <h3 className="text-lg font-medium mb-4 text-center">
+            <div className="py-6 relative">
+              {/* Subtle star background effect */}
+              <div className="absolute inset-0 overflow-hidden opacity-10">
+                <div className="absolute inset-0 bg-[radial-gradient(white,_rgba(255,255,255,0)_2px)] bg-[length:20px_20px]"></div>
+              </div>
+              
+              <h3 className="text-lg font-light tracking-wide mb-6 text-center text-blue-100">
                 Would you like to talk with a male or female voice?
               </h3>
               
-              <div className="grid grid-cols-2 gap-4 mt-6">
+              <div className="grid grid-cols-2 gap-6 mt-6">
                 <Button 
                   onClick={() => handleSelectGender('male')}
-                  className="h-auto py-6 flex flex-col items-center gap-3 bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700"
+                  className="h-auto py-6 flex flex-col items-center gap-3 bg-blue-800/60 border border-blue-500/40 shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-all"
                 >
-                  <Volume2 size={24} />
-                  <div className="text-lg font-medium">{maleName} (Male)</div>
+                  <Volume2 size={24} className="text-blue-300" />
+                  <div className="text-lg font-light tracking-wide text-white">{maleName} (Male)</div>
                 </Button>
                 
                 <Button 
                   onClick={() => handleSelectGender('female')}
-                  className="h-auto py-6 flex flex-col items-center gap-3 bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700"
+                  className="h-auto py-6 flex flex-col items-center gap-3 bg-purple-800/60 border border-purple-500/40 shadow-[0_0_15px_rgba(147,51,234,0.3)] hover:shadow-[0_0_20px_rgba(147,51,234,0.5)] transition-all"
                 >
-                  <Volume2 size={24} />
-                  <div className="text-lg font-medium">{femaleName} (Female)</div>
+                  <Volume2 size={24} className="text-purple-300" />
+                  <div className="text-lg font-light tracking-wide text-white">{femaleName} (Female)</div>
                 </Button>
               </div>
             </div>
@@ -684,106 +689,119 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       case 'lead-capture':
         return (
           <>
-            <DialogHeader className="border-b pb-4">
+            <DialogHeader className="border-b border-blue-900/30 pb-4">
               <div className="text-center">
-                <DialogTitle className="text-2xl font-medium">
+                <DialogTitle className="text-2xl text-white font-light tracking-wide">
                   Voice Demo Request
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-blue-200">
                   Try a personalized AI voice conversation tailored to your use case
                 </DialogDescription>
               </div>
             </DialogHeader>
             
-            <form onSubmit={handleSubmitLead} className="py-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <form onSubmit={handleSubmitLead} className="py-6 relative">
+              {/* Subtle star background effect */}
+              <div className="absolute inset-0 overflow-hidden opacity-5">
+                <div className="absolute inset-0 bg-[radial-gradient(white,_rgba(255,255,255,0)_2px)] bg-[length:20px_20px]"></div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 relative z-10">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="firstName" className="text-blue-200">First Name <span className="text-blue-400">*</span></Label>
                   <Input 
                     id="firstName" 
                     value={leadData.firstName}
                     onChange={(e) => setLeadData({...leadData, firstName: e.target.value})}
                     required
+                    className="bg-blue-950/50 border-blue-800/60 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="lastName" className="text-blue-200">Last Name <span className="text-blue-400">*</span></Label>
                   <Input 
                     id="lastName" 
                     value={leadData.lastName}
                     onChange={(e) => setLeadData({...leadData, lastName: e.target.value})}
                     required
+                    className="bg-blue-950/50 border-blue-800/60 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="email" className="text-blue-200">Email <span className="text-blue-400">*</span></Label>
                   <Input 
                     id="email" 
                     type="email"
                     value={leadData.email}
                     onChange={(e) => setLeadData({...leadData, email: e.target.value})}
                     required
+                    className="bg-blue-950/50 border-blue-800/60 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number <span className="text-red-500">*</span></Label>
+                  <Label htmlFor="phone" className="text-blue-200">Phone Number <span className="text-blue-400">*</span></Label>
                   <Input 
                     id="phone" 
                     type="tel"
                     value={leadData.phone}
                     onChange={(e) => setLeadData({...leadData, phone: e.target.value})}
                     required
+                    className="bg-blue-950/50 border-blue-800/60 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="businessName">Business Name</Label>
+                  <Label htmlFor="businessName" className="text-blue-200">Business Name</Label>
                   <Input 
                     id="businessName" 
                     value={leadData.businessName}
                     onChange={(e) => setLeadData({...leadData, businessName: e.target.value})}
+                    className="bg-blue-950/50 border-blue-800/60 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="industry">Industry</Label>
+                  <Label htmlFor="industry" className="text-blue-200">Industry</Label>
                   <Input 
                     id="industry" 
                     value={leadData.industry}
                     onChange={(e) => setLeadData({...leadData, industry: e.target.value})}
+                    className="bg-blue-950/50 border-blue-800/60 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="employees">Number of Employees</Label>
+                  <Label htmlFor="employees" className="text-blue-200">Number of Employees</Label>
                   <Input 
                     id="employees" 
                     value={leadData.employees}
                     onChange={(e) => setLeadData({...leadData, employees: e.target.value})}
+                    className="bg-blue-950/50 border-blue-800/60 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="budget">AI Technology Budget</Label>
+                  <Label htmlFor="budget" className="text-blue-200">AI Technology Budget</Label>
                   <Input 
                     id="budget" 
                     value={leadData.budget}
                     onChange={(e) => setLeadData({...leadData, budget: e.target.value})}
+                    className="bg-blue-950/50 border-blue-800/60 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
               
-              <div className="flex justify-center">
+              <div className="flex justify-center relative z-10">
                 <Button 
                   type="submit"
-                  className="w-full max-w-md py-3 bg-blue-600 hover:bg-blue-700 rounded-full shadow-md transition-all duration-300"
+                  className="w-full max-w-md py-6 bg-blue-600/80 border border-blue-500/40 shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] rounded-full transition-all duration-300"
                   size="lg"
                 >
                   <div className="flex items-center justify-center gap-2">
-                    <span className="text-base font-medium">Submit and Start Your Demo</span>
+                    <span className="text-base font-light tracking-wide text-white">Submit and Start Your Demo</span>
                   </div>
                 </Button>
               </div>
@@ -794,21 +812,24 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
       case 'full-demo':
         return (
           <>
-            <DialogHeader className="border-b pb-4">
+            <DialogHeader className="border-b border-blue-900/30 pb-4">
               <div className="text-center">
-                <DialogTitle className="text-2xl font-medium">
+                <DialogTitle className="text-2xl text-white font-light tracking-wide">
                   {selectedGender === 'male' ? maleName : femaleName}
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-blue-200">
                   AI Voice Assistant
                 </DialogDescription>
               </div>
             </DialogHeader>
             
-            <div className="flex-1 py-6 px-4 flex flex-col bg-slate-50">
-              <div className="w-full">
-                {/* Removed connection status indicator for cleaner UI */}
-                
+            <div className="flex-1 py-6 px-4 flex flex-col relative">
+              {/* Subtle star background effect */}
+              <div className="absolute inset-0 overflow-hidden opacity-5">
+                <div className="absolute inset-0 bg-[radial-gradient(white,_rgba(255,255,255,0)_2px)] bg-[length:20px_20px]"></div>
+              </div>
+              
+              <div className="w-full relative z-10">
                 {/* Simplified Voice Demo Interface */}
                 <div className="flex-1 min-h-[280px] mb-6 flex flex-col items-center justify-center">
                   {!conversationalAIService.isConversationActive() ? (
@@ -816,11 +837,11 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                       {/* Single button to start demo */}
                       <div 
                         onClick={startCustomConversation}
-                        className="rounded-full bg-white shadow-md hover:shadow-lg p-10 mb-6 cursor-pointer transition-all duration-300 ease-in-out"
+                        className="rounded-full bg-blue-900/30 border border-blue-500/40 shadow-[0_0_25px_rgba(59,130,246,0.4)] hover:shadow-[0_0_35px_rgba(59,130,246,0.6)] p-16 mb-6 cursor-pointer transition-all duration-300 ease-in-out"
                       >
-                        <Mic size={48} className="text-blue-500" />
+                        <Mic size={48} className="text-blue-300" />
                       </div>
-                      <p className="text-slate-700 text-center font-medium text-lg">
+                      <p className="text-blue-100 text-center font-light tracking-wide text-lg">
                         Start Your Demo
                       </p>
                     </div>
@@ -957,7 +978,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
                           }
                         }}
                         variant="outline"
-                        className="flex items-center gap-2 border-slate-300 hover:bg-slate-100 mt-4 rounded-full"
+                        className="flex items-center gap-2 bg-red-900/30 border border-red-500/40 text-red-300 hover:bg-red-800/40 hover:text-red-200 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] mt-4 rounded-full transition-all duration-300"
                         size="lg"
                       >
                         <MicOff size={16} />
@@ -990,6 +1011,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
         }
       }}>
         <DialogContent className={`
+          bg-black border-blue-900/40 
           ${stage === 'full-demo' ? 'sm:max-w-[600px] sm:h-[600px] flex flex-col' : 'sm:max-w-[500px]'}
           ${stage === 'lead-capture' ? 'sm:max-w-[600px]' : ''}
         `}>
