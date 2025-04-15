@@ -4,22 +4,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import { storage, DatabaseStorage } from "./storage";
 
 const app = express();
-
-// Create a raw body parser middleware for Stripe webhooks
-// This needs to be before other body parsers
-const rawBodyParser = express.raw({ type: 'application/json' });
-
-// Use raw body parser only for the webhook route
-app.use('/api/webhook', rawBodyParser);
-
-// Standard JSON and URL-encoded parsers for all other routes
-app.use((req, res, next) => {
-  if (req.originalUrl === '/api/webhook') {
-    next();
-  } else {
-    express.json()(req, res, next);
-  }
-});
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
