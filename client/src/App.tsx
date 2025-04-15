@@ -41,14 +41,14 @@ function App() {
         {/* We need to provide a key to the immediate child of AnimatePresence */}
         <div key={location} className="page-wrapper">
           <Switch location={location}>
-            {location === '/login' && <AnimatedRoute path="/login" component={Login} animation="slideUp" />}
-            {location === '/get-started' && <AnimatedRoute path="/get-started" component={GetStarted} animation="slideUp" />}
-            {location === '/' && <AnimatedRoute path="/" component={ImmersiveHome} animation="fade" />}
+            <AnimatedRoute path="/" component={ImmersiveHome} animation="fade" />
             <AnimatedRoute path="/chat/:agentId" component={Chat} animation="slideHorizontal" />
             <AnimatedRoute path="/payment" component={Payment} animation="slideUp" />
             <AnimatedRoute path="/calendar" component={Calendar} animation="zoom" />
             <AnimatedRoute path="/agent-chat" component={AgentChat} animation="fade" />
-            {location !== '/login' && location !== '/get-started' && location !== '/' && <AnimatedRoute component={NotFound} animation="fade" />}
+            <AnimatedRoute path="/login" component={Login} animation="slideUp" />
+            <AnimatedRoute path="/get-started" component={GetStarted} animation="slideUp" />
+            <AnimatedRoute component={NotFound} animation="fade" />
           </Switch>
         </div>
       </AnimatePresence>

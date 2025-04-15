@@ -22,8 +22,15 @@ const navItems: NavItem[] = [
 export const Header: React.FC = () => {
   const { scrolled } = useScroll();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const isHomePage = location === "/";
+  
+  // Function to handle navigation programmatically
+  const handleDirectNavigation = (to: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log('Navigating programmatically to:', to);
+    navigate(to);
+  };
 
   // Handle navigation click for both anchor and span elements
   const handleNavClick = (e: React.MouseEvent<HTMLElement>, item: NavItem) => {

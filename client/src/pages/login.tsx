@@ -31,8 +31,16 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 const Login = () => {
   const { toast } = useToast();
-  const [location, setLocation] = useLocation();
+  const [location, navigate] = useLocation();
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Ensure that we're not accidentally mounting this component on a different route
+  useEffect(() => {
+    if (location !== '/login') {
+      console.log('Login component mounted but location is:', location);
+      navigate('/login', { replace: true });
+    }
+  }, [location, navigate]);
 
   // Set background to black for consistency with home page
   useEffect(() => {
@@ -71,7 +79,7 @@ const Login = () => {
       });
       
       // Navigate to home page after successful login
-      setLocation('/');
+      navigate('/');
     } catch (error) {
       console.error('Login error:', error);
       

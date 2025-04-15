@@ -36,8 +36,16 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 
 const GetStarted = () => {
   const { toast } = useToast();
-  const [location, setLocation] = useLocation();
+  const [location, navigate] = useLocation();
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Ensure that we're not accidentally mounting this component on a different route
+  useEffect(() => {
+    if (location !== '/get-started') {
+      console.log('GetStarted component mounted but location is:', location);
+      navigate('/get-started', { replace: true });
+    }
+  }, [location, navigate]);
 
   // Set background to black for consistency with home page
   useEffect(() => {
@@ -78,7 +86,7 @@ const GetStarted = () => {
       });
       
       // Navigate to home page after successful signup
-      setLocation('/');
+      navigate('/');
     } catch (error) {
       console.error('Signup error:', error);
       
