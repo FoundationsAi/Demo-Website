@@ -216,41 +216,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Set price based on billing period
       amount = billingPeriod === 'yearly' ? planDetails.yearlyPrice : planDetails.monthlyPrice;
       
-      // Map plan IDs to actual Stripe price IDs based on billing period
-      // These IDs should be updated with the actual Stripe price IDs from your Stripe dashboard
-      const priceMappings = {
-        // Starter plan price IDs
-        "prod_S8QWDRCVcz07An": {
-          monthly: "price_1PAghrNXoAKacTL88JkY1g3L", // Stripe price ID for monthly billing
-          yearly: "price_1PAghxNXoAKacTL8Ps8Dxa9J"   // Stripe price ID for yearly billing
-        },
-        // Essential plan price IDs
-        "prod_S8QXUopH7dXHrJ": {
-          monthly: "price_1PAgi8NXoAKacTL8fmxCf42p", // Stripe price ID for monthly billing
-          yearly: "price_1PAgiENXoAKacTL8xekzcRY0"   // Stripe price ID for yearly billing
-        },
-        // Basic plan price IDs
-        "prod_S8QYxTHNgV2Dmr": {
-          monthly: "price_1PAgiMNXoAKacTL84O2KSN98", // Stripe price ID for monthly billing
-          yearly: "price_1PAgiRNXoAKacTL8yqbwkI9G"   // Stripe price ID for yearly billing
-        },
-        // Pro plan price IDs
-        "prod_S8QZE7hzuMcjru": {
-          monthly: "price_1PAgiYNXoAKacTL8MbMoFU55", // Stripe price ID for monthly billing
-          yearly: "price_1PAgieNXoAKacTL8eRlHnBFs"   // Stripe price ID for yearly billing
-        }
-      };
+      // We'll dynamically check for existing prices or create new ones
       
-      // Get price ID from mapping
-      const priceMapping = priceMappings[planId as keyof typeof priceMappings];
-      if (!priceMapping) {
-        return res.status(400).json({ error: "Invalid plan ID or missing price mapping" });
+      // First, check if there's already a matching price for this product
+      console.log(`Looking for ${billingPeriod} price for product ${planId} with amount ${amount}`);
+      
+      const prices = await stripe.prices.list({
+        product: planId,
+        active: true,
+      });
+      
+      let priceId;
+      
+      // Find price matching our criteria
+      if (prices.data.length > 0) {
+        const matchingPrice = prices.data.find(price => 
+          price.unit_amount === amount && 
+          price.recurring?.interval === (billingPeriod === 'yearly' ? 'year' : 'month')
+        );
+        
+        if (matchingPrice) {
+          console.log(`Found existing price ID: ${matchingPrice.id}`);
+          priceId = matchingPrice.id;
+        }
       }
       
-      const priceId = billingPeriod === 'yearly' ? priceMapping.yearly : priceMapping.monthly;
+      // If no matching price found, create a new one
+      if (!priceId) {
+        console.log(`Creating new price for product ${planId} with amount ${amount}`);
+        try {
+          const newPrice = await stripe.prices.create({
+            product: planId,
+            unit_amount: amount,
+            currency: 'usd',
+            recurring: {
+              interval: billingPeriod === 'yearly' ? 'year' : 'month',
+            },
+          });
+          console.log(`Created new price ID: ${newPrice.id}`);
+          priceId = newPrice.id;
+        } catch (error) {
+          console.error("Error creating price:", error);
+          return res.status(500).json({ error: `Failed to create price for ${planDetails.name}: ${error.message}` });
+        }
+      }
       
       if (!priceId) {
-        return res.status(400).json({ error: `No price ID found for ${planDetails.name} plan with ${billingPeriod} billing` });
+        return res.status(500).json({ error: `Could not find or create price for ${planDetails.name}` });
       }
       
       // Create subscription through Stripe using price ID
