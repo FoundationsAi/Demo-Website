@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useScroll } from 'framer-motion';
-import { Link } from 'wouter';
 import { SmoothScroll } from '@/components/smooth-scroll';
 import { SectionWrapper } from '@/components/section-wrapper';
 import { SpaceIntroSection } from '@/components/sections/space-intro-section';
@@ -58,20 +57,6 @@ export const ImmersiveHome: React.FC = () => {
           className="fixed z-50 top-0 left-0 h-1 bg-blue-500"
           style={{ scaleX: scrollYProgress, transformOrigin: "0%" }}
         />
-        
-        {/* Navigation/Auth buttons */}
-        <div className="fixed z-50 top-4 right-6 flex gap-4">
-          <Link href="/auth/login">
-            <div className="px-6 py-2 text-white bg-blue-600/80 hover:bg-blue-700/90 backdrop-blur-sm rounded-full transition-all duration-300 shadow-lg hover:shadow-blue-500/30 text-sm font-medium cursor-pointer">
-              Login
-            </div>
-          </Link>
-          <Link href="/auth/signup">
-            <div className="px-6 py-2 text-white bg-indigo-600/80 hover:bg-indigo-700/90 backdrop-blur-sm rounded-full transition-all duration-300 shadow-lg hover:shadow-indigo-500/30 text-sm font-medium cursor-pointer">
-              Sign Up
-            </div>
-          </Link>
-        </div>
         
         {/* Fixed text overlay that appears during mountain section */}
         <MountainTextOverlaySection />

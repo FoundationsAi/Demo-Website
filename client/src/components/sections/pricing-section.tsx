@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'wouter';
 import { ScrollReveal } from '@/components/scroll-reveal';
 import { AnimatedText } from '@/components/animated-text';
 import { HoverableCard } from '@/components/hoverable-card';
@@ -212,17 +211,15 @@ export const PricingSection: React.FC = () => {
                         
                         {/* Button */}
                         <div className="px-6 pb-6">
-                          <Link href="/auth/signup">
-                            <div
-                              className={`w-full py-3 rounded-lg font-medium text-lg cursor-pointer text-center ${
-                                tier.isPopular
-                                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                                  : 'bg-transparent hover:bg-blue-900/50 text-white border border-blue-500'
-                              }`}
-                            >
-                              {tier.buttonText}
-                            </div>
-                          </Link>
+                          <button
+                            className={`w-full py-3 rounded-lg font-medium text-lg ${
+                              tier.isPopular
+                                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                                : 'bg-transparent hover:bg-blue-900/50 text-white border border-blue-500'
+                            }`}
+                          >
+                            {tier.buttonText}
+                          </button>
                         </div>
                       </div>
                     </motion.div>
@@ -293,17 +290,15 @@ export const PricingSection: React.FC = () => {
                     
                     {/* Button */}
                     <div className="px-6 pb-6">
-                      <Link href="/auth/signup">
-                        <div
-                          className={`w-full py-3 rounded-lg font-medium text-lg cursor-pointer text-center ${
-                            tier.isPopular
-                              ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                              : 'bg-transparent hover:bg-blue-900/50 text-white border border-blue-500'
-                          }`}
-                        >
-                          {tier.buttonText}
-                        </div>
-                      </Link>
+                      <button 
+                        className={`w-full py-3 rounded-lg font-medium text-lg ${
+                          tier.isPopular
+                            ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                            : 'bg-transparent hover:bg-blue-900/50 text-white border border-blue-500'
+                        }`}
+                      >
+                        {tier.buttonText}
+                      </button>
                     </div>
                   </div>
                 </motion.div>
@@ -324,11 +319,9 @@ export const PricingSection: React.FC = () => {
                 </p>
               </div>
               <div className="md:w-1/3 flex justify-center">
-                <Link href="/auth/signup">
-                  <div className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition text-center cursor-pointer">
-                    Schedule a Demo
-                  </div>
-                </Link>
+                <button className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+                  Schedule a Demo
+                </button>
               </div>
             </div>
           </div>
@@ -386,11 +379,9 @@ export const PricingSection: React.FC = () => {
             <p className="text-base md:text-xl text-blue-300 mb-8 md:mb-10 max-w-3xl mx-auto">
               Join thousands of businesses already using Foundations AI to enhance their customer interactions.
             </p>
-            <Link href="/auth/signup">
-              <div className="inline-block px-6 py-3 md:px-8 md:py-4 bg-blue-600 hover:bg-blue-700 text-white text-base md:text-lg font-medium rounded-full transition transform hover:scale-105 shadow-lg shadow-blue-600/30 cursor-pointer">
-                Join Foundations AI
-              </div>
-            </Link>
+            <button className="px-6 py-3 md:px-8 md:py-4 bg-blue-600 hover:bg-blue-700 text-white text-base md:text-lg font-medium rounded-full transition transform hover:scale-105 shadow-lg shadow-blue-600/30">
+              Join Foundations AI
+            </button>
           </ScrollReveal>
         </div>
       </div>
