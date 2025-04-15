@@ -15,6 +15,56 @@ import { ArrowLeft, CheckCircle, CreditCard } from "lucide-react";
 const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY || "pk_test_placeholder";
 const stripePromise = loadStripe(stripeKey);
 
+// Helper function to get features based on plan name
+const getFeaturesForPlan = (planName: string): string[] => {
+  const plans: Record<string, string[]> = {
+    starter: [
+      "50 minutes of AI usage per month",
+      "Unlimited AI agents",
+      "5 concurrent calls",
+      "Voice API, LLM, transcriber costs",
+      "API integrations",
+      "Real-time booking",
+      "Human transfer",
+      "Community support"
+    ],
+    essential: [
+      "500 minutes of AI usage per month",
+      "Unlimited AI agents",
+      "10 concurrent calls",
+      "All Starter features",
+      "Email and chat support"
+    ],
+    basic: [
+      "1,250 minutes of AI usage per month",
+      "Unlimited AI agents",
+      "25 concurrent calls",
+      "All Essential features",
+      "Team access",
+      "Support via ticketing"
+    ],
+    pro: [
+      "2,100 minutes of AI usage per month",
+      "Unlimited AI agents",
+      "50 concurrent calls",
+      "All Basic features",
+      "Priority support",
+      "Custom voice training"
+    ],
+    enterprise: [
+      "Custom minutes of AI usage",
+      "Unlimited AI agents",
+      "Custom concurrent calls",
+      "All Pro features",
+      "White-label platform",
+      "Unlimited subaccounts"
+    ]
+  };
+  
+  // Return features for the given plan, or starter features as fallback
+  return plans[planName.toLowerCase()] || plans.starter;
+};
+
 const CheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -91,20 +141,51 @@ const PaymentSuccess = () => {
 export const Payment: React.FC = () => {
   const [clientSecret, setClientSecret] = useState("");
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [paymentLoading, setPaymentLoading] = useState(true);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [planDetails, setPlanDetails] = useState({
+    plan: "starter",
+    amount: 4999,
+    cycle: "monthly",
+  });
   const [, setLocation] = useLocation();
   
   useEffect(() => {
-    // Create PaymentIntent as soon as the page loads
+    // Parse query parameters from URL
+    const searchParams = new URLSearchParams(window.location.search);
+    const plan = searchParams.get("plan") || "starter";
+    const amount = parseInt(searchParams.get("amount") || "4999", 10);
+    const cycle = searchParams.get("cycle") || "monthly";
+    
+    setPlanDetails({
+      plan,
+      amount,
+      cycle
+    });
+    
+    // Create PaymentIntent with the parameters from URL
+    setPaymentLoading(true);
+    setPaymentError(null);
+    
     apiRequest("POST", "/api/create-payment-intent", { 
-      plan: "premium",
-      amount: 4999 // $49.99
+      plan,
+      amount,
+      cycle,
+      email: searchParams.get("email") || undefined
     })
       .then((res) => res.json())
       .then((data) => {
-        setClientSecret(data.clientSecret);
+        if (data.error) {
+          setPaymentError(data.error);
+        } else {
+          setClientSecret(data.clientSecret);
+        }
+        setPaymentLoading(false);
       })
       .catch(err => {
         console.error("Error creating payment intent:", err);
+        setPaymentError("Unable to initialize payment. Please try again.");
+        setPaymentLoading(false);
       });
   }, []);
 
@@ -128,9 +209,9 @@ export const Payment: React.FC = () => {
               <CardHeader>
                 <div className="flex items-center gap-2 mb-2">
                   <CreditCard className="h-5 w-5 text-secondary" />
-                  <CardTitle>Subscribe to Premium</CardTitle>
+                  <CardTitle>Subscribe to {planDetails.plan.charAt(0).toUpperCase() + planDetails.plan.slice(1)}</CardTitle>
                 </div>
-                <CardDescription>Choose our premium plan for full access to all features</CardDescription>
+                <CardDescription>Complete your subscription to access all features</CardDescription>
               </CardHeader>
               
               <CardContent>
@@ -154,23 +235,24 @@ export const Payment: React.FC = () => {
             
             <Card>
               <CardHeader>
-                <CardTitle>Premium Plan</CardTitle>
-                <CardDescription>Get access to all our enterprise features</CardDescription>
+                <CardTitle>{planDetails.plan.charAt(0).toUpperCase() + planDetails.plan.slice(1)} Plan</CardTitle>
+                <CardDescription>Get access to our AI voice features</CardDescription>
               </CardHeader>
               
               <CardContent className="space-y-4">
-                <div className="text-3xl font-bold">$49.99<span className="text-sm font-normal text-white/60">/month</span></div>
+                <div className="text-3xl font-bold">
+                  ${(planDetails.amount / 100).toFixed(2)}
+                  <span className="text-sm font-normal text-white/60">/{planDetails.cycle}</span>
+                </div>
+                
+                {paymentError && (
+                  <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-md text-sm text-white">
+                    {paymentError}
+                  </div>
+                )}
                 
                 <ul className="space-y-2">
-                  {[
-                    "Unlimited AI voice calls",
-                    "Full access to all agent types",
-                    "Custom voice training",
-                    "Advanced analytics",
-                    "Priority support",
-                    "API access",
-                    "White-label solution"
-                  ].map((feature, index) => (
+                  {getFeaturesForPlan(planDetails.plan).map((feature: string, index: number) => (
                     <li key={index} className="flex items-center gap-2">
                       <CheckCircle className="h-5 w-5 text-accent flex-shrink-0" />
                       <span>{feature}</span>

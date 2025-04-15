@@ -101,11 +101,40 @@ const pricingTiers: PricingTier[] = [
 ];
 
 /**
- * PricingSection - Displays pricing tiers with interactive elements
+ * PricingSection - Displays pricing tiers with interactive elements and Stripe integration
  */
 export const PricingSection: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [isProcessing, setIsProcessing] = useState<string | null>(null);
+  const [, setLocation] = useLocation();
   
+  // Handle plan selection and redirect to Stripe checkout
+  const handlePlanSelect = async (tier: PricingTier) => {
+    // Skip payment flow for enterprise (contact sales)
+    if (tier.name === "Enterprise") {
+      // Route to contact form instead
+      setLocation("/contact");
+      return;
+    }
+    
+    setIsProcessing(tier.name);
+    
+    try {
+      // Calculate the proper amount based on the plan and billing cycle
+      let amount = parseInt(tier.price.replace(/[^0-9]/g, ""));
+      
+      // For yearly billing, apply discount and multiply by 12
+      if (billingCycle === 'yearly') {
+        amount = Math.round(amount * 0.9 * 12);
+      }
+      
+      // Redirect to the payment page with the plan details
+      setLocation(`/payment?plan=${tier.name.toLowerCase()}&amount=${amount}&cycle=${billingCycle}`);
+    } catch (error) {
+      console.error("Error initiating payment:", error);
+      setIsProcessing(null);
+    }
+  };
   return (
     <section id="pricing" className="relative min-h-screen py-32 pb-48 pt-48 bg-gradient-to-b from-[#0a1528] to-[#061022] text-white overflow-hidden">
       {/* Background decoration */}
@@ -214,13 +243,25 @@ export const PricingSection: React.FC = () => {
                         {/* Button */}
                         <div className="px-6 pb-6">
                           <button
+                            onClick={() => handlePlanSelect(tier)}
+                            disabled={isProcessing === tier.name}
                             className={`w-full py-3 rounded-lg font-medium text-lg ${
                               tier.isPopular
                                 ? 'bg-blue-600 hover:bg-blue-700 text-white'
                                 : 'bg-transparent hover:bg-blue-900/50 text-white border border-blue-500'
                             }`}
                           >
-                            {tier.buttonText}
+                            {isProcessing === tier.name ? (
+                              <span className="flex items-center justify-center">
+                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Processing...
+                              </span>
+                            ) : (
+                              tier.buttonText
+                            )}
                           </button>
                         </div>
                       </div>
@@ -292,14 +333,26 @@ export const PricingSection: React.FC = () => {
                     
                     {/* Button */}
                     <div className="px-6 pb-6">
-                      <button 
+                      <button
+                        onClick={() => handlePlanSelect(tier)}
+                        disabled={isProcessing === tier.name}
                         className={`w-full py-3 rounded-lg font-medium text-lg ${
                           tier.isPopular
                             ? 'bg-blue-600 hover:bg-blue-700 text-white'
                             : 'bg-transparent hover:bg-blue-900/50 text-white border border-blue-500'
                         }`}
                       >
-                        {tier.buttonText}
+                        {isProcessing === tier.name ? (
+                          <span className="flex items-center justify-center">
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Processing...
+                          </span>
+                        ) : (
+                          tier.buttonText
+                        )}
                       </button>
                     </div>
                   </div>
@@ -321,7 +374,10 @@ export const PricingSection: React.FC = () => {
                 </p>
               </div>
               <div className="md:w-1/3 flex justify-center">
-                <button className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+                <button 
+                  onClick={() => setLocation("/contact")}
+                  className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
+                >
                   Schedule a Demo
                 </button>
               </div>
@@ -381,8 +437,11 @@ export const PricingSection: React.FC = () => {
             <p className="text-base md:text-xl text-blue-300 mb-8 md:mb-10 max-w-3xl mx-auto">
               Join thousands of businesses already using Foundations AI to enhance their customer interactions.
             </p>
-            <button className="px-6 py-3 md:px-8 md:py-4 bg-blue-600 hover:bg-blue-700 text-white text-base md:text-lg font-medium rounded-full transition transform hover:scale-105 shadow-lg shadow-blue-600/30">
-              Join Foundations AI
+            <button 
+              onClick={() => handlePlanSelect(pricingTiers[1])}
+              className="px-6 py-3 md:px-8 md:py-4 bg-blue-600 hover:bg-blue-700 text-white text-base md:text-lg font-medium rounded-full transition transform hover:scale-105 shadow-lg shadow-blue-600/30"
+            >
+              {isProcessing === pricingTiers[1].name ? 'Processing...' : 'Join Foundations AI'}
             </button>
           </ScrollReveal>
         </div>
