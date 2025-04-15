@@ -158,9 +158,9 @@ export const PricingSection: React.FC = () => {
         <div className="flex flex-col items-center justify-center w-full">
           {/* Mobile view scrollable container for small screens */}
           <div className="w-full overflow-x-auto pb-6 hide-scrollbar md:hidden">
-            <div className="inline-flex space-x-4 px-4" style={{ minWidth: "min-content" }}>
+            <div className="inline-flex space-x-4 px-4 pb-2" style={{ minWidth: "min-content" }}>
               {pricingTiers.map((tier, index) => (
-                <div key={tier.name} className="w-[280px] flex-shrink-0">
+                <div key={tier.name} className="w-[260px] xs:w-[280px] sm:w-[320px] flex-shrink-0">
                   <ScrollReveal delay={index * 0.1}>
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
@@ -170,7 +170,7 @@ export const PricingSection: React.FC = () => {
                       className="h-full"
                     >
                       <HoverableCard
-                        className={`h-full backdrop-blur-sm rounded-xl overflow-hidden border-2 p-6 relative ${
+                        className={`h-full flex flex-col backdrop-blur-sm rounded-xl overflow-hidden border-2 p-4 xs:p-6 relative ${
                           tier.isPopular 
                             ? 'bg-blue-900/30 border-blue-500/50' 
                             : 'bg-gray-900/40 border-gray-700/50'
@@ -214,8 +214,8 @@ export const PricingSection: React.FC = () => {
                           </div>
                         </div>
                         
-                        <div className="mb-6">
-                          <ul className="space-y-2 text-sm">
+                        <div className="mb-6 flex-grow">
+                          <ul className="space-y-2 text-xs xs:text-sm">
                             {tier.features.map((feature, i) => (
                               <motion.li 
                                 key={i}
@@ -224,10 +224,10 @@ export const PricingSection: React.FC = () => {
                                 transition={{ delay: 0.2 + (i * 0.05) }}
                                 className="flex items-start"
                               >
-                                <svg className="w-4 h-4 text-blue-400 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-3 h-3 xs:w-4 xs:h-4 text-blue-400 mr-1 xs:mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
-                                <span className="text-blue-100">{feature}</span>
+                                <span className="text-blue-100 leading-tight">{feature}</span>
                               </motion.li>
                             ))}
                           </ul>
@@ -253,7 +253,7 @@ export const PricingSection: React.FC = () => {
           </div>
           
           {/* Tablet and desktop grid view */}
-          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6 max-w-7xl mx-auto">
+          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-6 w-full max-w-[1600px] mx-auto">
             <AnimatePresence>
               {pricingTiers.map((tier, index) => (
                 <ScrollReveal key={tier.name} delay={index * 0.1}>
@@ -264,7 +264,7 @@ export const PricingSection: React.FC = () => {
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
                     <HoverableCard
-                      className={`h-full backdrop-blur-sm rounded-xl overflow-hidden border-2 p-6 lg:p-8 relative ${
+                      className={`h-full flex flex-col backdrop-blur-sm rounded-xl overflow-hidden border-2 p-6 lg:p-8 relative ${
                         tier.isPopular 
                           ? 'bg-blue-900/30 border-blue-500/50' 
                           : 'bg-gray-900/40 border-gray-700/50'
@@ -309,7 +309,7 @@ export const PricingSection: React.FC = () => {
                         )}
                       </div>
                       
-                      <div className="mb-8">
+                      <div className="mb-8 flex-grow">
                         <ul className="space-y-3">
                           {tier.features.map((feature, i) => (
                             <motion.li 
@@ -322,7 +322,7 @@ export const PricingSection: React.FC = () => {
                               <svg className="w-5 h-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                               </svg>
-                              <span className="text-blue-100">{feature}</span>
+                              <span className="text-blue-100 leading-tight">{feature}</span>
                             </motion.li>
                           ))}
                         </ul>
@@ -348,19 +348,21 @@ export const PricingSection: React.FC = () => {
         </div>
         
         {/* Enterprise section */}
-        <div className="mt-20 max-w-4xl mx-auto bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-xl p-8 backdrop-blur-sm border border-blue-500/20">
-          <div className="md:flex items-center">
-            <div className="md:w-2/3 mb-6 md:mb-0 md:pr-8">
-              <h3 className="text-2xl font-bold mb-4">Need a custom solution?</h3>
-              <p className="text-blue-200">
-                Our team is ready to build a tailored voice AI integration for your specific business needs.
-                Contact us for a personalized demo and custom pricing based on your requirements.
-              </p>
-            </div>
-            <div className="md:w-1/3 flex justify-center">
-              <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
-                Schedule a Demo
-              </button>
+        <div className="mt-16 md:mt-20 mx-auto px-4 w-full max-w-4xl">
+          <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-xl p-5 sm:p-8 backdrop-blur-sm border border-blue-500/20">
+            <div className="md:flex items-center">
+              <div className="md:w-2/3 mb-6 md:mb-0 md:pr-8">
+                <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-4">Need a custom solution?</h3>
+                <p className="text-sm sm:text-base text-blue-200">
+                  Our team is ready to build a tailored voice AI integration for your specific business needs.
+                  Contact us for a personalized demo and custom pricing based on your requirements.
+                </p>
+              </div>
+              <div className="md:w-1/3 flex justify-center">
+                <button className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+                  Schedule a Demo
+                </button>
+              </div>
             </div>
           </div>
         </div>
