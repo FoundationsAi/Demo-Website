@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useScroll } from "@/hooks/use-scroll";
 import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
+import logoImage from "../../assets/foundations-ai-logo.png";
 
 export const Header: React.FC = () => {
   const { scrolled } = useScroll();
@@ -22,9 +23,9 @@ export const Header: React.FC = () => {
           <Link href="/">
             <div className="flex items-center cursor-pointer">
               <img 
-                src="/images/mountain-logo.png" 
+                src={logoImage} 
                 alt="Foundations AI Logo" 
-                className="w-12 h-10 object-contain" 
+                className="w-14 h-12 object-contain" 
               />
               <div className="ml-2 flex flex-col">
                 <span className="text-xl font-bold text-[#6366F1]">
