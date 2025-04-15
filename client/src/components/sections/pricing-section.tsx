@@ -32,7 +32,7 @@ const pricingTiers: PricingTier[] = [
       "Human transfer",
       "Community support"
     ],
-    buttonText: "Start Testing Now",
+    buttonText: "Join Foundations AI",
     overageFee: "$0.35/minute",
     icon: "🚀"
   },
@@ -46,10 +46,8 @@ const pricingTiers: PricingTier[] = [
       "10 concurrent calls",
       "All Starter features"
     ],
-    buttonText: "Try Essential Free",
+    buttonText: "Join Foundations AI",
     overageFee: "$0.30/minute",
-    hasTrial: true,
-    trialDays: 7,
     isPopular: true,
     icon: "⭐"
   },
@@ -65,10 +63,8 @@ const pricingTiers: PricingTier[] = [
       "Team access",
       "Support via ticketing"
     ],
-    buttonText: "Try Basic Free",
+    buttonText: "Join Foundations AI",
     overageFee: "$0.25/minute",
-    hasTrial: true,
-    trialDays: 7,
     isPopular: true,
     icon: "📈"
   },
@@ -82,7 +78,7 @@ const pricingTiers: PricingTier[] = [
       "50 concurrent calls",
       "All Basic features"
     ],
-    buttonText: "Get Pro Now",
+    buttonText: "Join Foundations AI",
     overageFee: "$0.20/minute",
     icon: "💎"
   },
@@ -126,7 +122,7 @@ export const PricingSection: React.FC = () => {
               FIND THE PERFECT PLAN FOR YOUR BUSINESS
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-blue-300 max-w-3xl mx-auto leading-relaxed px-4 mb-6 sm:mb-8 md:mb-10">
-              Automate tasks with our specialized AI agents—unlimited agents, flexible plans, and no limits on your potential. From customer service to creative consulting, our AI handles it all. Try risk-free with our 7-day trial on Essential and Basic, or contact us for custom Enterprise solutions.
+              Automate tasks with our specialized AI agents—unlimited agents, flexible plans, and no limits on your potential. From customer service to creative consulting, our AI handles it all. Subscribe today to get started, or contact us for custom Enterprise solutions.
             </p>
           </ScrollReveal>
           
@@ -351,9 +347,9 @@ export const PricingSection: React.FC = () => {
           <div className="max-w-3xl mx-auto grid gap-4 md:gap-6">
             <ScrollReveal>
               <div className="bg-blue-900/20 rounded-lg p-4 md:p-6 backdrop-blur-sm border border-blue-800/30 text-left">
-                <h4 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">Can I try before I buy?</h4>
+                <h4 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">How do I get started?</h4>
                 <p className="text-sm md:text-base text-blue-200">
-                  Yes, we offer a 7-day free trial with the Essential and Basic plans. No credit card required to get started.
+                  Simply select your preferred plan and click "Join Foundations AI". Our team will guide you through the setup process to ensure you're up and running quickly.
                 </p>
               </div>
             </ScrollReveal>
@@ -398,7 +394,7 @@ export const PricingSection: React.FC = () => {
               Join thousands of businesses already using Foundations AI to enhance their customer interactions.
             </p>
             <button className="px-6 py-3 md:px-8 md:py-4 bg-blue-600 hover:bg-blue-700 text-white text-base md:text-lg font-medium rounded-full transition transform hover:scale-105 shadow-lg shadow-blue-600/30">
-              Get Started Now
+              Join Foundations AI
             </button>
           </ScrollReveal>
         </div>
