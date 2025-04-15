@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +14,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { Loader2 } from "lucide-react";
@@ -23,16 +31,20 @@ const signupSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
-}).required();
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
 
 type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
   // Get plan ID from URL query parameter
   const urlParams = new URLSearchParams(window.location.search);
@@ -44,6 +56,7 @@ export default function SignupPage() {
       username: "",
       email: "",
       password: "",
+      confirmPassword: "",
       firstName: "",
       lastName: "",
     },
@@ -64,12 +77,12 @@ export default function SignupPage() {
       const result = await response.json();
       
       if (!response.ok) {
-        throw new Error(result.error || "Failed to sign up");
+        throw new Error(result.error || "Failed to create account");
       }
       
       toast({
-        title: "Account created successfully!",
-        description: "You have been signed up and logged in.",
+        title: "Account created!",
+        description: "You have been registered successfully.",
       });
       
       // If there's a plan ID, redirect to subscription page
@@ -81,7 +94,7 @@ export default function SignupPage() {
       }
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: "Registration failed",
         description: error.message,
         variant: "destructive",
       });
@@ -98,104 +111,128 @@ export default function SignupPage() {
             <CardHeader>
               <CardTitle className="text-2xl">Create an Account</CardTitle>
               <CardDescription>
-                Sign up to get started with your virtual AI agent journey
+                Sign up to access AI voice agents
               </CardDescription>
             </CardHeader>
             
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input
-                      id="firstName"
-                      placeholder="John"
-                      {...form.register("firstName")}
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="firstName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>First Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="John" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                    {form.formState.errors.firstName && (
-                      <p className="text-sm text-red-500">{form.formState.errors.firstName.message}</p>
-                    )}
+                    
+                    <FormField
+                      control={form.control}
+                      name="lastName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Last Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Doe" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input
-                      id="lastName"
-                      placeholder="Doe"
-                      {...form.register("lastName")}
-                    />
-                    {form.formState.errors.lastName && (
-                      <p className="text-sm text-red-500">{form.formState.errors.lastName.message}</p>
+                  <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Username</FormLabel>
+                        <FormControl>
+                          <Input placeholder="johndoe" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="john.doe@example.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input type="password" placeholder="••••••••" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Confirm Password</FormLabel>
+                        <FormControl>
+                          <Input type="password" placeholder="••••••••" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+                
+                <CardFooter className="flex flex-col space-y-2">
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating account...
+                      </>
+                    ) : (
+                      "Sign Up"
+                    )}
+                  </Button>
+                  
+                  <div className="text-center text-sm mt-4">
+                    Already have an account?{" "}
+                    <a
+                      href="/login"
+                      className="text-blue-600 hover:underline"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setLocation("/login" + (planId ? `?plan=${planId}` : ""));
+                      }}
+                    >
+                      Sign in
+                    </a>
                   </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    placeholder="johndoe"
-                    {...form.register("username")}
-                  />
-                  {form.formState.errors.username && (
-                    <p className="text-sm text-red-500">{form.formState.errors.username.message}</p>
-                  )}
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="john.doe@example.com"
-                    {...form.register("email")}
-                  />
-                  {form.formState.errors.email && (
-                    <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
-                  )}
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    {...form.register("password")}
-                  />
-                  {form.formState.errors.password && (
-                    <p className="text-sm text-red-500">{form.formState.errors.password.message}</p>
-                  )}
-                </div>
-              </CardContent>
-              
-              <CardFooter className="flex flex-col space-y-2">
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating account...
-                    </>
-                  ) : (
-                    "Sign Up"
-                  )}
-                </Button>
-                
-                <div className="text-center text-sm mt-4">
-                  Already have an account?{" "}
-                  <a
-                    href="/login"
-                    className="text-blue-600 hover:underline"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setLocation("/login" + (planId ? `?plan=${planId}` : ""));
-                    }}
-                  >
-                    Sign in
-                  </a>
-                </div>
-              </CardFooter>
-            </form>
+                </CardFooter>
+              </form>
+            </Form>
           </Card>
         </ScrollReveal>
       </div>

@@ -23,10 +23,10 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Loader2, ArrowLeft, CheckCircle } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import CheckoutForm from "@/components/checkout-form";
+import CheckoutForm from "../components/checkout-form";
 
-// Initialize Stripe
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "pk_test_placeholder");
+// Initialize Stripe with public key from environment variables
+const stripePromise = loadStripe(import.meta.env.STRIPE_PUBLIC_KEY);
 
 interface PlanData {
   id: string;
