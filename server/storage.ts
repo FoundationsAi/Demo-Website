@@ -4,7 +4,11 @@ import {
   Message, InsertMessage, messages,
   Appointment, InsertAppointment, appointments,
   DemoRequest, InsertDemoRequest, demoRequests,
-  Payment, InsertPayment, payments
+  Payment, InsertPayment, payments,
+  Subscription, InsertSubscription, subscriptions,
+  Document, InsertDocument, documents,
+  CustomAgent, InsertCustomAgent, customAgents,
+  Lead, InsertLead, leads
 } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
@@ -15,7 +19,9 @@ export interface IStorage {
   // User methods
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, userData: Partial<InsertUser>): Promise<User>;
 
   // Agent methods
   getAgent(id: number): Promise<Agent | undefined>;
@@ -30,6 +36,7 @@ export interface IStorage {
   // Appointment methods
   createAppointment(appointment: InsertAppointment): Promise<Appointment>;
   getAppointmentsByEmail(email: string): Promise<Appointment[]>;
+  getAppointmentsByUserId(userId: number): Promise<Appointment[]>;
 
   // Demo request methods
   createDemoRequest(demoRequest: InsertDemoRequest): Promise<DemoRequest>;
@@ -38,6 +45,32 @@ export interface IStorage {
   createPayment(payment: InsertPayment): Promise<Payment>;
   getPaymentByPaymentIntentId(paymentIntentId: string): Promise<Payment | undefined>;
   updatePaymentStatus(id: number, status: string): Promise<Payment>;
+  
+  // Subscription methods
+  createSubscription(subscription: InsertSubscription): Promise<Subscription>;
+  getSubscriptionByStripeId(stripeSubscriptionId: string): Promise<Subscription | undefined>;
+  getSubscriptionsByUserId(userId: number): Promise<Subscription[]>;
+  updateSubscription(id: number, subscriptionData: Partial<InsertSubscription>): Promise<Subscription>;
+  
+  // Document methods
+  createDocument(document: InsertDocument): Promise<Document>;
+  getDocumentsByUserId(userId: number): Promise<Document[]>;
+  getDocument(id: number): Promise<Document | undefined>;
+  deleteDocument(id: number): Promise<void>;
+  
+  // Custom Agent methods
+  createCustomAgent(customAgent: InsertCustomAgent): Promise<CustomAgent>;
+  getCustomAgentsByUserId(userId: number): Promise<CustomAgent[]>;
+  getCustomAgent(id: number): Promise<CustomAgent | undefined>;
+  updateCustomAgent(id: number, agentData: Partial<InsertCustomAgent>): Promise<CustomAgent>;
+  deleteCustomAgent(id: number): Promise<void>;
+  
+  // Lead methods
+  createLead(lead: InsertLead): Promise<Lead>;
+  getLeadsByUserId(userId: number): Promise<Lead[]>;
+  getLead(id: number): Promise<Lead | undefined>;
+  updateLead(id: number, leadData: Partial<InsertLead>): Promise<Lead>;
+  deleteLead(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
