@@ -1,9 +1,15 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import Stripe from "stripe";
 import { insertDemoRequestSchema, insertAppointmentSchema } from "@shared/schema";
 import { randomUUID } from "crypto";
+import passport from 'passport';
+import session from 'express-session';
+import bodyParser from 'body-parser';
+import { initializePassport, authController, authenticateJwt, authorize } from './controllers/auth.controller';
+import { stripeController } from './controllers/stripe.controller';
+import { dashboardController } from './controllers/dashboard.controller';
 
 // Initialize Stripe with fallback key for development
 const stripeKey = process.env.STRIPE_SECRET_KEY || "sk_test_placeholder";
@@ -21,6 +27,86 @@ const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN || "placeholder_token";
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER || "+1234567890";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Initialize DB with agents if needed
+  await storage.initializeAgents();
+  
+  // Middleware setup
+  app.use(bodyParser.json());
+  
+  // Session setup for passport
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'foundations-ai-session-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: process.env.NODE_ENV === 'production' }
+  }));
+  
+  // Initialize passport
+  app.use(passport.initialize());
+  app.use(passport.session());
+  initializePassport();
+
+  // Special raw body parser for Stripe webhooks
+  app.use('/api/webhook/stripe', bodyParser.raw({ type: 'application/json' }));
+  
+  // Public API endpoints
+  app.get("/api", (req, res) => {
+    res.json({ message: "Welcome to Foundations AI API!" });
+  });
+  
+  // Auth routes
+  app.post('/api/auth/register', authController.register);
+  app.post('/api/auth/login', authController.login);
+  app.get('/api/auth/google', authController.googleLogin);
+  app.get('/api/auth/google/callback', authController.googleCallback);
+  
+  // Protected routes (require authentication)
+  app.get('/api/auth/profile', authenticateJwt, authController.getProfile);
+  app.put('/api/auth/profile', authenticateJwt, authController.updateProfile);
+  app.put('/api/auth/settings', authenticateJwt, authController.updateSettings);
+  app.post('/api/auth/change-password', authenticateJwt, authController.changePassword);
+  
+  // Stripe and subscription routes
+  app.post('/api/stripe/create-checkout-session', authenticateJwt, stripeController.createCheckoutSession);
+  app.get('/api/stripe/subscription', authenticateJwt, stripeController.getUserSubscription);
+  app.post('/api/stripe/cancel-subscription', authenticateJwt, stripeController.cancelSubscription);
+  app.post('/api/stripe/resume-subscription', authenticateJwt, stripeController.resumeSubscription);
+  app.get('/api/stripe/plans', stripeController.getSubscriptionPlans);
+  app.post('/api/webhook/stripe', stripeController.handleWebhook);
+  
+  // Dashboard routes
+  app.get('/api/dashboard/overview', authenticateJwt, dashboardController.getOverview);
+  
+  // Leads/CRM routes
+  app.get('/api/leads', authenticateJwt, dashboardController.getLeads);
+  app.post('/api/leads', authenticateJwt, dashboardController.createLead);
+  app.put('/api/leads/:id', authenticateJwt, dashboardController.updateLead);
+  
+  // Call center routes
+  app.get('/api/calls', authenticateJwt, dashboardController.getCallCenter);
+  app.post('/api/calls', authenticateJwt, dashboardController.recordCall);
+  
+  // Knowledge base routes
+  app.get('/api/knowledge', authenticateJwt, dashboardController.getKnowledgeBase);
+  app.post('/api/knowledge', authenticateJwt, dashboardController.uploadDocument);
+  
+  // Appointments routes
+  app.get('/api/appointments', authenticateJwt, dashboardController.getAppointments);
+  app.post('/api/appointments', authenticateJwt, dashboardController.createAppointment);
+  app.put('/api/appointments/:id', authenticateJwt, dashboardController.updateAppointment);
+  
+  // AI Agents routes
+  app.get('/api/agents', authenticateJwt, dashboardController.getAIAgents);
+  app.post('/api/agents/custom', authenticateJwt, dashboardController.createCustomAgent);
+  app.put('/api/agents/custom/:id', authenticateJwt, dashboardController.updateCustomAgent);
+  
+  // Admin routes (require admin role)
+  app.get('/api/admin/users', authenticateJwt, authorize(['admin']), async (req, res) => {
+    res.json({ message: 'Admin only route' });
+  });
+
+  // EXISTING FUNCTIONALITY PRESERVED BELOW
+  
   // 11Labs Conversational AI agent endpoint
   app.post("/api/conversational-agent", async (req, res) => {
     try {
@@ -92,6 +178,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: error.message || "Unknown error occurred" });
     }
   });
+  
   // Voice synthesis endpoint using 11Labs API
   app.post("/api/synthesize-speech", async (req, res) => {
     try {
@@ -401,6 +488,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         error: error.message
       });
     }
+  });
+
+  // Error handler
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    console.error("Error:", err);
+    res.status(500).json({ error: err.message || "Internal server error" });
   });
 
   // Create HTTP server
