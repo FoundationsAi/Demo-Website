@@ -179,8 +179,11 @@ export default function SignupPage() {
           <motion.div variants={itemVariants} className="mb-8 text-center">
             <Button 
               variant="ghost" 
-              className="mb-6 text-white/70 hover:text-white"
-              onClick={() => setLocation("/")}
+              className="mb-6 text-[#4F9BFF] hover:text-[#7FB5FF] transition-colors"
+              onClick={() => {
+                console.log("Navigating to home...");
+                window.location.href = "/";
+              }}
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Home
@@ -190,7 +193,7 @@ export default function SignupPage() {
               as="h1" 
               className="text-3xl md:text-4xl font-bold mb-2 text-white" 
               animation="gradient"
-              color="#6366F1"
+              color="#4F9BFF"
             />
             <p className="text-white/70">
               {planId ? "Complete your registration to activate your plan" : "Sign up to access AI voice agents"}
@@ -328,7 +331,7 @@ export default function SignupPage() {
                   <CardFooter className="flex flex-col space-y-4 border-t border-white/10 bg-slate-900/20">
                     <Button 
                       type="submit" 
-                      className="w-full bg-[#5D5FEF] hover:bg-[#4B4DDC] text-white font-medium rounded-full py-5 h-auto" 
+                      className="w-full bg-[#4F9BFF] hover:bg-[#3E7DD5] text-white font-medium rounded-full py-5 h-auto" 
                       disabled={isLoading}
                     >
                       {isLoading ? (
@@ -345,7 +348,7 @@ export default function SignupPage() {
                       Already have an account?{" "}
                       <a
                         href="/login"
-                        className="text-indigo-400 hover:text-indigo-300 font-medium"
+                        className="text-[#4F9BFF] hover:text-[#7FB5FF] font-medium"
                         onClick={(e) => {
                           e.preventDefault();
                           setLocation("/login" + (planId ? `?plan=${planId}` : ""));
