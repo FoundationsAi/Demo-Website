@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import Stripe from "stripe";
@@ -281,27 +281,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe payment intent API endpoint
   app.post("/api/create-payment-intent", async (req, res) => {
     try {
-      const { amount, plan } = req.body;
+      const { amount, plan, cycle, email } = req.body;
+      
+      if (!amount || !plan) {
+        return res.status(400).json({ error: "Missing required parameters: amount and plan are required" });
+      }
+      
+      // Format amount for Stripe (ensure it's an integer in cents)
+      const formattedAmount = Math.round(Number(amount));
+      
+      if (isNaN(formattedAmount) || formattedAmount <= 0) {
+        return res.status(400).json({ error: "Invalid amount provided" });
+      }
       
       // Create a payment intent with Stripe
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(amount), // Amount in cents
+        amount: formattedAmount, // Amount in cents
         currency: "usd",
-        metadata: { plan }
+        metadata: { 
+          plan,
+          cycle: cycle || "monthly",
+          userEmail: email || "anonymous"
+        },
+        receipt_email: email
       });
       
       // Store payment intent in our database
       await storage.createPayment({
         stripePaymentIntentId: paymentIntent.id,
-        amount,
+        amount: formattedAmount,
         status: paymentIntent.status,
-        email: req.body.email
+        email: email
       });
       
       // Return client secret to the frontend
       res.json({ 
         clientSecret: paymentIntent.client_secret,
-        amount
+        amount: formattedAmount,
+        id: paymentIntent.id
       });
     } catch (error: any) {
       console.error("Create payment intent error:", error);
@@ -400,6 +417,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: 'Attempted to terminate conversation but encountered an error',
         error: error.message
       });
+    }
+  });
+
+  // Stripe webhook endpoint to handle payment events - using express.raw middleware for this route
+  app.post('/api/stripe-webhook', express.raw({type: 'application/json'}), async (req, res) => {
+    const sig = req.headers['stripe-signature'] as string;
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    
+    // If webhook secret is not configured, log a warning but don't fail
+    if (!webhookSecret) {
+      console.warn('STRIPE_WEBHOOK_SECRET is not configured. Webhook verification is disabled.');
+    }
+    
+    let event;
+    
+    try {
+      // Skip signature verification in development
+      if (webhookSecret && process.env.NODE_ENV === 'production') {
+        // Verify webhook signature
+        event = stripe.webhooks.constructEvent(
+          req.body, // This is now a Buffer thanks to express.raw middleware
+          sig,
+          webhookSecret
+        );
+      } else {
+        // In development, just parse the body without verification
+        event = JSON.parse(req.body.toString());
+      }
+      
+      // Handle the event
+      switch (event.type) {
+        case 'payment_intent.succeeded':
+          const paymentIntent = event.data.object;
+          // Update payment status in database
+          const payment = await storage.getPaymentByPaymentIntentId(paymentIntent.id);
+          if (payment) {
+            await storage.updatePaymentStatus(payment.id, 'succeeded');
+            console.log(`Payment ${paymentIntent.id} succeeded`);
+          }
+          break;
+          
+        case 'payment_intent.payment_failed':
+          const failedPayment = event.data.object;
+          const failedPaymentRecord = await storage.getPaymentByPaymentIntentId(failedPayment.id);
+          if (failedPaymentRecord) {
+            await storage.updatePaymentStatus(failedPaymentRecord.id, 'failed');
+            console.log(`Payment ${failedPayment.id} failed`);
+          }
+          break;
+          
+        // Add other events you want to handle
+        default:
+          console.log(`Unhandled event type ${event.type}`);
+      }
+      
+      // Return a 200 response to acknowledge receipt of the event
+      res.json({ received: true });
+    } catch (err: any) {
+      console.error(`Webhook Error: ${err.message}`);
+      res.status(400).send(`Webhook Error: ${err.message}`);
     }
   });
 
