@@ -19,7 +19,7 @@ import "./types"; // Import the session type extensions
 // Initialize Stripe with fallback key for development
 const stripeKey = process.env.STRIPE_SECRET_KEY || "sk_test_placeholder";
 const stripe = new Stripe(stripeKey, {
-  apiVersion: "2025-03-31.basil" as any,
+  apiVersion: "2023-10-16" as any,
 });
 
 // Initialize Elevenlabs API (with fallback key for development)
@@ -176,7 +176,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { planId, billingPeriod } = req.body;
       
       // Get plan price ID based on product ID and billing period
-      let priceId;
       let amount;
       
       // Map product IDs to price IDs
@@ -217,19 +216,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Set price based on billing period
       amount = billingPeriod === 'yearly' ? planDetails.yearlyPrice : planDetails.monthlyPrice;
       
-      // Create subscription through Stripe
+      // First, check if there's already a price for this product
+      const prices = await stripe.prices.list({
+        product: planId,
+        active: true,
+      });
+      
+      let priceId;
+      
+      // Find price matching our criteria or create a new one
+      if (prices.data.length > 0) {
+        // Try to find a matching price with the right amount and interval
+        const matchingPrice = prices.data.find(price => 
+          price.unit_amount === amount && 
+          price.recurring?.interval === (billingPeriod === 'yearly' ? 'year' : 'month')
+        );
+        
+        if (matchingPrice) {
+          priceId = matchingPrice.id;
+        }
+      }
+      
+      // If no matching price found, create a new one
+      if (!priceId) {
+        const newPrice = await stripe.prices.create({
+          product: planId,
+          unit_amount: amount,
+          currency: 'usd',
+          recurring: {
+            interval: billingPeriod === 'yearly' ? 'year' : 'month',
+          },
+        });
+        priceId = newPrice.id;
+      }
+      
+      // Create subscription through Stripe using price ID
       const subscription = await stripe.subscriptions.create({
         customer: stripeCustomerId,
         items: [
           {
-            price_data: {
-              product: planId,
-              unit_amount: amount,
-              currency: 'usd',
-              recurring: {
-                interval: billingPeriod === 'yearly' ? 'year' : 'month',
-              },
-            },
+            price: priceId,
           },
         ],
         payment_behavior: 'default_incomplete',
