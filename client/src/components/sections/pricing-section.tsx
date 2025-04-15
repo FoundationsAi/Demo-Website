@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'wouter';
 import { ScrollReveal } from '@/components/scroll-reveal';
 import { AnimatedText } from '@/components/animated-text';
 import { HoverableCard } from '@/components/hoverable-card';
@@ -211,15 +212,17 @@ export const PricingSection: React.FC = () => {
                         
                         {/* Button */}
                         <div className="px-6 pb-6">
-                          <button
-                            className={`w-full py-3 rounded-lg font-medium text-lg ${
-                              tier.isPopular
-                                ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                                : 'bg-transparent hover:bg-blue-900/50 text-white border border-blue-500'
-                            }`}
-                          >
-                            {tier.buttonText}
-                          </button>
+                          <Link href="/auth/signup">
+                            <div
+                              className={`w-full py-3 rounded-lg font-medium text-lg cursor-pointer text-center ${
+                                tier.isPopular
+                                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                                  : 'bg-transparent hover:bg-blue-900/50 text-white border border-blue-500'
+                              }`}
+                            >
+                              {tier.buttonText}
+                            </div>
+                          </Link>
                         </div>
                       </div>
                     </motion.div>
