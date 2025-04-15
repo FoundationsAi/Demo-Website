@@ -1,9 +1,15 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import Stripe from "stripe";
-import { insertDemoRequestSchema, insertAppointmentSchema } from "@shared/schema";
+import { 
+  insertDemoRequestSchema, 
+  insertAppointmentSchema, 
+  insertUserSchema, 
+  insertSubscriptionSchema 
+} from "@shared/schema";
 import { randomUUID } from "crypto";
+import bcrypt from "bcryptjs";
 
 // Initialize Stripe with fallback key for development
 const stripeKey = process.env.STRIPE_SECRET_KEY || "sk_test_placeholder";
@@ -20,7 +26,331 @@ const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID || "placeholder_sid";
 const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN || "placeholder_token";
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER || "+1234567890";
 
+// Authentication middleware
+const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
+  if (req.session && req.session.userId) {
+    return next();
+  }
+  return res.status(401).json({ error: "Unauthorized" });
+};
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Auth API endpoints
+  app.post("/api/auth/signup", async (req, res) => {
+    try {
+      const { email, username, password, firstName, lastName } = req.body;
+      
+      // Check if user already exists
+      const existingUserByEmail = await storage.getUserByEmail(email);
+      if (existingUserByEmail) {
+        return res.status(400).json({ error: "Email already in use" });
+      }
+      
+      const existingUserByUsername = await storage.getUserByUsername(username);
+      if (existingUserByUsername) {
+        return res.status(400).json({ error: "Username already taken" });
+      }
+      
+      // Hash password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      
+      // Create user
+      const userData = insertUserSchema.parse({
+        email,
+        username,
+        password: hashedPassword,
+        firstName,
+        lastName,
+        role: "user",
+      });
+      
+      const newUser = await storage.createUser(userData);
+      
+      // Set user session
+      if (req.session) {
+        req.session.userId = newUser.id;
+      }
+      
+      // Remove password from response
+      const { password: _, ...userWithoutPassword } = newUser;
+      
+      res.status(201).json({ 
+        success: true, 
+        user: userWithoutPassword 
+      });
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      // Find user by email
+      const user = await storage.getUserByEmail(email);
+      
+      if (!user) {
+        return res.status(400).json({ error: "Invalid credentials" });
+      }
+      
+      // Verify password
+      const isMatch = await bcrypt.compare(password, user.password);
+      
+      if (!isMatch) {
+        return res.status(400).json({ error: "Invalid credentials" });
+      }
+      
+      // Set user session
+      if (req.session) {
+        req.session.userId = user.id;
+      }
+      
+      // Remove password from response
+      const { password: _, ...userWithoutPassword } = user;
+      
+      res.json({ 
+        success: true, 
+        user: userWithoutPassword 
+      });
+    } catch (error: any) {
+      console.error("Login error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.get("/api/auth/me", isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.session.userId;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      // Remove password from response
+      const { password: _, ...userWithoutPassword } = user;
+      
+      // Get user's subscription
+      const subscription = await storage.getSubscriptionByUserId(userId);
+      
+      res.json({ 
+        user: userWithoutPassword,
+        subscription
+      });
+    } catch (error: any) {
+      console.error("Get user error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.post("/api/auth/logout", (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ error: "Failed to logout" });
+      }
+      res.clearCookie("connect.sid");
+      res.json({ success: true });
+    });
+  });
+  
+  // Subscription API endpoints
+  app.post("/api/subscriptions/create", isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.session.userId;
+      const { planId, billingPeriod } = req.body;
+      
+      // Get plan price ID based on product ID and billing period
+      let priceId;
+      let amount;
+      
+      // Map product IDs to price IDs
+      const planProductMap = {
+        "prod_S8QWDRCVcz07An": { name: "Starter", monthlyPrice: 2999, yearlyPrice: 29990 },
+        "prod_S8QXUopH7dXHrJ": { name: "Essential", monthlyPrice: 4999, yearlyPrice: 49990 },
+        "prod_S8QYxTHNgV2Dmr": { name: "Basic", monthlyPrice: 9999, yearlyPrice: 99990 },
+        "prod_S8QZE7hzuMcjru": { name: "Pro", monthlyPrice: 19999, yearlyPrice: 199990 }
+      };
+      
+      // Get Stripe customer ID or create one
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      let stripeCustomerId = user.stripeCustomerId;
+      
+      if (!stripeCustomerId) {
+        // Create new customer
+        const customer = await stripe.customers.create({
+          email: user.email,
+          name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username,
+        });
+        
+        stripeCustomerId = customer.id;
+        await storage.updateUserStripeCustomerId(userId, stripeCustomerId);
+      }
+      
+      // Get plan details
+      const planDetails = planProductMap[planId as keyof typeof planProductMap];
+      
+      if (!planDetails) {
+        return res.status(400).json({ error: "Invalid plan ID" });
+      }
+      
+      // Set price based on billing period
+      amount = billingPeriod === 'yearly' ? planDetails.yearlyPrice : planDetails.monthlyPrice;
+      
+      // Create subscription through Stripe
+      const subscription = await stripe.subscriptions.create({
+        customer: stripeCustomerId,
+        items: [
+          {
+            price_data: {
+              product: planId,
+              unit_amount: amount,
+              currency: 'usd',
+              recurring: {
+                interval: billingPeriod === 'yearly' ? 'year' : 'month',
+              },
+            },
+          },
+        ],
+        payment_behavior: 'default_incomplete',
+        payment_settings: {
+          save_default_payment_method: 'on_subscription',
+        },
+        expand: ['latest_invoice.payment_intent'],
+      });
+      
+      // Get payment intent client secret
+      const invoice = subscription.latest_invoice as Stripe.Invoice;
+      const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+      
+      // Create subscription record in our database
+      await storage.createSubscription({
+        userId,
+        stripeSubscriptionId: subscription.id,
+        planId,
+        status: subscription.status,
+        currentPeriodStart: new Date(subscription.current_period_start * 1000),
+        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+        cancelAtPeriodEnd: subscription.cancel_at_period_end,
+      });
+      
+      // Update user's subscription plan status
+      await storage.updateUserSubscription(userId, planDetails.name, "active");
+      
+      res.json({
+        subscriptionId: subscription.id,
+        clientSecret: paymentIntent.client_secret,
+      });
+    } catch (error: any) {
+      console.error("Create subscription error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.get("/api/subscriptions/plans", async (req, res) => {
+    try {
+      // Return pricing plans information
+      const plans = [
+        {
+          id: "prod_S8QWDRCVcz07An",
+          name: "Starter",
+          monthlyPrice: 29.99,
+          yearlyPrice: 299.90,
+          features: [
+            "Access to AI voice agents",
+            "Up to 1,000 minutes/month",
+            "Email support"
+          ]
+        },
+        {
+          id: "prod_S8QXUopH7dXHrJ",
+          name: "Essential",
+          monthlyPrice: 49.99,
+          yearlyPrice: 499.90,
+          features: [
+            "All Starter features",
+            "Up to 5,000 minutes/month",
+            "Priority support",
+            "Basic analytics"
+          ]
+        },
+        {
+          id: "prod_S8QYxTHNgV2Dmr",
+          name: "Basic",
+          monthlyPrice: 99.99,
+          yearlyPrice: 999.90,
+          features: [
+            "All Essential features",
+            "Up to 15,000 minutes/month",
+            "Advanced analytics",
+            "API access"
+          ]
+        },
+        {
+          id: "prod_S8QZE7hzuMcjru",
+          name: "Pro",
+          monthlyPrice: 199.99,
+          yearlyPrice: 1999.90,
+          features: [
+            "All Basic features",
+            "Unlimited minutes",
+            "24/7 priority support",
+            "Custom voice training",
+            "White-label solution"
+          ]
+        }
+      ];
+      
+      res.json(plans);
+    } catch (error: any) {
+      console.error("Get plans error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.delete("/api/subscriptions/:id", isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.session.userId;
+      const { id } = req.params;
+      
+      // Get subscription
+      const subscription = await storage.getSubscriptionByStripeId(id);
+      
+      if (!subscription) {
+        return res.status(404).json({ error: "Subscription not found" });
+      }
+      
+      // Check if user owns the subscription
+      if (subscription.userId !== userId) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+      
+      // Cancel subscription in Stripe
+      await stripe.subscriptions.update(id, {
+        cancel_at_period_end: true,
+      });
+      
+      // Update subscription in our database
+      await storage.updateSubscription(subscription.id, {
+        cancelAtPeriodEnd: true,
+      });
+      
+      // Update user's subscription status
+      await storage.updateUserSubscription(userId, subscription.planId, "cancelling");
+      
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Cancel subscription error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
   // 11Labs Conversational AI agent endpoint
   app.post("/api/conversational-agent", async (req, res) => {
     try {
