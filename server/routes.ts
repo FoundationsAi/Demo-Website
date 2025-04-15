@@ -129,6 +129,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/auth/me", isAuthenticated, async (req, res) => {
     try {
       const userId = req.session.userId;
+      if (!userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
       const user = await storage.getUser(userId);
       
       if (!user) {
@@ -165,6 +169,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/subscriptions/create", isAuthenticated, async (req, res) => {
     try {
       const userId = req.session.userId;
+      if (!userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
       const { planId, billingPeriod } = req.body;
       
       // Get plan price ID based on product ID and billing period
@@ -231,9 +239,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         expand: ['latest_invoice.payment_intent'],
       });
       
-      // Get payment intent client secret
-      const invoice = subscription.latest_invoice as Stripe.Invoice;
-      const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+      // Get payment intent client secret - handle type issues with Stripe expansion
+      const invoice = subscription.latest_invoice as any;
+      // Since we're using expand, the payment_intent will be the full object, not just an ID
+      const paymentIntent = invoice.payment_intent as any;
       
       // Create subscription record in our database
       await storage.createSubscription({
@@ -241,8 +250,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         stripeSubscriptionId: subscription.id,
         planId,
         status: subscription.status,
-        currentPeriodStart: new Date(subscription.current_period_start * 1000),
-        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+        // Convert Unix timestamps to JavaScript Date objects
+        currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+        currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
         cancelAtPeriodEnd: subscription.cancel_at_period_end,
       });
       

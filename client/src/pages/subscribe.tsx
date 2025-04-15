@@ -279,7 +279,10 @@ export default function SubscribePage() {
                   <>
                     {clientSecret ? (
                       <Elements stripe={stripePromise} options={{ clientSecret }}>
-                        <CheckoutForm onSuccess={() => setPaymentSuccess(true)} />
+                        <CheckoutForm 
+                          clientSecret={clientSecret}
+                          onSuccess={() => setPaymentSuccess(true)} 
+                        />
                       </Elements>
                     ) : (
                       <div className="h-40 flex items-center justify-center">

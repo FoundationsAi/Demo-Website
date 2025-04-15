@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
@@ -6,20 +6,33 @@ import { useToast } from "@/hooks/use-toast";
 
 interface CheckoutFormProps {
   onSuccess: () => void;
+  clientSecret?: string;
 }
 
-const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess }) => {
+const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, clientSecret }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
   const [cardError, setCardError] = useState('');
   const { toast } = useToast();
 
+  useEffect(() => {
+    // Log client secret for debugging
+    if (!clientSecret) {
+      console.warn('No client secret provided to CheckoutForm');
+    }
+  }, [clientSecret]);
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     if (!stripe || !elements) {
       // Stripe.js has not loaded yet
+      return;
+    }
+
+    if (!clientSecret) {
+      setCardError('Payment setup incomplete. Please try again.');
       return;
     }
 
@@ -35,7 +48,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess }) => {
 
     try {
       // Use the client secret provided by the server to confirm payment
-      const { error, paymentIntent } = await stripe.confirmCardPayment("", {
+      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: cardElement,
           billing_details: {
