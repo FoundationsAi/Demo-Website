@@ -8,6 +8,20 @@ const AGENTS = {
   JADE: 'QvsJlPVuXKVwEEOc9Vub'   // Jade voice ID
 };
 
+// Get the appropriate agent ID based on agent type and gender
+export const getAgentIdByTypeAndGender = (agentType: string, gender: string): string => {
+  // For customer service agent type
+  if (agentType === 'customer-service') {
+    return gender === 'male' ? AGENTS.STEVE : AGENTS.SARAH;
+  }
+  // For receptionist agent type
+  else if (agentType === 'receptionist') {
+    return gender === 'male' ? AGENTS.ALEX : AGENTS.JADE;
+  }
+  // Default fallback
+  return gender === 'male' ? AGENTS.STEVE : AGENTS.SARAH;
+};
+
 type AgentType = keyof typeof AGENTS;
 
 let activeConversation: any = null;
@@ -319,7 +333,7 @@ export const sendMessageToAgent = async (
       },
       body: JSON.stringify({
         message,
-        agentId: gender === 'male' ? AGENTS.STEVE : AGENTS.SARAH,
+        agentId: getAgentIdByTypeAndGender(agentType, gender),
         history
       }),
     });
