@@ -84,9 +84,28 @@ export class DatabaseStorage implements IStorage {
     const [user] = await db.select().from(users).where(eq(users.username, username));
     return user;
   }
+  
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const [user] = await db.insert(users).values(insertUser).returning();
+    return user;
+  }
+  
+  async updateUser(id: number, userData: Partial<InsertUser>): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set(userData)
+      .where(eq(users.id, id))
+      .returning();
+    
+    if (!user) {
+      throw new Error(`User with ID ${id} not found`);
+    }
+    
     return user;
   }
 
@@ -129,6 +148,16 @@ export class DatabaseStorage implements IStorage {
   async getAppointmentsByEmail(email: string): Promise<Appointment[]> {
     return await db.select().from(appointments).where(eq(appointments.email, email));
   }
+  
+  async getAppointmentsByUserId(userId: number): Promise<Appointment[]> {
+    // Since appointments don't have a direct userId field, we would typically join with users
+    // For now, we'll just get appointments by email using the user's email
+    const user = await this.getUser(userId);
+    if (!user) {
+      return [];
+    }
+    return await this.getAppointmentsByEmail(user.email);
+  }
 
   // Demo request methods
   async createDemoRequest(insertDemoRequest: InsertDemoRequest): Promise<DemoRequest> {
@@ -159,6 +188,120 @@ export class DatabaseStorage implements IStorage {
     }
     
     return payment;
+  }
+  
+  // Subscription methods
+  async createSubscription(insertSubscription: InsertSubscription): Promise<Subscription> {
+    const [subscription] = await db.insert(subscriptions).values(insertSubscription).returning();
+    return subscription;
+  }
+  
+  async getSubscriptionByStripeId(stripeSubscriptionId: string): Promise<Subscription | undefined> {
+    const [subscription] = await db.select().from(subscriptions).where(eq(subscriptions.stripeSubscriptionId, stripeSubscriptionId));
+    return subscription;
+  }
+  
+  async getSubscriptionsByUserId(userId: number): Promise<Subscription[]> {
+    return await db.select().from(subscriptions).where(eq(subscriptions.userId, userId));
+  }
+  
+  async updateSubscription(id: number, subscriptionData: Partial<InsertSubscription>): Promise<Subscription> {
+    const [subscription] = await db
+      .update(subscriptions)
+      .set(subscriptionData)
+      .where(eq(subscriptions.id, id))
+      .returning();
+    
+    if (!subscription) {
+      throw new Error(`Subscription with ID ${id} not found`);
+    }
+    
+    return subscription;
+  }
+  
+  // Document methods
+  async createDocument(insertDocument: InsertDocument): Promise<Document> {
+    const [document] = await db.insert(documents).values(insertDocument).returning();
+    return document;
+  }
+  
+  async getDocumentsByUserId(userId: number): Promise<Document[]> {
+    return await db.select().from(documents).where(eq(documents.userId, userId));
+  }
+  
+  async getDocument(id: number): Promise<Document | undefined> {
+    const [document] = await db.select().from(documents).where(eq(documents.id, id));
+    return document;
+  }
+  
+  async deleteDocument(id: number): Promise<void> {
+    await db.delete(documents).where(eq(documents.id, id));
+  }
+  
+  // Custom Agent methods
+  async createCustomAgent(insertCustomAgent: InsertCustomAgent): Promise<CustomAgent> {
+    const [customAgent] = await db.insert(customAgents).values(insertCustomAgent).returning();
+    return customAgent;
+  }
+  
+  async getCustomAgentsByUserId(userId: number): Promise<CustomAgent[]> {
+    return await db.select().from(customAgents).where(eq(customAgents.userId, userId));
+  }
+  
+  async getCustomAgent(id: number): Promise<CustomAgent | undefined> {
+    const [customAgent] = await db.select().from(customAgents).where(eq(customAgents.id, id));
+    return customAgent;
+  }
+  
+  async updateCustomAgent(id: number, agentData: Partial<InsertCustomAgent>): Promise<CustomAgent> {
+    const [customAgent] = await db
+      .update(customAgents)
+      .set(agentData)
+      .where(eq(customAgents.id, id))
+      .returning();
+    
+    if (!customAgent) {
+      throw new Error(`Custom agent with ID ${id} not found`);
+    }
+    
+    return customAgent;
+  }
+  
+  async deleteCustomAgent(id: number): Promise<void> {
+    await db.delete(customAgents).where(eq(customAgents.id, id));
+  }
+  
+  // Lead methods
+  async createLead(insertLead: InsertLead): Promise<Lead> {
+    const [lead] = await db.insert(leads).values(insertLead).returning();
+    return lead;
+  }
+  
+  async getLeadsByUserId(userId: number): Promise<Lead[]> {
+    return await db.select().from(leads).where(eq(leads.userId, userId));
+  }
+  
+  async getLead(id: number): Promise<Lead | undefined> {
+    const [lead] = await db.select().from(leads).where(eq(leads.id, id));
+    return lead;
+  }
+  
+  async updateLead(id: number, leadData: Partial<InsertLead>): Promise<Lead> {
+    const [lead] = await db
+      .update(leads)
+      .set(leadData)
+      .where(eq(leads.id, id))
+      .returning();
+    
+    if (!lead) {
+      throw new Error(`Lead with ID ${id} not found`);
+    }
+    
+    return lead;
+  }
+  
+  async deleteLead(id: number): Promise<void> {
+    await db.delete(leads).where(eq(leads.id, id));
   }
 
   // Initialize sample agents if none exist

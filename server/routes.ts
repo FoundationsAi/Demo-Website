@@ -1,9 +1,22 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import Stripe from "stripe";
-import { insertDemoRequestSchema, insertAppointmentSchema } from "@shared/schema";
+import { 
+  insertDemoRequestSchema, 
+  insertAppointmentSchema,
+  insertUserSchema,
+  insertSubscriptionSchema,
+  insertDocumentSchema,
+  insertCustomAgentSchema,
+  insertLeadSchema
+} from "@shared/schema";
 import { randomUUID } from "crypto";
+import bcrypt from "bcrypt";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import { z } from "zod";
 
 // Initialize Stripe with fallback key for development
 const stripeKey = process.env.STRIPE_SECRET_KEY || "sk_test_placeholder";
