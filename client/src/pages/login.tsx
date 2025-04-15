@@ -161,9 +161,10 @@ export default function LoginPage() {
             <Button 
               variant="ghost" 
               className="mb-6 text-[#4F9BFF] hover:text-[#7FB5FF] transition-colors"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 console.log("Navigating to home...");
-                window.location.href = "/";
+                window.location.replace("/");
               }}
             >
               <ArrowLeft className="mr-2 h-4 w-4" />

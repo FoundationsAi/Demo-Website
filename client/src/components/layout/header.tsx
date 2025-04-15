@@ -28,10 +28,10 @@ export const Header: React.FC = () => {
                 className="w-14 h-12 object-contain" 
               />
               <div className="ml-2 flex flex-col">
-                <span className="text-xl font-bold text-[#6366F1]">
+                <span className="text-xl font-bold text-[#4F9BFF]">
                   Foundations
                 </span>
-                <span className="text-xl font-bold text-[#6366F1]">
+                <span className="text-xl font-bold text-[#4F9BFF]">
                   AI
                 </span>
               </div>
@@ -50,7 +50,7 @@ export const Header: React.FC = () => {
           </Button>
 
           <Button 
-            className="bg-[#5D5FEF] hover:bg-[#4B4DDC] text-white font-medium rounded-full px-8 py-5 h-auto"
+            className="bg-[#4F9BFF] hover:bg-[#3E7DD5] text-white font-medium rounded-full px-8 py-5 h-auto"
             onClick={() => handleNavigate("/signup")}
           >
             Get Started
