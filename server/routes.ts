@@ -278,14 +278,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Stripe payment intent API endpoint
-  app.post("/api/create-payment-intent", async (req, res) => {
+  // Stripe subscription API endpoint
+  app.post("/api/create-subscription", async (req, res) => {
     try {
-      const { amount, plan, cycle, email } = req.body;
+      const { amount, plan, cycle, email, name } = req.body;
       
-      if (!amount || !plan) {
-        return res.status(400).json({ error: "Missing required parameters: amount and plan are required" });
+      if (!amount || !plan || !email) {
+        return res.status(400).json({ 
+          error: "Missing required parameters: amount, plan, and email are required" 
+        });
       }
+      
+      console.log("Creating subscription:", { plan, cycle, amount, email });
       
       // Format amount for Stripe (ensure it's an integer in cents)
       const formattedAmount = Math.round(Number(amount));
@@ -294,34 +298,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid amount provided" });
       }
       
-      // Create a payment intent with Stripe
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: formattedAmount, // Amount in cents
-        currency: "usd",
-        metadata: { 
+      // Create or retrieve Stripe customer
+      let customer;
+      const existingCustomers = await stripe.customers.list({ email });
+      
+      if (existingCustomers.data.length > 0) {
+        // Use existing customer
+        customer = existingCustomers.data[0];
+        console.log("Using existing customer:", customer.id);
+      } else {
+        // Create new customer
+        customer = await stripe.customers.create({
+          email,
+          name,
+          metadata: {
+            plan,
+            cycle: cycle || "monthly"
+          }
+        });
+        console.log("Created new customer:", customer.id);
+      }
+      
+      // Create a subscription checkout session
+      const session = await stripe.checkout.sessions.create({
+        customer: customer.id,
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: `${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan (${cycle})`,
+                description: `Foundations AI ${plan} subscription - ${cycle} billing`,
+              },
+              unit_amount: formattedAmount,
+              recurring: {
+                interval: cycle === 'yearly' ? 'year' : 'month',
+              },
+            },
+            quantity: 1,
+          },
+        ],
+        mode: 'subscription',
+        success_url: `${req.headers.origin}/subscription-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${req.headers.origin}/#pricing`,
+        metadata: {
           plan,
           cycle: cycle || "monthly",
-          userEmail: email || "anonymous"
-        },
-        receipt_email: email
+          amount: formattedAmount.toString()
+        }
       });
       
-      // Store payment intent in our database
+      // Store payment info in our database
       await storage.createPayment({
-        stripePaymentIntentId: paymentIntent.id,
+        stripePaymentIntentId: session.id,
         amount: formattedAmount,
-        status: paymentIntent.status,
+        status: 'created',
         email: email
       });
       
-      // Return client secret to the frontend
+      // Return checkout URL to the frontend
       res.json({ 
-        clientSecret: paymentIntent.client_secret,
-        amount: formattedAmount,
-        id: paymentIntent.id
+        checkoutUrl: session.url,
+        sessionId: session.id
       });
     } catch (error: any) {
-      console.error("Create payment intent error:", error);
+      console.error("Create subscription error:", error);
       res.status(500).json({ error: error.message });
     }
   });
@@ -465,6 +507,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
             await storage.updatePaymentStatus(failedPaymentRecord.id, 'failed');
             console.log(`Payment ${failedPayment.id} failed`);
           }
+          break;
+
+        // Subscription events
+        case 'checkout.session.completed':
+          const session = event.data.object;
+          console.log(`Checkout session ${session.id} completed`);
+          
+          // Update our database with successful checkout
+          const checkoutPayment = await storage.getPaymentByPaymentIntentId(session.id);
+          if (checkoutPayment) {
+            await storage.updatePaymentStatus(checkoutPayment.id, 'succeeded');
+            console.log(`Payment for session ${session.id} marked as succeeded`);
+          }
+          break;
+          
+        case 'customer.subscription.created':
+          const newSubscription = event.data.object;
+          console.log(`New subscription created: ${newSubscription.id} for customer ${newSubscription.customer}`);
+          break;
+          
+        case 'customer.subscription.updated':
+          const updatedSubscription = event.data.object;
+          console.log(`Subscription updated: ${updatedSubscription.id}, status: ${updatedSubscription.status}`);
+          break;
+          
+        case 'customer.subscription.deleted':
+          const deletedSubscription = event.data.object;
+          console.log(`Subscription deleted: ${deletedSubscription.id}`);
+          break;
+          
+        case 'invoice.payment_succeeded':
+          const invoice = event.data.object;
+          console.log(`Invoice payment succeeded: ${invoice.id} for subscription ${invoice.subscription}`);
+          break;
+          
+        case 'invoice.payment_failed':
+          const failedInvoice = event.data.object;
+          console.log(`Invoice payment failed: ${failedInvoice.id} for subscription ${failedInvoice.subscription}`);
           break;
           
         // Add other events you want to handle

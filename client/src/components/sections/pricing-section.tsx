@@ -4,7 +4,7 @@ import { ScrollReveal } from '@/components/scroll-reveal';
 import { AnimatedText } from '@/components/animated-text';
 import { HoverableCard } from '@/components/hoverable-card';
 import { useLocation } from 'wouter';
-import { apiRequest } from '@/lib/queryClient';
+import { apiRequest } from '@/lib/api';
 
 interface PricingTier {
   name: string;
@@ -128,11 +128,41 @@ export const PricingSection: React.FC = () => {
         amount = Math.round(amount * 0.9 * 12);
       }
       
-      // Redirect to the payment page with the plan details
-      console.log(`Redirecting to payment page: plan=${tier.name.toLowerCase()}, amount=${amount}, cycle=${billingCycle}`);
-      setLocation(`/payment?plan=${tier.name.toLowerCase()}&amount=${amount}&cycle=${billingCycle}`);
-    } catch (error) {
-      console.error("Error initiating payment:", error);
+      // Open a modal to collect email address
+      const email = prompt("Please enter your email address to continue with subscription:");
+      
+      if (!email || !email.includes('@')) {
+        alert("A valid email address is required for subscription.");
+        setIsProcessing(null);
+        return;
+      }
+      
+      console.log(`Creating subscription: plan=${tier.name.toLowerCase()}, amount=${amount}, cycle=${billingCycle}`);
+      
+      // Call our subscription API
+      const response = await apiRequest("POST", "/api/create-subscription", {
+        plan: tier.name.toLowerCase(),
+        amount,
+        cycle: billingCycle,
+        email,
+        name: email.split('@')[0] // Use part of email as name for now
+      });
+      
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      if (data.checkoutUrl) {
+        // Redirect to Stripe checkout
+        window.location.href = data.checkoutUrl;
+      } else {
+        throw new Error("No checkout URL received from server");
+      }
+    } catch (error: any) {
+      console.error("Error initiating subscription:", error);
+      alert(`Subscription error: ${error.message || "Unknown error occurred"}`);
       setIsProcessing(null);
     }
   };

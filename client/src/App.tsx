@@ -9,6 +9,7 @@ import Chat from "@/pages/chat";
 // Import Payment components
 import Payment from "@/pages/payment";
 import StripePayment from "@/pages/stripe-payment";
+import SubscriptionSuccess from "@/pages/subscription-success";
 import Calendar from "@/pages/calendar";
 import AgentChat from "@/pages/agent-chat";
 
@@ -41,6 +42,7 @@ function App() {
             <AnimatedRoute path="/" component={ImmersiveHome} animation="fade" />
             <AnimatedRoute path="/chat/:agentId" component={Chat} animation="slideHorizontal" />
             <AnimatedRoute path="/payment" component={StripePayment} animation="slideUp" />
+            <AnimatedRoute path="/subscription-success" component={SubscriptionSuccess} animation="fade" />
             <AnimatedRoute path="/calendar" component={Calendar} animation="zoom" />
             <AnimatedRoute path="/agent-chat" component={AgentChat} animation="fade" />
             <AnimatedRoute component={NotFound} animation="fade" />
