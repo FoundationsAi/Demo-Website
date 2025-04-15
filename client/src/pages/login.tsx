@@ -162,9 +162,9 @@ const Login = () => {
                       </div>
                       
                       <div className="text-center text-sm mt-4">
-                        <a href="#" className="text-blue-400 hover:text-blue-300 transition">
+                        <Link href="#" className="text-blue-400 hover:text-blue-300 transition">
                           Forgot your password?
-                        </a>
+                        </Link>
                       </div>
                     </form>
                   </Form>

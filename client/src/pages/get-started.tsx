@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'wouter';
+import { useLocation, Link } from 'wouter';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -212,12 +212,12 @@ const GetStarted = () => {
                 <div className="text-center mt-8">
                   <p className="text-blue-300">
                     Already have an account?{' '}
-                    <a 
+                    <Link 
                       href="/login" 
                       className="text-blue-400 hover:text-blue-300 transition font-medium"
                     >
                       Login
-                    </a>
+                    </Link>
                   </p>
                 </div>
               </div>
