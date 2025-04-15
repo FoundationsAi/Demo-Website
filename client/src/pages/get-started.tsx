@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'wouter';
 import { motion } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -109,10 +110,10 @@ const GetStarted = () => {
         {/* Background effects */}
         <ParticleBackground variant="subtle" />
         
-        <div className="relative z-10 pt-32 pb-20">
+        <div className="relative z-10 pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20">
           <div className="container mx-auto px-4 md:px-6">
             <ScrollReveal>
-              <div className="max-w-md mx-auto">
+              <div className="w-full max-w-[90%] sm:max-w-md mx-auto">
                 <div className="text-center mb-8">
                   <AnimatedText 
                     text="Join Foundations AI" 
@@ -228,6 +229,17 @@ const GetStarted = () => {
                     </Link>
                   </p>
                 </div>
+                
+                <div className="text-center mt-6">
+                  <Button
+                    variant="outline"
+                    className="text-blue-400 hover:text-blue-300 border border-blue-500/30 hover:border-blue-500/50 bg-transparent"
+                    onClick={() => navigate('/')}
+                  >
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Return to Home
+                  </Button>
+                </div>
               </div>
             </ScrollReveal>
           </div>
@@ -237,13 +249,13 @@ const GetStarted = () => {
         <div className="relative z-10 py-16 bg-gradient-to-b from-black/0 to-blue-950/20">
           <div className="container mx-auto px-4 md:px-6">
             <ScrollReveal>
-              <div className="max-w-4xl mx-auto text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Why Create an Account?</h2>
-                <p className="text-xl text-blue-300">Unlock the full potential of Foundations AI with exclusive member benefits</p>
+              <div className="max-w-4xl mx-auto text-center mb-8 sm:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-white">Why Create an Account?</h2>
+                <p className="text-base sm:text-lg md:text-xl text-blue-300 px-2">Unlock the full potential of Foundations AI with exclusive member benefits</p>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="bg-gradient-to-b from-blue-900/15 to-indigo-900/15 backdrop-blur-lg p-6 rounded-xl border border-blue-500/30 shadow-[0_4px_15px_rgba(0,100,255,0.2)] hover:shadow-[0_4px_25px_rgba(0,100,255,0.3)] transition-all duration-300 hover:scale-[1.03]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                <div className="bg-gradient-to-b from-blue-900/15 to-indigo-900/15 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl border border-blue-500/30 shadow-[0_4px_15px_rgba(0,100,255,0.2)] hover:shadow-[0_4px_25px_rgba(0,100,255,0.3)] transition-all duration-300 hover:scale-[1.03]">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/40 to-blue-600/40 flex items-center justify-center mb-4 mx-auto shadow-[0_0_15px_rgba(59,130,246,0.4)]">
                     <div className="text-blue-200 text-2xl">💬</div>
                   </div>
