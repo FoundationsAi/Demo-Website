@@ -20,7 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { Loader2, ArrowLeft, CheckCircle } from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle, Rocket, Star, LineChart, Diamond, Building } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import CheckoutForm from "../components/checkout-form";
@@ -34,6 +34,7 @@ interface PlanData {
   monthlyPrice: number;
   yearlyPrice: number;
   features: string[];
+  overageFee?: string;
 }
 
 export default function SubscribePage() {
@@ -208,41 +209,48 @@ export default function SubscribePage() {
                     </Select>
                   </div>
                   
-                  <div className="border border-slate-200 rounded-lg p-6">
+                  <div className="border border-slate-200 rounded-lg p-6 bg-[#0d111b]/95 text-white">
                     {selectedPlan ? (
                       <>
                         <div className="flex items-start">
-                          <div className="w-10 h-10 mr-4 bg-slate-100 rounded-md flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                            </svg>
+                          <div className="w-12 h-12 mr-4 bg-slate-800/50 rounded-lg flex items-center justify-center">
+                            {selectedPlan.name === 'Starter' && <Rocket className="h-6 w-6 text-white" />}
+                            {selectedPlan.name === 'Essential' && <Star className="h-6 w-6 text-amber-400" />}
+                            {selectedPlan.name === 'Basic' && <LineChart className="h-6 w-6 text-blue-400" />}
+                            {selectedPlan.name === 'Pro' && <Diamond className="h-6 w-6 text-cyan-400" />}
+                            {selectedPlan.name === 'Enterprise' && <Building className="h-6 w-6 text-purple-400" />}
                           </div>
                           <div>
-                            <h3 className="text-xl font-medium text-slate-800">{selectedPlan.name}</h3>
+                            <h3 className="text-xl font-medium text-white">{selectedPlan.name}</h3>
                             <div className="flex items-center mt-1">
-                              <div className="text-2xl font-bold text-slate-800">
+                              <div className="text-3xl font-bold text-white">
                                 ${billingPeriod === 'monthly' ? selectedPlan.monthlyPrice.toFixed(2) : selectedPlan.yearlyPrice.toFixed(2)}
                               </div>
-                              <div className="text-slate-500 ml-2">
-                                Per {billingPeriod === 'monthly' ? 'month' : 'year'}
+                              <div className="text-slate-300 ml-2">
+                                /{billingPeriod === 'monthly' ? 'month' : 'year'}
                               </div>
                             </div>
+                            {selectedPlan.overageFee && (
+                              <div className="text-sm text-slate-300 mt-1">
+                                Overage: {selectedPlan.overageFee}
+                              </div>
+                            )}
                           </div>
                         </div>
                         
-                        <div className="mt-6 border-t border-slate-200 pt-4">
-                          <div className="space-y-2">
+                        <div className="mt-6 border-t border-slate-700 pt-5">
+                          <div className="space-y-3">
                             {selectedPlan.features.map((feature, index) => (
                               <div key={index} className="flex items-center">
-                                <CheckCircle className="h-5 w-5 text-[#4F9BFF] flex-shrink-0 mr-2" />
-                                <span className="text-slate-700">{feature}</span>
+                                <CheckCircle className="h-5 w-5 text-[#4F9BFF] flex-shrink-0 mr-3" />
+                                <span className="text-white">{feature}</span>
                               </div>
                             ))}
                           </div>
                         </div>
                       </>
                     ) : (
-                      <div className="text-center py-8 text-slate-500">
+                      <div className="text-center py-8 text-slate-300">
                         Please select a plan to view details
                       </div>
                     )}
@@ -267,7 +275,7 @@ export default function SubscribePage() {
                   </div>
                   
                   <Button
-                    className="w-full mt-6 bg-[#4F9BFF] hover:bg-[#3E7DD5] text-white font-medium py-6"
+                    className="w-full mt-6 bg-[#3b5bf5] hover:bg-[#2a46cf] text-white font-medium py-6 rounded-md"
                     onClick={createSubscription}
                     disabled={!selectedPlan || isCreatingSubscription}
                   >
@@ -277,7 +285,7 @@ export default function SubscribePage() {
                         Setting up subscription...
                       </>
                     ) : (
-                      "Continue to Payment"
+                      "Join Foundations AI"
                     )}
                   </Button>
                 </div>

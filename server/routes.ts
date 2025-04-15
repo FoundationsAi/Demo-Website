@@ -288,51 +288,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const plans = [
         {
           id: "prod_S8QWDRCVcz07An",
-          name: "Starter Plan",
+          name: "Starter",
           monthlyPrice: 49.99,
           yearlyPrice: 539.89,
           features: [
-            "Access to AI voice agents",
-            "Basic voice customization",
-            "Standard support",
-            "Web integration"
-          ]
+            "50 minutes of AI usage per month",
+            "Unlimited AI agents",
+            "5 concurrent calls",
+            "Voice API, LLM, transcriber costs",
+            "API integrations",
+            "Real-time booking",
+            "Human transfer",
+            "Community support"
+          ],
+          overageFee: "$0.35/minute"
         },
         {
           id: "prod_S8QXUopH7dXHrJ",
-          name: "Essential Plan",
+          name: "Essential",
           monthlyPrice: 299.99,
           yearlyPrice: 3239.89,
           features: [
-            "All Starter features",
-            "Priority email support",
-            "Analytics dashboard",
-            "Multiple voice options"
-          ]
+            "500 minutes of AI usage per month",
+            "Unlimited AI agents",
+            "10 concurrent calls",
+            "All Starter features"
+          ],
+          overageFee: "$0.30/minute"
         },
         {
           id: "prod_S8QYxTHNgV2Dmr",
-          name: "Basic Plan",
+          name: "Basic",
           monthlyPrice: 749.99,
           yearlyPrice: 8099.89,
           features: [
+            "1,250 minutes of AI usage per month",
+            "Unlimited AI agents",
+            "25 concurrent calls",
             "All Essential features",
-            "Advanced integrations",
-            "Custom voice training",
-            "API access"
-          ]
+            "Team access",
+            "Support via ticketing"
+          ],
+          overageFee: "$0.25/minute"
         },
         {
           id: "prod_S8QZE7hzuMcjru",
-          name: "Pro Plan",
+          name: "Pro",
           monthlyPrice: 1499.99,
           yearlyPrice: 16199.89,
           features: [
-            "All Basic features",
-            "Dedicated account manager",
-            "Enterprise-level support",
-            "White-label solution"
-          ]
+            "2,500 minutes of AI usage per month",
+            "Unlimited AI agents",
+            "50 concurrent calls",
+            "All Basic features"
+          ],
+          overageFee: "$0.20/minute"
         }
       ];
       
