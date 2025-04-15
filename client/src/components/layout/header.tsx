@@ -54,18 +54,7 @@ export const Header: React.FC = () => {
           </Link>
         </div>
         
-        <nav className="hidden md:flex items-center space-x-8">
-          {navItems.map((item) => (
-            <Link key={item.name} href={item.href}>
-              <span
-                className="text-white/80 hover:text-white transition cursor-pointer"
-                onClick={(e) => handleNavClick(e, item)}
-              >
-                {item.name}
-              </span>
-            </Link>
-          ))}
-        </nav>
+        {/* Removed navigation items as requested */}
         
         <div className="flex items-center gap-4">
           <Link href="/login" className="flex">
@@ -100,18 +89,6 @@ export const Header: React.FC = () => {
         role="navigation"
       >
         <div className="flex flex-col space-y-3 py-4 px-6">
-          {navItems.map((item) => (
-            <Link key={item.name} href={item.href}>
-              <span
-                className="text-white/90 hover:text-white transition-all py-2 block cursor-pointer font-medium"
-                onClick={(e) => handleNavClick(e, item)}
-                role="menuitem"
-              >
-                {item.name}
-              </span>
-            </Link>
-          ))}
-          
           <Link href="/login">
             <span
               className="text-white/90 hover:text-white transition-all py-2 flex items-center cursor-pointer font-medium"
