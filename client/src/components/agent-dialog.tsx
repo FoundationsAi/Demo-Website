@@ -454,13 +454,14 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
   const startCustomConversation = async () => {
     try {
       // Get agent type and gender
-      const agentType = selectedGender === 'male' ? 'STEVE' : 'SARAH';
+      const currentAgent = agent?.id || 'default';
+      const agentKey = `${currentAgent}-${selectedGender}`;
       
       // Request microphone permission
       await navigator.mediaDevices.getUserMedia({ audio: true });
       
       // Start the conversation using our custom service
-      const success = await conversationalAIService.startConversation(agentType as any);
+      const success = await conversationalAIService.startConversation(agentKey as any);
       
       if (success) {
         toast({

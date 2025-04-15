@@ -336,6 +336,20 @@ export const sendMessageToAgent = async (
   history: { role: string, content: string }[] = []
 ): Promise<{ text: string, audio: string }> => {
   try {
+    // Determine the correct agent ID based on agent type and gender
+    let agentId;
+    const agentKey = `${agentType}-${gender}` as keyof typeof AGENTS;
+    
+    // Try to get the specific agent-gender combination
+    if (AGENTS[agentKey]) {
+      agentId = AGENTS[agentKey];
+      console.log(`Using specific agent: ${agentKey}`);
+    } else {
+      // Fall back to generic male/female agents if specific one doesn't exist
+      agentId = gender === 'male' ? AGENTS.MALE : AGENTS.FEMALE;
+      console.log(`Using fallback ${gender} agent for type: ${agentType}`);
+    }
+    
     // Make API call to our backend endpoint
     const response = await fetch('/api/conversational-agent', {
       method: 'POST',
@@ -344,8 +358,9 @@ export const sendMessageToAgent = async (
       },
       body: JSON.stringify({
         message,
-        agentId: gender === 'male' ? AGENTS.STEVE : AGENTS.SARAH,
-        history
+        agentId,
+        history,
+        agentType // Send agent type for context
       }),
     });
 
