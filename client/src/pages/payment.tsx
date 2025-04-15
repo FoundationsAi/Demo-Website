@@ -138,7 +138,7 @@ const PaymentSuccess = () => {
   );
 };
 
-const Payment: React.FC = () => {
+const Payment = () => {
   const [clientSecret, setClientSecret] = useState("");
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(true);
@@ -149,13 +149,18 @@ const Payment: React.FC = () => {
     cycle: "monthly",
   });
   const [, setLocation] = useLocation();
+
+  console.log("Payment component rendered", window.location.search);
   
   useEffect(() => {
+    console.log("Payment component useEffect running");
     // Parse query parameters from URL
     const searchParams = new URLSearchParams(window.location.search);
     const plan = searchParams.get("plan") || "starter";
     const amount = parseInt(searchParams.get("amount") || "4999", 10);
     const cycle = searchParams.get("cycle") || "monthly";
+    
+    console.log("Payment params:", { plan, amount, cycle });
     
     setPlanDetails({
       plan,
@@ -167,17 +172,25 @@ const Payment: React.FC = () => {
     setPaymentLoading(true);
     setPaymentError(null);
     
+    console.log("Creating payment intent with:", { plan, amount, cycle });
+    
     apiRequest("POST", "/api/create-payment-intent", { 
       plan,
       amount,
       cycle,
       email: searchParams.get("email") || undefined
     })
-      .then((res) => res.json())
+      .then((res) => {
+        console.log("Payment intent response received");
+        return res.json();
+      })
       .then((data) => {
+        console.log("Payment intent data:", data);
         if (data.error) {
+          console.error("Payment intent error:", data.error);
           setPaymentError(data.error);
         } else {
+          console.log("Setting client secret:", data.clientSecret.substring(0, 10) + "...");
           setClientSecret(data.clientSecret);
         }
         setPaymentLoading(false);
