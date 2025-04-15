@@ -1,9 +1,8 @@
-import express, { type Express } from "express";
+import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import Stripe from "stripe";
-import bcrypt from "bcryptjs";
-import { insertDemoRequestSchema, insertAppointmentSchema, insertUserSchema } from "@shared/schema";
+import { insertDemoRequestSchema, insertAppointmentSchema } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 // Initialize Stripe with fallback key for development
@@ -279,95 +278,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Stripe subscription API endpoint
-  app.post("/api/create-subscription", async (req, res) => {
+  // Stripe payment intent API endpoint
+  app.post("/api/create-payment-intent", async (req, res) => {
     try {
-      const { amount, plan, cycle, email, name, userId } = req.body;
+      const { amount, plan } = req.body;
       
-      if (!amount || !plan || !email) {
-        return res.status(400).json({ 
-          error: "Missing required parameters: amount, plan, and email are required" 
-        });
-      }
-      
-      console.log("Creating subscription:", { plan, cycle, amount, email, userId });
-      
-      // Format amount for Stripe (ensure it's an integer in cents)
-      const formattedAmount = Math.round(Number(amount));
-      
-      if (isNaN(formattedAmount) || formattedAmount <= 0) {
-        return res.status(400).json({ error: "Invalid amount provided" });
-      }
-      
-      // Create or retrieve Stripe customer
-      let customer;
-      const existingCustomers = await stripe.customers.list({ email });
-      
-      if (existingCustomers.data.length > 0) {
-        // Use existing customer
-        customer = existingCustomers.data[0];
-        console.log("Using existing customer:", customer.id);
-      } else {
-        // Create new customer
-        customer = await stripe.customers.create({
-          email,
-          name,
-          metadata: {
-            plan,
-            cycle: cycle || "monthly",
-            userId: userId ? userId.toString() : undefined
-          }
-        });
-        console.log("Created new customer:", customer.id);
-      }
-      
-      // Create a subscription checkout session
-      const session = await stripe.checkout.sessions.create({
-        customer: customer.id,
-        payment_method_types: ['card'],
-        line_items: [
-          {
-            price_data: {
-              currency: 'usd',
-              product_data: {
-                name: `${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan (${cycle})`,
-                description: `Foundations AI ${plan} subscription - ${cycle} billing`,
-              },
-              unit_amount: formattedAmount,
-              recurring: {
-                interval: cycle === 'yearly' ? 'year' : 'month',
-              },
-            },
-            quantity: 1,
-          },
-        ],
-        mode: 'subscription',
-        success_url: `${req.headers.origin}/subscription-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${req.headers.origin}/#pricing`,
-        metadata: {
-          plan,
-          cycle: cycle || "monthly",
-          amount: formattedAmount.toString(),
-          userId: userId ? userId.toString() : undefined
-        }
+      // Create a payment intent with Stripe
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(amount), // Amount in cents
+        currency: "usd",
+        metadata: { plan }
       });
       
-      // Store payment info in our database
+      // Store payment intent in our database
       await storage.createPayment({
-        stripePaymentIntentId: session.id,
-        amount: formattedAmount,
-        status: 'created',
-        email: email,
-        userId: userId
+        stripePaymentIntentId: paymentIntent.id,
+        amount,
+        status: paymentIntent.status,
+        email: req.body.email
       });
       
-      // Return checkout URL to the frontend
+      // Return client secret to the frontend
       res.json({ 
-        checkoutUrl: session.url,
-        sessionId: session.id
+        clientSecret: paymentIntent.client_secret,
+        amount
       });
     } catch (error: any) {
-      console.error("Create subscription error:", error);
+      console.error("Create payment intent error:", error);
       res.status(500).json({ error: error.message });
     }
   });
@@ -463,142 +400,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: 'Attempted to terminate conversation but encountered an error',
         error: error.message
       });
-    }
-  });
-
-  // Create user API endpoint
-  app.post("/api/users", async (req, res) => {
-    try {
-      const { name, email, username, password } = req.body;
-      
-      if (!name || !email || !username || !password) {
-        return res.status(400).json({ 
-          error: "Missing required fields: name, email, username, and password are required" 
-        });
-      }
-      
-      // Check if user with email or username already exists
-      const existingUser = await storage.getUserByUsername(username);
-      if (existingUser) {
-        return res.status(409).json({ error: "Username already exists" });
-      }
-      
-      // Hash the password
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
-      
-      // Create user
-      const user = await storage.createUser({
-        name,
-        email,
-        username,
-        password: hashedPassword,
-      });
-      
-      // Return user data (excluding password)
-      const { password: _, ...userWithoutPassword } = user;
-      res.status(201).json(userWithoutPassword);
-    } catch (error: any) {
-      console.error("Create user error:", error);
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  // Stripe webhook endpoint to handle payment events - using express.raw middleware for this route
-  app.post('/api/stripe-webhook', express.raw({type: 'application/json'}), async (req, res) => {
-    const sig = req.headers['stripe-signature'] as string;
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-    
-    // If webhook secret is not configured, log a warning but don't fail
-    if (!webhookSecret) {
-      console.warn('STRIPE_WEBHOOK_SECRET is not configured. Webhook verification is disabled.');
-    }
-    
-    let event;
-    
-    try {
-      // Skip signature verification in development
-      if (webhookSecret && process.env.NODE_ENV === 'production') {
-        // Verify webhook signature
-        event = stripe.webhooks.constructEvent(
-          req.body, // This is now a Buffer thanks to express.raw middleware
-          sig,
-          webhookSecret
-        );
-      } else {
-        // In development, just parse the body without verification
-        event = JSON.parse(req.body.toString());
-      }
-      
-      // Handle the event
-      switch (event.type) {
-        case 'payment_intent.succeeded':
-          const paymentIntent = event.data.object;
-          // Update payment status in database
-          const payment = await storage.getPaymentByPaymentIntentId(paymentIntent.id);
-          if (payment) {
-            await storage.updatePaymentStatus(payment.id, 'succeeded');
-            console.log(`Payment ${paymentIntent.id} succeeded`);
-          }
-          break;
-          
-        case 'payment_intent.payment_failed':
-          const failedPayment = event.data.object;
-          const failedPaymentRecord = await storage.getPaymentByPaymentIntentId(failedPayment.id);
-          if (failedPaymentRecord) {
-            await storage.updatePaymentStatus(failedPaymentRecord.id, 'failed');
-            console.log(`Payment ${failedPayment.id} failed`);
-          }
-          break;
-
-        // Subscription events
-        case 'checkout.session.completed':
-          const session = event.data.object;
-          console.log(`Checkout session ${session.id} completed`);
-          
-          // Update our database with successful checkout
-          const checkoutPayment = await storage.getPaymentByPaymentIntentId(session.id);
-          if (checkoutPayment) {
-            await storage.updatePaymentStatus(checkoutPayment.id, 'succeeded');
-            console.log(`Payment for session ${session.id} marked as succeeded`);
-          }
-          break;
-          
-        case 'customer.subscription.created':
-          const newSubscription = event.data.object;
-          console.log(`New subscription created: ${newSubscription.id} for customer ${newSubscription.customer}`);
-          break;
-          
-        case 'customer.subscription.updated':
-          const updatedSubscription = event.data.object;
-          console.log(`Subscription updated: ${updatedSubscription.id}, status: ${updatedSubscription.status}`);
-          break;
-          
-        case 'customer.subscription.deleted':
-          const deletedSubscription = event.data.object;
-          console.log(`Subscription deleted: ${deletedSubscription.id}`);
-          break;
-          
-        case 'invoice.payment_succeeded':
-          const invoice = event.data.object;
-          console.log(`Invoice payment succeeded: ${invoice.id} for subscription ${invoice.subscription}`);
-          break;
-          
-        case 'invoice.payment_failed':
-          const failedInvoice = event.data.object;
-          console.log(`Invoice payment failed: ${failedInvoice.id} for subscription ${failedInvoice.subscription}`);
-          break;
-          
-        // Add other events you want to handle
-        default:
-          console.log(`Unhandled event type ${event.type}`);
-      }
-      
-      // Return a 200 response to acknowledge receipt of the event
-      res.json({ received: true });
-    } catch (err: any) {
-      console.error(`Webhook Error: ${err.message}`);
-      res.status(400).send(`Webhook Error: ${err.message}`);
     }
   });
 
