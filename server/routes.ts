@@ -6,10 +6,15 @@ import {
   insertDemoRequestSchema, 
   insertAppointmentSchema, 
   insertUserSchema, 
-  insertSubscriptionSchema 
+  insertSubscriptionSchema,
+  users
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import bcrypt from "bcryptjs";
+import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
+import { pool } from "./db";
+import "./types"; // Import the session type extensions
 
 // Initialize Stripe with fallback key for development
 const stripeKey = process.env.STRIPE_SECRET_KEY || "sk_test_placeholder";
