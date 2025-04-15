@@ -4,8 +4,7 @@ import {
   Message, InsertMessage, messages,
   Appointment, InsertAppointment, appointments,
   DemoRequest, InsertDemoRequest, demoRequests,
-  Payment, InsertPayment, payments,
-  Subscription, InsertSubscription, subscriptions
+  Payment, InsertPayment, payments
 } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
@@ -16,11 +15,7 @@ export interface IStorage {
   // User methods
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
-  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  updateUser(id: number, data: Partial<InsertUser>): Promise<User>;
-  updateUserStripeCustomerId(id: number, stripeCustomerId: string): Promise<User>;
-  updateUserSubscription(id: number, plan: string, status: string): Promise<User>;
 
   // Agent methods
   getAgent(id: number): Promise<Agent | undefined>;
@@ -43,12 +38,6 @@ export interface IStorage {
   createPayment(payment: InsertPayment): Promise<Payment>;
   getPaymentByPaymentIntentId(paymentIntentId: string): Promise<Payment | undefined>;
   updatePaymentStatus(id: number, status: string): Promise<Payment>;
-  
-  // Subscription methods
-  createSubscription(subscription: InsertSubscription): Promise<Subscription>;
-  getSubscriptionByUserId(userId: number): Promise<Subscription | undefined>;
-  getSubscriptionByStripeId(stripeSubscriptionId: string): Promise<Subscription | undefined>;
-  updateSubscription(id: number, data: Partial<InsertSubscription>): Promise<Subscription>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -63,39 +52,9 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-    return user;
-  }
-
   async createUser(insertUser: InsertUser): Promise<User> {
     const [user] = await db.insert(users).values(insertUser).returning();
     return user;
-  }
-  
-  async updateUser(id: number, data: Partial<InsertUser>): Promise<User> {
-    const [user] = await db
-      .update(users)
-      .set(data)
-      .where(eq(users.id, id))
-      .returning();
-    
-    if (!user) {
-      throw new Error(`User with ID ${id} not found`);
-    }
-    
-    return user;
-  }
-  
-  async updateUserStripeCustomerId(id: number, stripeCustomerId: string): Promise<User> {
-    return this.updateUser(id, { stripeCustomerId });
-  }
-  
-  async updateUserSubscription(id: number, plan: string, status: string): Promise<User> {
-    return this.updateUser(id, { 
-      subscriptionPlan: plan,
-      subscriptionStatus: status
-    });
   }
 
   // Agent methods
@@ -167,36 +126,6 @@ export class DatabaseStorage implements IStorage {
     }
     
     return payment;
-  }
-  
-  // Subscription methods
-  async createSubscription(insertSubscription: InsertSubscription): Promise<Subscription> {
-    const [subscription] = await db.insert(subscriptions).values(insertSubscription).returning();
-    return subscription;
-  }
-  
-  async getSubscriptionByUserId(userId: number): Promise<Subscription | undefined> {
-    const [subscription] = await db.select().from(subscriptions).where(eq(subscriptions.userId, userId));
-    return subscription;
-  }
-  
-  async getSubscriptionByStripeId(stripeSubscriptionId: string): Promise<Subscription | undefined> {
-    const [subscription] = await db.select().from(subscriptions).where(eq(subscriptions.stripeSubscriptionId, stripeSubscriptionId));
-    return subscription;
-  }
-  
-  async updateSubscription(id: number, data: Partial<InsertSubscription>): Promise<Subscription> {
-    const [subscription] = await db
-      .update(subscriptions)
-      .set(data)
-      .where(eq(subscriptions.id, id))
-      .returning();
-    
-    if (!subscription) {
-      throw new Error(`Subscription with ID ${id} not found`);
-    }
-    
-    return subscription;
   }
 
   // Initialize sample agents if none exist

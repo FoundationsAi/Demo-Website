@@ -9,7 +9,6 @@ import { AgentSelectionSection } from '@/components/sections/agent-selection-sec
 import { PricingSection } from '@/components/sections/pricing-section';
 import { ScrollReveal } from '@/components/scroll-reveal';
 import { AnimatedText } from '@/components/animated-text';
-import { Header } from '@/components/layout/header';
 
 // Sample mountain images
 // In a real implementation, these would be optimized and imported properly
@@ -53,9 +52,6 @@ export const ImmersiveHome = () => {
         ref={containerRef}
         className="immersive-experience relative overflow-hidden bg-black"
       >
-        {/* Header */}
-        <Header />
-        
         {/* Progress indicator */}
         <motion.div
           className="fixed z-50 top-0 left-0 h-1 bg-blue-500"

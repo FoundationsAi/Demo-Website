@@ -1,69 +1,108 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useScroll } from "@/hooks/use-scroll";
 import { Button } from "@/components/ui/button";
-import { LogIn } from "lucide-react";
-import logoImage from "../../assets/foundations-ai-logo.png";
+import { MountainLogo } from "@/components/mountain-logo";
+import { scrollToSection } from "@/lib/utils";
+import { Menu, X } from "lucide-react";
+
+interface NavItem {
+  name: string;
+  href: string;
+  isSection?: boolean;
+}
+
+const navItems: NavItem[] = [
+  { name: "Features", href: "#features", isSection: true },
+  { name: "Agents", href: "#agents", isSection: true },
+  { name: "How It Works", href: "#how-it-works", isSection: true },
+  { name: "Demo", href: "#demo", isSection: true },
+];
 
 export const Header: React.FC = () => {
   const { scrolled } = useScroll();
-  const [location, setLocation] = useLocation();
-  
-  const handleNavigate = (path: string) => {
-    console.log("Navigating to:", path);
-    setLocation(path);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [location] = useLocation();
+  const isHomePage = location === "/";
+
+  // Handle navigation click for both anchor and span elements
+  const handleNavClick = (e: React.MouseEvent<HTMLElement>, item: NavItem) => {
+    if (item.isSection && isHomePage) {
+      e.preventDefault();
+      scrollToSection(item.href.substring(1));
+      setIsMenuOpen(false);
+    } else if (!isHomePage) {
+      setIsMenuOpen(false);
+    }
   };
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-sm shadow-lg border-b border-white/10"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? "bg-primary/90 backdrop-blur-sm shadow-lg" : "bg-transparent"
+      } border-b border-white/10`}
     >
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center">
           <Link href="/">
             <div className="flex items-center cursor-pointer">
-              <img 
-                src={logoImage} 
-                alt="Foundations AI Logo" 
-                className="w-14 h-12 object-contain" 
-              />
-              <div className="ml-2 flex flex-col">
-                <span className="text-xl font-bold text-[#4F9BFF]">
-                  Foundations
-                </span>
-                <span className="text-xl font-bold text-[#4F9BFF]">
-                  AI
-                </span>
-              </div>
+              <MountainLogo animate />
+              <span className="text-xl font-bold gradient-text ml-3">
+                Foundations AI
+              </span>
             </div>
           </Link>
         </div>
         
+        <nav className="hidden md:flex items-center space-x-8">
+          {navItems.map((item) => (
+            <Link key={item.name} href={item.href}>
+              <span
+                className="text-white/80 hover:text-white transition cursor-pointer"
+                onClick={(e) => handleNavClick(e, item)}
+              >
+                {item.name}
+              </span>
+            </Link>
+          ))}
+        </nav>
+        
         <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            className="flex items-center gap-2 text-white hover:text-white/80"
-            onClick={() => handleNavigate("/login")}
-          >
-            <LogIn size={18} />
-            <span>Login</span>
+          <Button className="gradient-button hidden md:flex">
+            Get Started
           </Button>
-
-          <Button 
-            className="bg-[#4F9BFF] hover:bg-[#3E7DD5] text-white font-medium rounded-full px-8 py-5 h-auto"
-            onClick={() => {
-              // Scroll to pricing section if on homepage
-              if (window.location.pathname === '/') {
-                const pricingSection = document.getElementById('pricing-section');
-                if (pricingSection) {
-                  pricingSection.scrollIntoView({ behavior: 'smooth' });
-                  return;
-                }
-              }
-              // Otherwise navigate to homepage with pricing anchor
-              window.location.href = '/#pricing-section';
-            }}
+          
+          <button 
+            className="md:hidden text-white"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </div>
+      
+      {/* Mobile menu - with animation and improved accessibility */}
+      <div 
+        className={`md:hidden bg-primary/95 backdrop-blur-sm absolute w-full transition-all duration-300 ease-in-out overflow-hidden ${
+          isMenuOpen ? 'max-h-[300px] border-b border-white/10 shadow-lg' : 'max-h-0'
+        }`}
+        aria-hidden={!isMenuOpen}
+        aria-expanded={isMenuOpen}
+        role="navigation"
+      >
+        <div className="flex flex-col space-y-3 py-4 px-6">
+          {navItems.map((item) => (
+            <Link key={item.name} href={item.href}>
+              <span
+                className="text-white/90 hover:text-white transition-all py-2 block cursor-pointer font-medium"
+                onClick={(e) => handleNavClick(e, item)}
+                role="menuitem"
+              >
+                {item.name}
+              </span>
+            </Link>
+          ))}
+          <Button className="gradient-button mt-2 w-full py-2">
             Get Started
           </Button>
         </div>

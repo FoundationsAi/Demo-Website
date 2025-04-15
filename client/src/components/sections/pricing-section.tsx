@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollReveal } from '@/components/scroll-reveal';
 import { AnimatedText } from '@/components/animated-text';
 import { HoverableCard } from '@/components/hoverable-card';
-import { useLocation } from 'wouter';
 
 interface PricingTier {
   name: string;
@@ -22,88 +21,76 @@ const pricingTiers: PricingTier[] = [
     price: "$49.99",
     description: "Perfect for startups and small businesses exploring AI automation",
     features: [
-      "Access to AI voice agents",
-      "Up to 1,000 minutes/month",
-      "Email support",
-      "Basic agent customization",
-      "Standard voice quality",
-      "Web integration",
-      "API access (basic)",
-      "Standard reporting"
+      "50 minutes of AI usage per month",
+      "Unlimited AI agents",
+      "5 concurrent calls",
+      "Voice API, LLM, transcriber costs",
+      "API integrations",
+      "Real-time booking",
+      "Human transfer",
+      "Community support"
     ],
-    buttonText: "Get Started",
-    overageFee: "$0.05/minute",
+    buttonText: "Join Foundations AI",
+    overageFee: "$0.35/minute",
     icon: "🚀"
   },
   {
     name: "Essential",
     price: "$299.99",
-    description: "Ideal for growing businesses with customer service needs",
+    description: "Ideal for small to medium businesses with low call volumes",
     features: [
-      "All Starter features",
-      "Up to 5,000 minutes/month",
-      "Priority support",
-      "Basic analytics",
-      "Enhanced voice quality",
-      "Multiple language support",
-      "CRM integration",
-      "Weekend support"
+      "500 minutes of AI usage per month",
+      "Unlimited AI agents",
+      "10 concurrent calls",
+      "All Starter features"
     ],
-    buttonText: "Get Started",
-    overageFee: "$0.03/minute",
+    buttonText: "Join Foundations AI",
+    overageFee: "$0.30/minute",
     isPopular: true,
     icon: "⭐"
   },
   {
     name: "Basic",
     price: "$749.99",
-    description: "Designed for businesses with moderate voice AI needs",
+    description: "Designed for growing businesses with moderate call volumes",
     features: [
+      "1,250 minutes of AI usage per month",
+      "Unlimited AI agents",
+      "25 concurrent calls",
       "All Essential features",
-      "Up to 15,000 minutes/month",
-      "Advanced analytics",
-      "API access (full)",
-      "Premium voice quality",
-      "Custom voice options",
-      "Dedicated account manager",
-      "Team collaboration tools"
+      "Team access",
+      "Support via ticketing"
     ],
-    buttonText: "Get Started",
-    overageFee: "$0.02/minute",
+    buttonText: "Join Foundations AI",
+    overageFee: "$0.25/minute",
     isPopular: true,
     icon: "📈"
   },
   {
     name: "Pro",
-    price: "$1499.99",
-    description: "Complete solution for businesses with high-volume requirements",
+    price: "$1,499.99",
+    description: "Built for established businesses with high call volumes",
     features: [
-      "All Basic features",
-      "Unlimited minutes",
-      "24/7 priority support",
-      "Custom voice training",
-      "White-label solution",
-      "Advanced security features",
-      "Multi-channel deployment",
-      "Enterprise-grade SLA"
+      "2,100 minutes of AI usage per month",
+      "Unlimited AI agents",
+      "50 concurrent calls",
+      "All Basic features"
     ],
-    buttonText: "Get Started",
-    overageFee: "Included",
+    buttonText: "Join Foundations AI",
+    overageFee: "$0.20/minute",
     icon: "💎"
   },
   {
     name: "Enterprise",
     price: "Custom",
-    description: "For large businesses and agencies with unique requirements",
+    description: "For large businesses and agencies with massive call volumes or unique needs",
     features: [
-      "Custom solution architecture",
-      "Unlimited agents and minutes",
-      "Dedicated support team",
-      "Custom AI voice development",
-      "On-premises deployment option",
-      "Full system integration",
-      "Custom analytics dashboard",
-      "Strategic AI consultation"
+      "Custom minutes of AI usage",
+      "Unlimited AI agents",
+      "Custom concurrent calls",
+      "All Pro features",
+      "White-label platform",
+      "Unlimited subaccounts"
     ],
     buttonText: "Contact Sales",
     overageFee: "Custom rates",
@@ -111,23 +98,14 @@ const pricingTiers: PricingTier[] = [
   }
 ];
 
-// Map tier names to Stripe product IDs
-const PLAN_PRODUCT_IDS = {
-  "Starter": "prod_S8QWDRCVcz07An",
-  "Essential": "prod_S8QXUopH7dXHrJ",
-  "Basic": "prod_S8QYxTHNgV2Dmr",
-  "Pro": "prod_S8QZE7hzuMcjru"
-};
-
 /**
  * PricingSection - Displays pricing tiers with interactive elements
  */
 export const PricingSection: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const [, setLocation] = useLocation();
   
   return (
-    <section id="pricing-section" className="relative min-h-screen py-32 pb-48 pt-48 bg-gradient-to-b from-[#0a1528] to-[#061022] text-white overflow-hidden">
+    <section id="pricing" className="relative min-h-screen py-32 pb-48 pt-48 bg-gradient-to-b from-[#0a1528] to-[#061022] text-white overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-blue-900/10 to-transparent" />
@@ -234,16 +212,6 @@ export const PricingSection: React.FC = () => {
                         {/* Button */}
                         <div className="px-6 pb-6">
                           <button
-                            onClick={() => {
-                              if (tier.name === "Enterprise") {
-                                // For Enterprise, just link to contact page or show modal
-                                window.location.href = "mailto:sales@foundationsai.com";
-                              } else {
-                                // For other plans, redirect to signup with the plan ID
-                                const planId = PLAN_PRODUCT_IDS[tier.name as keyof typeof PLAN_PRODUCT_IDS];
-                                setLocation(`/signup?plan=${planId}`);
-                              }
-                            }}
                             className={`w-full py-3 rounded-lg font-medium text-lg ${
                               tier.isPopular
                                 ? 'bg-blue-600 hover:bg-blue-700 text-white'
@@ -323,16 +291,6 @@ export const PricingSection: React.FC = () => {
                     {/* Button */}
                     <div className="px-6 pb-6">
                       <button 
-                        onClick={() => {
-                          if (tier.name === "Enterprise") {
-                            // For Enterprise, just link to contact page or show modal
-                            window.location.href = "mailto:sales@foundationsai.com";
-                          } else {
-                            // For other plans, redirect to signup with the plan ID
-                            const planId = PLAN_PRODUCT_IDS[tier.name as keyof typeof PLAN_PRODUCT_IDS];
-                            setLocation(`/signup?plan=${planId}`);
-                          }
-                        }}
                         className={`w-full py-3 rounded-lg font-medium text-lg ${
                           tier.isPopular
                             ? 'bg-blue-600 hover:bg-blue-700 text-white'
@@ -361,10 +319,7 @@ export const PricingSection: React.FC = () => {
                 </p>
               </div>
               <div className="md:w-1/3 flex justify-center">
-                <button 
-                  onClick={() => window.location.href = "mailto:sales@foundationsai.com"}
-                  className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
-                >
+                <button className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
                   Schedule a Demo
                 </button>
               </div>
@@ -424,10 +379,7 @@ export const PricingSection: React.FC = () => {
             <p className="text-base md:text-xl text-blue-300 mb-8 md:mb-10 max-w-3xl mx-auto">
               Join thousands of businesses already using Foundations AI to enhance their customer interactions.
             </p>
-            <button 
-              onClick={() => setLocation(`/signup?plan=${PLAN_PRODUCT_IDS.Starter}`)} 
-              className="px-6 py-3 md:px-8 md:py-4 bg-blue-600 hover:bg-blue-700 text-white text-base md:text-lg font-medium rounded-full transition transform hover:scale-105 shadow-lg shadow-blue-600/30"
-            >
+            <button className="px-6 py-3 md:px-8 md:py-4 bg-blue-600 hover:bg-blue-700 text-white text-base md:text-lg font-medium rounded-full transition transform hover:scale-105 shadow-lg shadow-blue-600/30">
               Join Foundations AI
             </button>
           </ScrollReveal>
