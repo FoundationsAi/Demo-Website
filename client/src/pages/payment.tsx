@@ -138,7 +138,7 @@ const PaymentSuccess = () => {
   );
 };
 
-export const Payment: React.FC = () => {
+const Payment: React.FC = () => {
   const [clientSecret, setClientSecret] = useState("");
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(true);
