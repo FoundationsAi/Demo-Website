@@ -132,16 +132,16 @@ export default function SubscribePage() {
   // Success component to show after payment
   const PaymentSuccess = () => (
     <div className="text-center py-6">
-      <div className="mb-4 flex justify-center">
-        <CheckCircle className="h-16 w-16 text-green-500" />
+      <div className="mb-6 flex justify-center">
+        <CheckCircle className="h-16 w-16 text-[#4F9BFF]" />
       </div>
-      <h3 className="text-xl font-semibold mb-2">Payment Successful!</h3>
-      <p className="mb-6 text-muted-foreground">
-        Thank you for subscribing to {selectedPlan?.name}. Your account is now active.
+      <h3 className="text-2xl font-semibold mb-3 text-[#4F9BFF]">Payment Successful!</h3>
+      <p className="mb-6 text-muted-foreground text-lg">
+        Thank you for subscribing to {selectedPlan?.name}. Your account is now active with full access to AI voice features.
       </p>
       <Button 
         onClick={() => setLocation("/dashboard")}
-        className="w-full"
+        className="w-full bg-[#4F9BFF] hover:bg-[#3E7DD5] text-white"
       >
         Go to Dashboard
       </Button>
@@ -161,9 +161,9 @@ export default function SubscribePage() {
         </Button>
         
         <div className="mb-8">
-          <h1 className="text-3xl font-bold">Subscribe to AI Voice Agents</h1>
+          <h1 className="text-3xl font-bold text-[#4F9BFF]">Elevate Your Business with AI Voice</h1>
           <p className="text-muted-foreground mt-2">
-            Choose the plan that's right for you
+            Set up your subscription and start using intelligent voice agents today
           </p>
         </div>
         
@@ -248,7 +248,7 @@ export default function SubscribePage() {
                 )}
                 
                 <Button
-                  className="w-full mt-6"
+                  className="w-full mt-6 bg-[#4F9BFF] hover:bg-[#3E7DD5] text-white"
                   onClick={createSubscription}
                   disabled={!selectedPlan || isCreatingSubscription}
                 >
