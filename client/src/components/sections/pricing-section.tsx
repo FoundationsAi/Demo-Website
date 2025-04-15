@@ -108,7 +108,7 @@ export const PricingSection: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
   const [, setLocation] = useLocation();
   
-  // Handle plan selection and redirect to Stripe checkout
+  // Handle plan selection and redirect to signup page
   const handlePlanSelect = async (tier: PricingTier) => {
     // Skip payment flow for enterprise (contact sales)
     if (tier.name === "Enterprise") {
@@ -128,41 +128,12 @@ export const PricingSection: React.FC = () => {
         amount = Math.round(amount * 0.9 * 12);
       }
       
-      // Open a modal to collect email address
-      const email = prompt("Please enter your email address to continue with subscription:");
+      console.log(`Redirecting to signup page for plan=${tier.name.toLowerCase()}, amount=${amount}, cycle=${billingCycle}`);
       
-      if (!email || !email.includes('@')) {
-        alert("A valid email address is required for subscription.");
-        setIsProcessing(null);
-        return;
-      }
-      
-      console.log(`Creating subscription: plan=${tier.name.toLowerCase()}, amount=${amount}, cycle=${billingCycle}`);
-      
-      // Call our subscription API
-      const response = await apiRequest("POST", "/api/create-subscription", {
-        plan: tier.name.toLowerCase(),
-        amount,
-        cycle: billingCycle,
-        email,
-        name: email.split('@')[0] // Use part of email as name for now
-      });
-      
-      const data = await response.json();
-      
-      if (data.error) {
-        throw new Error(data.error);
-      }
-      
-      if (data.checkoutUrl) {
-        // Redirect to Stripe checkout
-        window.location.href = data.checkoutUrl;
-      } else {
-        throw new Error("No checkout URL received from server");
-      }
+      // Redirect to signup page with plan details in URL parameters
+      setLocation(`/signup?plan=${tier.name.toLowerCase()}&amount=${amount}&cycle=${billingCycle}`);
     } catch (error: any) {
-      console.error("Error initiating subscription:", error);
-      alert(`Subscription error: ${error.message || "Unknown error occurred"}`);
+      console.error("Error selecting plan:", error);
       setIsProcessing(null);
     }
   };
