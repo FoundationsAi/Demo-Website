@@ -28,7 +28,7 @@ const signupSchema = z.object({
 
 type SignupFormValues = z.infer<typeof signupSchema>;
 
-const SignupPage: React.FC = () => {
+const Signup: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const [, setLocation] = useLocation();
@@ -287,4 +287,4 @@ const SignupPage: React.FC = () => {
   );
 };
 
-export default SignupPage;
+export default Signup;

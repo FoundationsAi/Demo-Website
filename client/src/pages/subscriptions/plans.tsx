@@ -83,7 +83,7 @@ const plans: PlanProps[] = [
   }
 ];
 
-const SubscriptionPlansPage: React.FC = () => {
+const SubscriptionPlans: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const { toast } = useToast();
@@ -318,4 +318,4 @@ const SubscriptionPlansPage: React.FC = () => {
   );
 };
 
-export default SubscriptionPlansPage;
+export default SubscriptionPlans;
