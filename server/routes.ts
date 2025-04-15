@@ -216,38 +216,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Set price based on billing period
       amount = billingPeriod === 'yearly' ? planDetails.yearlyPrice : planDetails.monthlyPrice;
       
-      // First, check if there's already a price for this product
-      const prices = await stripe.prices.list({
-        product: planId,
-        active: true,
-      });
-      
-      let priceId;
-      
-      // Find price matching our criteria or create a new one
-      if (prices.data.length > 0) {
-        // Try to find a matching price with the right amount and interval
-        const matchingPrice = prices.data.find(price => 
-          price.unit_amount === amount && 
-          price.recurring?.interval === (billingPeriod === 'yearly' ? 'year' : 'month')
-        );
-        
-        if (matchingPrice) {
-          priceId = matchingPrice.id;
+      // Map plan IDs to actual Stripe price IDs based on billing period
+      // These IDs should be updated with the actual Stripe price IDs from your Stripe dashboard
+      const priceMappings = {
+        // Starter plan price IDs
+        "prod_S8QWDRCVcz07An": {
+          monthly: "price_1PAghrNXoAKacTL88JkY1g3L", // Stripe price ID for monthly billing
+          yearly: "price_1PAghxNXoAKacTL8Ps8Dxa9J"   // Stripe price ID for yearly billing
+        },
+        // Essential plan price IDs
+        "prod_S8QXUopH7dXHrJ": {
+          monthly: "price_1PAgi8NXoAKacTL8fmxCf42p", // Stripe price ID for monthly billing
+          yearly: "price_1PAgiENXoAKacTL8xekzcRY0"   // Stripe price ID for yearly billing
+        },
+        // Basic plan price IDs
+        "prod_S8QYxTHNgV2Dmr": {
+          monthly: "price_1PAgiMNXoAKacTL84O2KSN98", // Stripe price ID for monthly billing
+          yearly: "price_1PAgiRNXoAKacTL8yqbwkI9G"   // Stripe price ID for yearly billing
+        },
+        // Pro plan price IDs
+        "prod_S8QZE7hzuMcjru": {
+          monthly: "price_1PAgiYNXoAKacTL8MbMoFU55", // Stripe price ID for monthly billing
+          yearly: "price_1PAgieNXoAKacTL8eRlHnBFs"   // Stripe price ID for yearly billing
         }
+      };
+      
+      // Get price ID from mapping
+      const priceMapping = priceMappings[planId as keyof typeof priceMappings];
+      if (!priceMapping) {
+        return res.status(400).json({ error: "Invalid plan ID or missing price mapping" });
       }
       
-      // If no matching price found, create a new one
+      const priceId = billingPeriod === 'yearly' ? priceMapping.yearly : priceMapping.monthly;
+      
       if (!priceId) {
-        const newPrice = await stripe.prices.create({
-          product: planId,
-          unit_amount: amount,
-          currency: 'usd',
-          recurring: {
-            interval: billingPeriod === 'yearly' ? 'year' : 'month',
-          },
-        });
-        priceId = newPrice.id;
+        return res.status(400).json({ error: `No price ID found for ${planDetails.name} plan with ${billingPeriod} billing` });
       }
       
       // Create subscription through Stripe using price ID
