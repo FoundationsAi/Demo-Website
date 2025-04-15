@@ -4,7 +4,7 @@ import { useScroll } from "@/hooks/use-scroll";
 import { Button } from "@/components/ui/button";
 import { MountainLogo } from "@/components/mountain-logo";
 import { scrollToSection } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react";
 
 interface NavItem {
   name: string;
@@ -68,9 +68,18 @@ export const Header: React.FC = () => {
         </nav>
         
         <div className="flex items-center gap-4">
-          <Button className="gradient-button hidden md:flex">
-            Get Started
-          </Button>
+          <Link href="/login">
+            <Button variant="ghost" className="hidden md:flex items-center gap-1 text-white/90 hover:text-white">
+              <LogIn size={16} />
+              <span>Login</span>
+            </Button>
+          </Link>
+
+          <Link href="/signup">
+            <Button className="gradient-button hidden md:flex">
+              Get Started
+            </Button>
+          </Link>
           
           <button 
             className="md:hidden text-white"
@@ -102,9 +111,18 @@ export const Header: React.FC = () => {
               </span>
             </Link>
           ))}
-          <Button className="gradient-button mt-2 w-full py-2">
-            Get Started
-          </Button>
+          <Link href="/login" className="w-full">
+            <Button variant="outline" className="w-full py-2 flex items-center justify-center gap-1">
+              <LogIn size={16} />
+              <span>Login</span>
+            </Button>
+          </Link>
+          
+          <Link href="/signup" className="w-full">
+            <Button className="gradient-button mt-2 w-full py-2">
+              Get Started
+            </Button>
+          </Link>
         </div>
       </div>
     </header>
