@@ -155,7 +155,7 @@ export const PricingSection: React.FC = () => {
           {/* Mobile view scrollable container for small screens */}
           <div className="w-full overflow-x-auto pb-6 hide-scrollbar md:hidden">
             <div className="inline-flex space-x-4 px-4 pb-2" style={{ minWidth: "min-content" }}>
-              {pricingTiers.slice(0, 3).map((tier, index) => (
+              {pricingTiers.map((tier, index) => (
                 <div key={tier.name} className="w-[280px] sm:w-[320px] flex-shrink-0">
                   <ScrollReveal delay={index * 0.1}>
                     <motion.div
@@ -177,7 +177,7 @@ export const PricingSection: React.FC = () => {
                           
                           {tier.isPopular && (
                             <div className="bg-blue-600 text-white font-bold py-2 px-4 text-sm rounded-bl-lg ml-auto">
-                              {index === 0 ? 'POPULAR' : 'MOST POPULAR'}
+                              {tier.name === 'Essential' ? 'POPULAR' : 'MOST POPULAR'}
                             </div>
                           )}
                         </div>
@@ -223,7 +223,11 @@ export const PricingSection: React.FC = () => {
                         {/* Button */}
                         <div className="px-6 pb-6">
                           <button
-                            className="w-full py-3 rounded-lg font-medium bg-blue-600 hover:bg-blue-700 text-white text-lg"
+                            className={`w-full py-3 rounded-lg font-medium text-lg ${
+                              tier.isPopular || tier.hasTrial
+                                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                                : 'bg-transparent hover:bg-blue-900/50 text-white border border-blue-500'
+                            }`}
                           >
                             {tier.buttonText}
                           </button>
@@ -237,8 +241,8 @@ export const PricingSection: React.FC = () => {
           </div>
           
           {/* Tablet and desktop grid view */}
-          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 max-w-[1200px] mx-auto gap-6 px-4">
-            {pricingTiers.slice(0, 3).map((tier, index) => (
+          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 max-w-[1600px] mx-auto gap-6 px-4">
+            {pricingTiers.map((tier, index) => (
               <ScrollReveal key={tier.name} delay={index * 0.1}>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -258,7 +262,7 @@ export const PricingSection: React.FC = () => {
                       
                       {tier.isPopular && (
                         <div className="bg-blue-600 text-white font-bold py-2 px-4 text-sm rounded-bl-lg ml-auto">
-                          MOST POPULAR
+                          {tier.name === 'Essential' ? 'POPULAR' : 'MOST POPULAR'}
                         </div>
                       )}
                     </div>
@@ -303,7 +307,13 @@ export const PricingSection: React.FC = () => {
                     
                     {/* Button */}
                     <div className="px-6 pb-6">
-                      <button className="w-full py-3 rounded-lg font-medium bg-blue-600 hover:bg-blue-700 text-white text-lg">
+                      <button 
+                        className={`w-full py-3 rounded-lg font-medium text-lg ${
+                          tier.isPopular || tier.hasTrial
+                            ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                            : 'bg-transparent hover:bg-blue-900/50 text-white border border-blue-500'
+                        }`}
+                      >
                         {tier.buttonText}
                       </button>
                     </div>
