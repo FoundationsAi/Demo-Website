@@ -253,8 +253,8 @@ export async function recordUsage(subscriptionId: string, priceId: string, quant
       throw new Error(`No subscription item found for price ID: ${priceId}`);
     }
     
-    // Create the usage record
-    const usageRecord = await stripe.subscriptionItems.createUsageRecord(
+    // Create the usage record using the raw API client approach to bypass TS issue
+    const usageRecord = await (stripe as any).subscriptionItems.createUsageRecord(
       item.id,
       {
         quantity: quantity,
