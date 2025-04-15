@@ -4,7 +4,8 @@ import {
   Message, InsertMessage, messages,
   Appointment, InsertAppointment, appointments,
   DemoRequest, InsertDemoRequest, demoRequests,
-  Payment, InsertPayment, payments
+  Payment, InsertPayment, payments,
+  Subscription, InsertSubscription, subscriptions
 } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
@@ -15,7 +16,11 @@ export interface IStorage {
   // User methods
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, data: Partial<InsertUser>): Promise<User>;
+  updateUserStripeCustomerId(id: number, stripeCustomerId: string): Promise<User>;
+  updateUserSubscription(id: number, plan: string, status: string): Promise<User>;
 
   // Agent methods
   getAgent(id: number): Promise<Agent | undefined>;
@@ -38,6 +43,12 @@ export interface IStorage {
   createPayment(payment: InsertPayment): Promise<Payment>;
   getPaymentByPaymentIntentId(paymentIntentId: string): Promise<Payment | undefined>;
   updatePaymentStatus(id: number, status: string): Promise<Payment>;
+  
+  // Subscription methods
+  createSubscription(subscription: InsertSubscription): Promise<Subscription>;
+  getSubscriptionByUserId(userId: number): Promise<Subscription | undefined>;
+  getSubscriptionByStripeId(stripeSubscriptionId: string): Promise<Subscription | undefined>;
+  updateSubscription(id: number, data: Partial<InsertSubscription>): Promise<Subscription>;
 }
 
 export class DatabaseStorage implements IStorage {
