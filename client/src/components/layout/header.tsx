@@ -4,7 +4,7 @@ import { useScroll } from "@/hooks/use-scroll";
 import { Button } from "@/components/ui/button";
 import { MountainLogo } from "@/components/mountain-logo";
 import { scrollToSection } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
+import { LogIn, Menu, X } from "lucide-react";
 
 interface NavItem {
   name: string;
@@ -68,9 +68,18 @@ export const Header: React.FC = () => {
         </nav>
         
         <div className="flex items-center gap-4">
-          <Button className="gradient-button hidden md:flex">
-            Get Started
-          </Button>
+          <Link href="/login" className="hidden md:flex">
+            <Button variant="ghost" className="text-white hover:text-blue-200 hover:bg-blue-900/20">
+              <LogIn className="mr-2 h-4 w-4" />
+              Login
+            </Button>
+          </Link>
+          
+          <Link href="/get-started" className="hidden md:flex">
+            <Button className="gradient-button">
+              Get Started
+            </Button>
+          </Link>
           
           <button 
             className="md:hidden text-white"
@@ -84,7 +93,7 @@ export const Header: React.FC = () => {
       {/* Mobile menu - with animation and improved accessibility */}
       <div 
         className={`md:hidden bg-primary/95 backdrop-blur-sm absolute w-full transition-all duration-300 ease-in-out overflow-hidden ${
-          isMenuOpen ? 'max-h-[300px] border-b border-white/10 shadow-lg' : 'max-h-0'
+          isMenuOpen ? 'max-h-[400px] border-b border-white/10 shadow-lg' : 'max-h-0'
         }`}
         aria-hidden={!isMenuOpen}
         aria-expanded={isMenuOpen}
@@ -102,9 +111,22 @@ export const Header: React.FC = () => {
               </span>
             </Link>
           ))}
-          <Button className="gradient-button mt-2 w-full py-2">
-            Get Started
-          </Button>
+          
+          <Link href="/login">
+            <span
+              className="text-white/90 hover:text-white transition-all py-2 flex items-center cursor-pointer font-medium"
+              role="menuitem"
+            >
+              <LogIn className="mr-2 h-4 w-4" />
+              Login
+            </span>
+          </Link>
+          
+          <Link href="/get-started">
+            <Button className="gradient-button mt-2 w-full py-2">
+              Get Started
+            </Button>
+          </Link>
         </div>
       </div>
     </header>
