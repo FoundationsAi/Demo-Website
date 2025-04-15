@@ -30,8 +30,8 @@ export const DEFAULT_VOICES: VoiceMap = {
     female: "2EiwWnXFnvU5JabPnv8n" // Rachel voice ID
   },
   "receptionist": {
-    male: "SOYHLrjzK2X1ezoPC6cr", // Robert voice ID
-    female: "jBpfuIE2acCO8z3wKNLl" // Jessica voice ID
+    male: "hBgdG6LBM8kibonEH5Z2", // Alex voice ID (previously Robert)
+    female: "QvsJlPVuXKVwEEOc9Vub" // Jade voice ID (previously Jessica)
   },
   "mortgage": {
     male: "TxGEqnHWrfWFTfGW9XjX", // Thomas voice ID
