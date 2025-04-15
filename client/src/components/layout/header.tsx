@@ -51,18 +51,21 @@ export const Header: React.FC = () => {
     >
       <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-end">
         <div className="flex items-center gap-4">
-          <Link href="/login" className="flex">
-            <Button variant="ghost" className="text-white hover:text-blue-200 hover:bg-blue-900/20">
-              <LogIn className="mr-2 h-4 w-4" />
-              Login
-            </Button>
-          </Link>
+          <Button 
+            variant="ghost" 
+            className="text-white hover:text-blue-200 hover:bg-blue-900/20"
+            onClick={() => navigate('/login')}
+          >
+            <LogIn className="mr-2 h-4 w-4" />
+            Login
+          </Button>
           
-          <Link href="/get-started" className="flex">
-            <Button className="gradient-button">
-              Get Started
-            </Button>
-          </Link>
+          <Button 
+            className="gradient-button"
+            onClick={() => navigate('/get-started')}
+          >
+            Get Started
+          </Button>
           
           <button 
             className="md:hidden text-white"
@@ -83,21 +86,27 @@ export const Header: React.FC = () => {
         role="navigation"
       >
         <div className="flex flex-col space-y-3 py-4 px-6">
-          <Link href="/login">
-            <span
-              className="text-white/90 hover:text-white transition-all py-2 flex items-center cursor-pointer font-medium"
-              role="menuitem"
-            >
-              <LogIn className="mr-2 h-4 w-4" />
-              Login
-            </span>
-          </Link>
+          <span
+            className="text-white/90 hover:text-white transition-all py-2 flex items-center cursor-pointer font-medium"
+            role="menuitem"
+            onClick={() => {
+              navigate('/login');
+              setIsMenuOpen(false);
+            }}
+          >
+            <LogIn className="mr-2 h-4 w-4" />
+            Login
+          </span>
           
-          <Link href="/get-started">
-            <Button className="gradient-button mt-2 w-full py-2">
-              Get Started
-            </Button>
-          </Link>
+          <Button 
+            className="gradient-button mt-2 w-full py-2"
+            onClick={() => {
+              navigate('/get-started');
+              setIsMenuOpen(false);
+            }}
+          >
+            Get Started
+          </Button>
         </div>
       </div>
     </header>
