@@ -187,6 +187,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
       style={{
         ...style,
         backgroundColor: backgroundColor || 'transparent',
+        position: 'relative' // Added position relative
       }}
       initial="hidden"
       animate={controls}
