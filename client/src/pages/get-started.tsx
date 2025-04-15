@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'wouter';
+import { useLocation } from 'wouter';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -36,7 +36,7 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 
 const GetStarted = () => {
   const { toast } = useToast();
-  const [location, navigate] = useLocation();
+  const [location, setLocation] = useLocation();
   const [isLoading, setIsLoading] = useState(false);
 
   // Set background to black for consistency with home page
@@ -78,7 +78,7 @@ const GetStarted = () => {
       });
       
       // Navigate to home page after successful signup
-      navigate('/');
+      setLocation('/');
     } catch (error) {
       console.error('Signup error:', error);
       

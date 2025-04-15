@@ -31,7 +31,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 const Login = () => {
   const { toast } = useToast();
-  const [location, navigate] = useLocation();
+  const [location, setLocation] = useLocation();
   const [isLoading, setIsLoading] = useState(false);
 
   // Set background to black for consistency with home page
@@ -71,7 +71,7 @@ const Login = () => {
       });
       
       // Navigate to home page after successful login
-      navigate('/');
+      setLocation('/');
     } catch (error) {
       console.error('Login error:', error);
       
