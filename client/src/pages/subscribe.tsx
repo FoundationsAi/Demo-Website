@@ -149,153 +149,130 @@ export default function SubscribePage() {
   );
   
   return (
-    <div className="min-h-screen bg-primary">
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
+    <div className="min-h-screen bg-[#4F9BFF]/10">
+      <div className="container mx-auto px-4 py-12 max-w-3xl">
         <Button 
           variant="ghost" 
-          className="mb-6"
+          className="mb-6 text-[#4F9BFF]"
           onClick={() => setLocation("/")}
         >
           <ArrowLeft size={16} className="mr-2" />
           Back
         </Button>
         
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#4F9BFF]">Elevate Your Business with AI Voice</h1>
-          <p className="text-muted-foreground mt-2">
-            Set up your subscription and start using intelligent voice agents today
-          </p>
-        </div>
-        
         {isLoading ? (
           <div className="flex justify-center py-16">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <Loader2 className="h-8 w-8 animate-spin text-[#4F9BFF]" />
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 gap-8">
-            <Card>
-              <CardHeader>
-                <CardTitle>Choose Your Plan</CardTitle>
-                <CardDescription>
+          <Card className="shadow-lg border-0 rounded-xl overflow-hidden">
+            <CardContent className="p-0">
+              <div className="bg-white p-8">
+                <h1 className="text-2xl font-semibold text-slate-700 mb-1">Choose Your Plan</h1>
+                <p className="text-slate-500 mb-6">
                   Select a subscription plan and billing cycle
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label>Subscription Plan</Label>
-                  <Select
-                    value={selectedPlan?.id || ""}
-                    onValueChange={(value) => {
-                      const plan = plans.find(p => p.id === value);
-                      if (plan) setSelectedPlan(plan);
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a plan" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {plans.map((plan) => (
-                        <SelectItem key={plan.id} value={plan.id}>
-                          {plan.name} - ${billingPeriod === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice.toFixed(2)}/
-                          {billingPeriod === 'monthly' ? 'month' : 'year'}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                </p>
                 
-                <div className="space-y-2">
-                  <Label>Billing Period</Label>
-                  <RadioGroup
-                    value={billingPeriod}
-                    onValueChange={(value) => setBillingPeriod(value as 'monthly' | 'yearly')}
-                    className="flex space-x-4"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="monthly" id="monthly" />
-                      <Label htmlFor="monthly">Monthly</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="yearly" id="yearly" />
-                      <Label htmlFor="yearly">Yearly <span className="text-xs text-green-500 font-medium">(Save 15%)</span></Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-                
-                {selectedPlan && (
-                  <div className="border rounded-lg p-4 mt-4">
-                    <h3 className="font-medium text-lg">{selectedPlan.name}</h3>
-                    <div className="text-2xl font-bold mt-1">
-                      ${billingPeriod === 'monthly' ? selectedPlan.monthlyPrice : selectedPlan.yearlyPrice.toFixed(2)}
-                      <span className="text-sm font-normal text-muted-foreground">
-                        /{billingPeriod === 'monthly' ? 'month' : 'year'}
-                      </span>
-                    </div>
-                    
-                    <div className="mt-4">
-                      <h4 className="font-medium mb-2">Features:</h4>
-                      <ul className="space-y-2">
-                        {selectedPlan.features.map((feature, index) => (
-                          <li key={index} className="flex items-center gap-2">
-                            <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-                            <span className="text-sm">{feature}</span>
-                          </li>
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <Label className="text-slate-700">Subscription Plan</Label>
+                    <Select
+                      value={selectedPlan?.id || ""}
+                      onValueChange={(value) => {
+                        const plan = plans.find(p => p.id === value);
+                        if (plan) setSelectedPlan(plan);
+                      }}
+                    >
+                      <SelectTrigger className="border-slate-300 bg-white text-slate-800">
+                        <SelectValue placeholder="Select a plan" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {plans.map((plan) => (
+                          <SelectItem key={plan.id} value={plan.id}>
+                            {plan.name} - ${billingPeriod === 'monthly' ? plan.monthlyPrice.toFixed(2) : plan.yearlyPrice.toFixed(2)}/
+                            {billingPeriod === 'monthly' ? 'month' : 'year'}
+                          </SelectItem>
                         ))}
-                      </ul>
-                    </div>
+                      </SelectContent>
+                    </Select>
                   </div>
-                )}
-                
-                <Button
-                  className="w-full mt-6 bg-[#4F9BFF] hover:bg-[#3E7DD5] text-white"
-                  onClick={createSubscription}
-                  disabled={!selectedPlan || isCreatingSubscription}
-                >
-                  {isCreatingSubscription ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Setting up subscription...
-                    </>
-                  ) : (
-                    "Continue to Payment"
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment Details</CardTitle>
-                <CardDescription>
-                  Complete your subscription with a secure payment
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent>
-                {paymentSuccess ? (
-                  <PaymentSuccess />
-                ) : (
-                  <>
-                    {clientSecret ? (
-                      <Elements stripe={stripePromise} options={{ clientSecret }}>
-                        <CheckoutForm 
-                          clientSecret={clientSecret}
-                          onSuccess={() => setPaymentSuccess(true)} 
-                        />
-                      </Elements>
-                    ) : (
-                      <div className="h-40 flex items-center justify-center">
-                        <p className="text-muted-foreground">
-                          Select a plan and continue to payment
-                        </p>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-slate-700">Billing Period</Label>
+                    <RadioGroup
+                      value={billingPeriod}
+                      onValueChange={(value) => setBillingPeriod(value as 'monthly' | 'yearly')}
+                      className="flex space-x-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="monthly" id="monthly" className="text-[#4F9BFF]" />
+                        <Label htmlFor="monthly" className="text-slate-700">Monthly</Label>
                       </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="yearly" id="yearly" className="text-[#4F9BFF]" />
+                        <Label htmlFor="yearly" className="text-slate-700">Yearly <span className="text-xs text-green-500 font-medium">(Save 15%)</span></Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                  
+                  {selectedPlan && (
+                    <div className="border border-slate-200 rounded-lg p-6 mt-4 bg-slate-50">
+                      <div className="text-4xl font-semibold text-slate-800 mb-1">
+                        ${billingPeriod === 'monthly' ? selectedPlan.monthlyPrice.toFixed(2) : selectedPlan.yearlyPrice.toFixed(2)}
+                      </div>
+                      <div className="text-slate-500 mb-4">
+                        /{billingPeriod === 'monthly' ? 'month' : 'year'}
+                      </div>
+                      
+                      <div className="mt-4">
+                        <ul className="space-y-3">
+                          {selectedPlan.features.map((feature, index) => (
+                            <li key={index} className="flex items-center gap-2">
+                              <CheckCircle className="h-5 w-5 text-[#4F9BFF] flex-shrink-0" />
+                              <span className="text-slate-700">{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <Button
+                    className="w-full mt-6 bg-[#4F9BFF] hover:bg-[#3E7DD5] text-white font-medium py-6"
+                    onClick={createSubscription}
+                    disabled={!selectedPlan || isCreatingSubscription}
+                  >
+                    {isCreatingSubscription ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Setting up subscription...
+                      </>
+                    ) : (
+                      "Continue to Payment"
                     )}
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+                  </Button>
+                </div>
+              </div>
+              
+              {clientSecret && !paymentSuccess && (
+                <div className="border-t border-slate-200 p-8">
+                  <h2 className="text-xl font-semibold text-slate-700 mb-4">Payment Details</h2>
+                  <Elements stripe={stripePromise} options={{ clientSecret }}>
+                    <CheckoutForm 
+                      clientSecret={clientSecret}
+                      onSuccess={() => setPaymentSuccess(true)} 
+                    />
+                  </Elements>
+                </div>
+              )}
+              
+              {paymentSuccess && (
+                <div className="border-t border-slate-200 p-8">
+                  <PaymentSuccess />
+                </div>
+              )}
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>

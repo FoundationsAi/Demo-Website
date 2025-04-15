@@ -242,9 +242,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get payment intent client secret
       const invoice = subscription.latest_invoice as any;
       
-      // Get the payment intent - we need to retrieve it separately
-      const paymentIntentId = invoice.payment_intent as string;
-      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      if (!invoice || !invoice.payment_intent) {
+        throw new Error("Failed to create subscription payment intent");
+      }
+      
+      let clientSecret = "";
+      
+      // Check if payment_intent is a string ID or an expanded object
+      if (typeof invoice.payment_intent === 'string') {
+        const paymentIntent = await stripe.paymentIntents.retrieve(invoice.payment_intent);
+        clientSecret = paymentIntent.client_secret || "";
+      } else {
+        // It's already an expanded object
+        clientSecret = invoice.payment_intent.client_secret || "";
+      }
       
       // Create subscription record in our database
       await storage.createSubscription({
@@ -263,7 +274,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({
         subscriptionId: subscription.id,
-        clientSecret: paymentIntent.client_secret,
+        clientSecret: clientSecret,
       });
     } catch (error: any) {
       console.error("Create subscription error:", error);
