@@ -1,106 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollReveal } from '@/components/scroll-reveal';
 import { AnimatedText } from '@/components/animated-text';
 import { HoverableCard } from '@/components/hoverable-card';
+import { useToast } from '@/hooks/use-toast';
 
+// Define the pricing tier interface for our application
 interface PricingTier {
+  id: string; // Maps to Stripe price ID
   name: string;
-  price: string;
+  price: number;
   description: string;
   features: string[];
   isPopular?: boolean;
   buttonText: string;
-  overageFee?: string;
-  hasTrial?: boolean;
-  trialDays?: number;
+  overageFee: string;
+  minutes: number;
+  planKey: string;
   icon?: string;
+  hasTrial?: boolean;
 }
 
-const pricingTiers: PricingTier[] = [
+// Define a placeholder loading state for pricing plans
+const loadingPricingTiers: PricingTier[] = [
   {
-    name: "Starter",
-    price: "$49.99",
-    description: "Perfect for startups and small businesses exploring AI automation",
-    features: [
-      "50 minutes of AI usage per month",
-      "Unlimited AI agents",
-      "5 concurrent calls",
-      "Voice API, LLM, transcriber costs",
-      "API integrations",
-      "Real-time booking",
-      "Human transfer",
-      "Community support"
-    ],
-    buttonText: "Start Testing Now",
-    overageFee: "$0.35/minute",
-    icon: "🚀"
-  },
-  {
-    name: "Essential",
-    price: "$299.99",
-    description: "Ideal for small to medium businesses with low call volumes",
-    features: [
-      "500 minutes of AI usage per month",
-      "Unlimited AI agents",
-      "10 concurrent calls",
-      "All Starter features"
-    ],
-    buttonText: "Try Essential Free",
-    overageFee: "$0.30/minute",
-    hasTrial: true,
-    trialDays: 7,
+    id: 'loading',
+    name: 'Essential',
+    price: 49,
+    description: 'Loading pricing information...',
+    minutes: 500,
+    features: ['Loading features...'],
+    buttonText: 'Loading...',
+    overageFee: '$0.15/minute',
+    planKey: 'ESSENTIAL',
     isPopular: true,
-    icon: "⭐"
+    icon: '⭐'
   },
   {
-    name: "Basic",
-    price: "$749.99",
-    description: "Designed for growing businesses with moderate call volumes",
-    features: [
-      "1,250 minutes of AI usage per month",
-      "Unlimited AI agents",
-      "25 concurrent calls",
-      "All Essential features",
-      "Team access",
-      "Support via ticketing"
-    ],
-    buttonText: "Try Basic Free",
-    overageFee: "$0.25/minute",
-    hasTrial: true,
-    trialDays: 7,
-    isPopular: true,
-    icon: "📈"
+    id: 'loading',
+    name: 'Professional',
+    price: 99,
+    description: 'Loading pricing information...',
+    minutes: 1500,
+    features: ['Loading features...'],
+    buttonText: 'Loading...',
+    overageFee: '$0.10/minute',
+    planKey: 'PROFESSIONAL',
+    icon: '💼'
   },
   {
-    name: "Pro",
-    price: "$1,499.99",
-    description: "Built for established businesses with high call volumes",
-    features: [
-      "2,100 minutes of AI usage per month",
-      "Unlimited AI agents",
-      "50 concurrent calls",
-      "All Basic features"
-    ],
-    buttonText: "Get Pro Now",
-    overageFee: "$0.20/minute",
-    icon: "💎"
-  },
-  {
-    name: "Enterprise",
-    price: "Custom",
-    description: "For large businesses and agencies with massive call volumes or unique needs",
-    features: [
-      "Custom minutes of AI usage",
-      "Unlimited AI agents",
-      "Custom concurrent calls",
-      "All Pro features",
-      "White-label platform",
-      "Unlimited subaccounts"
-    ],
-    buttonText: "Contact Sales",
-    overageFee: "Custom rates",
-    icon: "🏢"
+    id: 'loading',
+    name: 'Enterprise',
+    price: 299,
+    description: 'Loading pricing information...',
+    minutes: 5000,
+    features: ['Loading features...'],
+    buttonText: 'Loading...',
+    overageFee: '$0.06/minute',
+    planKey: 'ENTERPRISE',
+    icon: '🏢'
   }
 ];
 
@@ -109,6 +67,103 @@ const pricingTiers: PricingTier[] = [
  */
 export const PricingSection: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [pricingTiers, setPricingTiers] = useState<PricingTier[]>(loadingPricingTiers);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [stripePublishableKey, setStripePublishableKey] = useState<string | null>(null);
+  const { toast } = useToast();
+  
+  // Fetch pricing plans from server
+  useEffect(() => {
+    const fetchPricingPlans = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Fetch Stripe config
+        const configResponse = await fetch('/api/stripe-config');
+        if (!configResponse.ok) {
+          throw new Error('Failed to load Stripe configuration');
+        }
+        const configData = await configResponse.json();
+        setStripePublishableKey(configData.publishableKey);
+        
+        // Fetch pricing plans
+        const plansResponse = await fetch('/api/pricing-plans');
+        if (!plansResponse.ok) {
+          throw new Error('Failed to load pricing plans');
+        }
+        
+        const plansData = await plansResponse.json();
+        
+        // Convert server data to our PricingTier format
+        const formattedTiers: PricingTier[] = Object.entries(plansData).map(([key, plan]) => {
+          const typedPlan = plan as any;
+          return {
+            id: typedPlan.priceId || 'loading',
+            name: typedPlan.name,
+            price: typedPlan.price,
+            minutes: typedPlan.minutes,
+            description: `Perfect for businesses needing ${typedPlan.minutes} voice minutes monthly`,
+            features: typedPlan.features,
+            buttonText: typedPlan.popular ? 'Choose Popular Plan' : `Choose ${typedPlan.name}`,
+            overageFee: `$${typedPlan.overagePerMinute}/minute`,
+            planKey: key,
+            isPopular: typedPlan.popular,
+            icon: key === 'ESSENTIAL' ? '⭐' : key === 'PROFESSIONAL' ? '💼' : '🏢'
+          };
+        });
+        
+        setPricingTiers(formattedTiers);
+      } catch (error) {
+        console.error('Error fetching pricing plans:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load pricing information. Please try again later.',
+          variant: 'destructive'
+        });
+        // Keep the loading state data as fallback
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchPricingPlans();
+  }, [toast]);
+  
+  // Handle subscription checkout
+  const handleSubscribe = async (tier: PricingTier) => {
+    try {
+      if (isLoading) return;
+      
+      // Create a Stripe checkout session
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          planKey: tier.planKey,
+          successUrl: `${window.location.origin}/success?plan=${tier.planKey}`,
+          cancelUrl: `${window.location.origin}/pricing`,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session');
+      }
+      
+      const { url } = await response.json();
+      
+      // Redirect to Stripe Checkout
+      window.location.href = url;
+    } catch (error) {
+      console.error('Checkout error:', error);
+      toast({
+        title: 'Checkout Error',
+        description: 'Something went wrong while processing your payment. Please try again.',
+        variant: 'destructive'
+      });
+    }
+  };
   
   return (
     <section id="pricing" className="relative min-h-screen py-32 pb-48 pt-48 bg-gradient-to-b from-[#0a1528] to-[#061022] text-white overflow-hidden">
@@ -195,9 +250,9 @@ export const PricingSection: React.FC = () => {
                         {/* Price section */}
                         <div className="text-center px-6">
                           <div className="text-4xl font-bold text-white">
-                            {billingCycle === 'yearly' && tier.price !== 'Custom' 
-                              ? `$${(parseFloat(tier.price.replace('$', '')) * 0.9 * 12).toFixed(2)}` 
-                              : tier.price}
+                            {billingCycle === 'yearly' 
+                              ? `$${(tier.price * 0.9 * 12).toFixed(2)}` 
+                              : `$${tier.price}`}
                           </div>
                           <div className="text-blue-300 mb-2">
                             /{billingCycle === 'yearly' ? 'year' : 'month'}
@@ -280,9 +335,9 @@ export const PricingSection: React.FC = () => {
                     {/* Price section */}
                     <div className="text-center px-6">
                       <div className="text-4xl font-bold text-white">
-                        {billingCycle === 'yearly' && tier.price !== 'Custom' 
-                          ? `$${(parseFloat(tier.price.replace('$', '')) * 0.9 * 12).toFixed(2)}` 
-                          : tier.price}
+                        {billingCycle === 'yearly' 
+                          ? `$${(tier.price * 0.9 * 12).toFixed(2)}` 
+                          : `$${tier.price}`}
                       </div>
                       <div className="text-blue-300 mb-2">
                         /{billingCycle === 'yearly' ? 'year' : 'month'}
