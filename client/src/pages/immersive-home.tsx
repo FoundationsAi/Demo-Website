@@ -83,16 +83,16 @@ export const ImmersiveHome: React.FC = () => {
               </div>
               
               <div className="relative z-10">
-                <div className="mb-8">
-                  <h2 className="text-2xl md:text-4xl font-bold tracking-widest text-blue-200 drop-shadow-[0_0_15px_rgba(100,200,255,0.5)] whitespace-nowrap sm:whitespace-normal">
+                <div className="mb-10 md:mb-12">
+                  <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-widest text-white drop-shadow-[0_0_20px_rgba(100,200,255,0.7)] whitespace-nowrap sm:whitespace-normal">
                     WHERE TECHNOLOGY MEETS
                   </h2>
-                  <h2 className="text-2xl md:text-4xl font-bold tracking-widest text-blue-200 drop-shadow-[0_0_15px_rgba(100,200,255,0.5)]">
+                  <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-widest text-white drop-shadow-[0_0_20px_rgba(100,200,255,0.7)]">
                     EMOTION
                   </h2>
                 </div>
                 
-                <div className="bg-gradient-to-r from-blue-900/30 to-indigo-900/30 backdrop-blur-sm p-8 rounded-xl border border-blue-500/20 shadow-[0_4px_30px_rgba(0,100,255,0.2)]">
+                <div className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20 backdrop-blur-md p-8 md:p-10 rounded-xl border border-blue-500/30 shadow-[0_4px_30px_rgba(0,100,255,0.3)]">
                   <ScrollReveal animation="fadeInUp">
                     <p className="text-xl md:text-2xl leading-relaxed mb-8 text-white">
                       Our revolutionary approach to voice AI transcends mere functionality.
@@ -101,16 +101,24 @@ export const ImmersiveHome: React.FC = () => {
                       feel genuinely human.
                     </p>
                     
-                    <div className="flex flex-wrap justify-center gap-8 mt-10">
-                      <div className="w-full md:w-1/3 bg-blue-800/20 p-5 rounded-lg border border-blue-400/20">
-                        <div className="text-blue-300 text-4xl mb-3">🧠</div>
-                        <h3 className="text-xl font-semibold text-blue-100 mb-2">Contextual Understanding</h3>
-                        <p className="text-blue-200 opacity-80">Grasps nuanced meanings beyond words alone</p>
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mt-10 max-w-4xl mx-auto">
+                      <div className="w-full sm:w-64 md:w-72 lg:w-80 xl:w-96 bg-blue-900/30 p-8 rounded-lg border border-blue-400/30 backdrop-blur-md shadow-[0_0_25px_rgba(59,130,246,0.15)]">
+                        <div className="flex justify-center">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/40 to-blue-600/40 flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+                            <div className="text-blue-200 text-2xl">🧠</div>
+                          </div>
+                        </div>
+                        <h3 className="text-xl font-semibold text-blue-100 mb-3 text-center">Contextual Understanding</h3>
+                        <p className="text-blue-200 text-center leading-relaxed">Breaks language barriers by looking beyond simple words</p>
                       </div>
-                      <div className="w-full md:w-1/3 bg-indigo-800/20 p-5 rounded-lg border border-indigo-400/20">
-                        <div className="text-indigo-300 text-4xl mb-3">💫</div>
-                        <h3 className="text-xl font-semibold text-indigo-100 mb-2">Emotional Intelligence</h3>
-                        <p className="text-indigo-200 opacity-80">Perceives and responds to emotional states</p>
+                      <div className="w-full sm:w-64 md:w-72 lg:w-80 xl:w-96 bg-purple-900/30 p-8 rounded-lg border border-purple-400/30 backdrop-blur-md shadow-[0_0_25px_rgba(147,51,234,0.15)]">
+                        <div className="flex justify-center">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/40 to-purple-600/40 flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(147,51,234,0.4)]">
+                            <div className="text-purple-200 text-2xl">💫</div>
+                          </div>
+                        </div>
+                        <h3 className="text-xl font-semibold text-purple-100 mb-3 text-center">Emotional Intelligence</h3>
+                        <p className="text-purple-200 text-center leading-relaxed">Perceives and responds to emotional nuances naturally</p>
                       </div>
                     </div>
                   </ScrollReveal>
