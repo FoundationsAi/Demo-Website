@@ -130,8 +130,7 @@ export const ScrollReveal: React.FC<ScrollRevealProps> = ({
       style={{ 
         willChange: "transform, opacity",
         backfaceVisibility: "hidden",
-        transform: "translateZ(0)",
-        position: "relative" // Adding position relative to fix Framer Motion warning
+        transform: "translateZ(0)"
       }}
     >
       {children}
@@ -169,8 +168,7 @@ export const ScrollRevealItem: React.FC<Omit<ScrollRevealProps, 'staggerChildren
       style={{ 
         willChange: "transform, opacity",
         backfaceVisibility: "hidden",
-        transform: "translateZ(0)",
-        position: "relative" // Adding position relative to fix Framer Motion warning
+        transform: "translateZ(0)"
       }}
     >
       {children}

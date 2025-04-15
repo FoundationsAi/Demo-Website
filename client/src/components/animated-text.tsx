@@ -19,7 +19,7 @@ interface AnimatedTextProps {
  */
 export const AnimatedText: React.FC<AnimatedTextProps> = ({
   text,
-  as: Component = "div", // Changed from "p" to "div" to avoid DOM nesting issues
+  as: Component = "p",
   className = "",
   animation = "slide",
   delay = 0,
