@@ -7,6 +7,7 @@ import { randomUUID } from "crypto";
 
 // Initialize Stripe with fallback key for development
 const stripeKey = process.env.STRIPE_SECRET_KEY || "sk_test_placeholder";
+const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "whsec_placeholder";
 const stripe = new Stripe(stripeKey, {
   apiVersion: "2025-03-31.basil" as any,
 });
@@ -400,6 +401,103 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: 'Attempted to terminate conversation but encountered an error',
         error: error.message
       });
+    }
+  });
+
+  // Stripe webhook endpoint for handling payment events
+  app.post("/api/webhook", async (req, res) => {
+    let event: Stripe.Event;
+    const signature = req.headers["stripe-signature"] as string;
+
+    try {
+      // Verify webhook signature
+      if (!signature) {
+        return res.status(400).json({ error: "Missing Stripe signature" });
+      }
+
+      try {
+        // Construct the event from the raw body and signature using Stripe's webhook secret
+        event = stripe.webhooks.constructEvent(
+          req.body,
+          signature,
+          stripeWebhookSecret
+        );
+      } catch (err: any) {
+        console.error("Webhook signature verification failed:", err.message);
+        return res.status(400).json({ error: `Webhook Error: ${err.message}` });
+      }
+
+      // Handle specific event types
+      console.log(`Processing webhook event: ${event.type}`);
+      
+      if (event.type === 'payment_intent.succeeded') {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        console.log(`Payment succeeded: ${paymentIntent.id}`);
+        
+        // Find the payment in our database and update its status
+        const existingPayment = await storage.getPaymentByPaymentIntentId(paymentIntent.id);
+        if (existingPayment) {
+          await storage.updatePaymentStatus(existingPayment.id, 'succeeded');
+          console.log(`Payment status updated to succeeded for ID: ${existingPayment.id}`);
+        } else {
+          console.warn(`Payment not found in database: ${paymentIntent.id}`);
+        }
+      } 
+      else if (event.type === 'payment_intent.payment_failed') {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        console.log(`Payment failed: ${paymentIntent.id}`);
+        
+        // Update payment status to failed
+        const existingPayment = await storage.getPaymentByPaymentIntentId(paymentIntent.id);
+        if (existingPayment) {
+          await storage.updatePaymentStatus(existingPayment.id, 'failed');
+          console.log(`Payment status updated to failed for ID: ${existingPayment.id}`);
+        }
+      }
+      else if (event.type === 'payment_intent.processing') {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        
+        const existingPayment = await storage.getPaymentByPaymentIntentId(paymentIntent.id);
+        if (existingPayment) {
+          await storage.updatePaymentStatus(existingPayment.id, 'processing');
+        }
+      }
+
+      // Return a 200 response to acknowledge receipt of the event
+      res.json({ received: true });
+    } catch (error: any) {
+      console.error("Error processing webhook:", error);
+      res.status(500).json({ error: error.message || "Unknown error occurred" });
+    }
+  });
+
+  // API endpoint to check payment status
+  app.get("/api/payment-status/:paymentIntentId", async (req, res) => {
+    try {
+      const { paymentIntentId } = req.params;
+      
+      if (!paymentIntentId) {
+        return res.status(400).json({ error: "Payment Intent ID is required" });
+      }
+      
+      // Check payment status in our database
+      const payment = await storage.getPaymentByPaymentIntentId(paymentIntentId);
+      if (!payment) {
+        return res.status(404).json({ error: "Payment not found" });
+      }
+      
+      // Check with Stripe for the latest status
+      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      
+      // If the statuses don't match, update our database
+      if (payment.status !== paymentIntent.status) {
+        await storage.updatePaymentStatus(payment.id, paymentIntent.status);
+      }
+      
+      res.json({ status: paymentIntent.status });
+    } catch (error: any) {
+      console.error("Payment status check error:", error);
+      res.status(500).json({ error: error.message || "Unknown error occurred" });
     }
   });
 

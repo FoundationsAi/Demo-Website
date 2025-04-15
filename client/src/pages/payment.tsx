@@ -8,12 +8,16 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, CheckCircle, CreditCard } from "lucide-react";
+import { ArrowLeft, CheckCircle, CreditCard, AlertCircle, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Make sure to call `loadStripe` outside of a component's render to avoid
 // recreating the `Stripe` object on every render.
 const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY || "pk_test_placeholder";
 const stripePromise = loadStripe(stripeKey);
+
+// Payment status states
+type PaymentStatus = 'initial' | 'processing' | 'succeeded' | 'failed' | 'canceled';
 
 const CheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const stripe = useStripe();
