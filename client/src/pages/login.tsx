@@ -108,13 +108,9 @@ const Login = () => {
             <ScrollReveal>
               <div className="w-full max-w-[90%] sm:max-w-md mx-auto">
                 <div className="text-center mb-8">
-                  <AnimatedText 
-                    text="Welcome Back" 
-                    as="h1" 
-                    className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4"
-                    animation="slide"
-                    stagger={0.05}
-                  />
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 text-white">
+                    Welcome Back
+                  </h1>
                   <p className="text-base sm:text-lg text-blue-300 px-1">
                     Sign in to access your Foundations AI experience
                   </p>
