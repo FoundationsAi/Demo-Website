@@ -25,7 +25,7 @@ function App() {
   // Add a global class for cursor visibility
   useEffect(() => {
     // Force the cursor to be visible on all pages except the home page
-    if (location !== '/') {
+    if (location !== '/' && location !== '/home') {
       document.body.classList.remove('cursor-default');
       document.body.classList.add('cursor-visible');
     } else {
@@ -42,7 +42,11 @@ function App() {
           <div key={location} className="page-wrapper">
             <Switch location={location}>
               {/* Public routes */}
-              <AnimatedRoute path="/" component={ImmersiveHome} animation="fade" />
+              <AnimatedRoute path="/" component={() => {
+                window.location.href = '/home';
+                return null;
+              }} animation="fade" />
+              <AnimatedRoute path="/home" component={ImmersiveHome} animation="fade" />
               <AnimatedRoute path="/login" component={Login} animation="fade" />
               <AnimatedRoute path="/register" component={Register} animation="fade" />
               <AnimatedRoute path="/chat/:agentId" component={Chat} animation="slideHorizontal" />
