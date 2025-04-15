@@ -1,114 +1,43 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "wouter";
-import { useScroll } from "@/hooks/use-scroll";
-import { Button } from "@/components/ui/button";
+import React from "react";
+import { Link } from "wouter";
 import { MountainLogo } from "@/components/mountain-logo";
-import { scrollToSection } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
-
-interface NavItem {
-  name: string;
-  href: string;
-  isSection?: boolean;
-}
-
-const navItems: NavItem[] = [
-  { name: "Features", href: "#features", isSection: true },
-  { name: "Agents", href: "#agents", isSection: true },
-  { name: "How It Works", href: "#how-it-works", isSection: true },
-  { name: "Demo", href: "#demo", isSection: true },
-];
 
 export const Header: React.FC = () => {
-  const { scrolled } = useScroll();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [location] = useLocation();
-  const isHomePage = location === "/";
-
-  // Handle navigation click for both anchor and span elements
-  const handleNavClick = (e: React.MouseEvent<HTMLElement>, item: NavItem) => {
-    if (item.isSection && isHomePage) {
-      e.preventDefault();
-      scrollToSection(item.href.substring(1));
-      setIsMenuOpen(false);
-    } else if (!isHomePage) {
-      setIsMenuOpen(false);
-    }
-  };
-
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-primary/90 backdrop-blur-sm shadow-lg" : "bg-transparent"
-      } border-b border-white/10`}
-    >
-      <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center">
-          <Link href="/">
-            <div className="flex items-center cursor-pointer">
-              <MountainLogo animate />
-              <span className="text-xl font-bold gradient-text ml-3">
-                Foundations AI
-              </span>
-            </div>
+    <header className="fixed top-0 left-0 right-0 z-50 py-4 px-6 bg-gradient-to-b from-blue-950/90 to-blue-950/70 backdrop-blur-md border-b border-blue-900/30">
+      <div className="container mx-auto flex justify-between items-center">
+        <Link href="/">
+          <a className="flex items-center space-x-2 text-white hover:opacity-90 transition-opacity">
+            <MountainLogo className="h-8 w-8" animate={false} />
+            <span className="font-bold text-lg sm:text-xl">Foundations AI</span>
+          </a>
+        </Link>
+
+        <nav className="hidden md:flex items-center space-x-6">
+          <Link href="/#features">
+            <a className="text-blue-200 hover:text-white transition-colors">Features</a>
           </Link>
-        </div>
-        
-        <nav className="hidden md:flex items-center space-x-8">
-          {navItems.map((item) => (
-            <Link key={item.name} href={item.href}>
-              <span
-                className="text-white/80 hover:text-white transition cursor-pointer"
-                onClick={(e) => handleNavClick(e, item)}
-              >
-                {item.name}
-              </span>
-            </Link>
-          ))}
+          <Link href="/#pricing">
+            <a className="text-blue-200 hover:text-white transition-colors">Pricing</a>
+          </Link>
+          <Link href="/contact">
+            <a className="text-blue-200 hover:text-white transition-colors">Contact</a>
+          </Link>
         </nav>
-        
-        <div className="flex items-center gap-4">
-          <Button className="gradient-button hidden md:flex">
-            Get Started
-          </Button>
-          
-          <button 
-            className="md:hidden text-white"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-      </div>
-      
-      {/* Mobile menu - with animation and improved accessibility */}
-      <div 
-        className={`md:hidden bg-primary/95 backdrop-blur-sm absolute w-full transition-all duration-300 ease-in-out overflow-hidden ${
-          isMenuOpen ? 'max-h-[300px] border-b border-white/10 shadow-lg' : 'max-h-0'
-        }`}
-        aria-hidden={!isMenuOpen}
-        aria-expanded={isMenuOpen}
-        role="navigation"
-      >
-        <div className="flex flex-col space-y-3 py-4 px-6">
-          {navItems.map((item) => (
-            <Link key={item.name} href={item.href}>
-              <span
-                className="text-white/90 hover:text-white transition-all py-2 block cursor-pointer font-medium"
-                onClick={(e) => handleNavClick(e, item)}
-                role="menuitem"
-              >
-                {item.name}
-              </span>
-            </Link>
-          ))}
-          <Button className="gradient-button mt-2 w-full py-2">
-            Get Started
-          </Button>
+
+        <div className="flex items-center space-x-3">
+          <Link href="/login">
+            <a className="hidden sm:inline-block text-blue-200 hover:text-white transition-colors px-3 py-2">
+              Log In
+            </a>
+          </Link>
+          <Link href="/signup">
+            <a className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors">
+              Get Started
+            </a>
+          </Link>
         </div>
       </div>
     </header>
   );
 };
-
-export default Header;
