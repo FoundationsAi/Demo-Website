@@ -174,7 +174,33 @@ export const startConversation = async (agentType: AgentType): Promise<boolean> 
     updateConnectionStatus('connecting');
 
     // Select the correct agent ID based on the agent type
-    const agentId = AGENTS[agentType];
+    let agentId;
+    if (AGENTS[agentType]) {
+      // If the exact agent type key exists in our mapping
+      agentId = AGENTS[agentType];
+      console.log(`Using agent: ${agentType}`);
+    } else {
+      // If not found, try to parse the key format (e.g., 'customer-service-male')
+      const parts = agentType.toString().split('-');
+      // Check if this is in the format agent-gender
+      if (parts.length >= 2) {
+        const lastPart = parts[parts.length - 1];
+        // If the last part is gender (male/female)
+        if (lastPart === 'male' || lastPart === 'female') {
+          // Fall back to generic gender
+          agentId = lastPart === 'male' ? AGENTS.MALE : AGENTS.FEMALE;
+          console.log(`Using fallback ${lastPart} agent for ${agentType}`);
+        } else {
+          // If not a gender-specific format, use male as default
+          agentId = AGENTS.MALE;
+          console.log(`Using default male agent for type: ${agentType}`);
+        }
+      } else {
+        // Default to male voice if format is unexpected
+        agentId = AGENTS.MALE;
+        console.log(`Using default male agent for unknown type: ${agentType}`);
+      }
+    }
     
     // Get signed URL for the WebSocket connection
     const signedUrl = await getSignedUrl(agentId);
