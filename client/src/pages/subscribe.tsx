@@ -24,6 +24,7 @@ import { Loader2, ArrowLeft, CheckCircle, Rocket, Star, LineChart, Diamond, Buil
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import CheckoutForm from "../components/checkout-form";
+import { PaymentFlowVisualizer, type PaymentStep } from "@/components/payment-flow-visualizer";
 
 // Initialize Stripe with public key from environment variables
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
@@ -48,6 +49,7 @@ export default function SubscribePage() {
   const [clientSecret, setClientSecret] = useState("");
   const [subscriptionId, setSubscriptionId] = useState("");
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [currentStep, setCurrentStep] = useState<PaymentStep>("plan-selection");
   
   // Get plan ID from URL query parameter
   const urlParams = new URLSearchParams(window.location.search);
@@ -96,6 +98,7 @@ export default function SubscribePage() {
     if (!selectedPlan) return;
     
     setIsCreatingSubscription(true);
+    setCurrentStep("processing");
     
     try {
       const response = await fetch("/api/subscriptions/create", {
@@ -117,6 +120,7 @@ export default function SubscribePage() {
       
       setClientSecret(data.clientSecret);
       setSubscriptionId(data.subscriptionId);
+      setCurrentStep("payment-info");
       
     } catch (error: any) {
       console.error("Error creating subscription:", error);
@@ -125,6 +129,7 @@ export default function SubscribePage() {
         description: error.message || "Failed to create subscription. Please try again.",
         variant: "destructive",
       });
+      setCurrentStep("plan-selection");
     } finally {
       setIsCreatingSubscription(false);
     }
@@ -149,6 +154,13 @@ export default function SubscribePage() {
     </div>
   );
   
+  // Effect to update step when payment is successful
+  useEffect(() => {
+    if (paymentSuccess) {
+      setCurrentStep("confirmation");
+    }
+  }, [paymentSuccess]);
+  
   return (
     <div className="min-h-screen bg-[#4F9BFF]/10">
       <div className="container mx-auto px-4 py-12 max-w-xl">
@@ -170,9 +182,11 @@ export default function SubscribePage() {
             <CardContent className="p-0">
               <div className="bg-white p-8">
                 <h1 className="text-2xl font-semibold text-slate-700 mb-1">Choose Your Plan</h1>
-                <p className="text-slate-500 mb-6">
+                <p className="text-slate-500 mb-3">
                   Select a subscription plan and billing cycle
                 </p>
+                
+                <PaymentFlowVisualizer currentStep={currentStep} className="mb-8" />
                 
                 <div className="space-y-6">
                   <div className="space-y-2">
@@ -293,7 +307,13 @@ export default function SubscribePage() {
               
               {clientSecret && !paymentSuccess && (
                 <div className="border-t border-slate-200 p-8">
-                  <h2 className="text-xl font-semibold text-slate-700 mb-4">Payment Details</h2>
+                  <h2 className="text-xl font-semibold text-slate-700 mb-1">Payment Details</h2>
+                  <p className="text-slate-500 mb-3">
+                    Enter your payment information to complete your subscription
+                  </p>
+                  
+                  <PaymentFlowVisualizer currentStep={currentStep} className="mb-6" />
+                  
                   <Elements stripe={stripePromise} options={{ clientSecret }}>
                     <CheckoutForm 
                       clientSecret={clientSecret}
@@ -305,6 +325,13 @@ export default function SubscribePage() {
               
               {paymentSuccess && (
                 <div className="border-t border-slate-200 p-8">
+                  <h2 className="text-xl font-semibold text-slate-700 mb-1">Subscription Complete</h2>
+                  <p className="text-slate-500 mb-3">
+                    Your subscription was successful
+                  </p>
+                  
+                  <PaymentFlowVisualizer currentStep={currentStep} className="mb-6" />
+                  
                   <PaymentSuccess />
                 </div>
               )}
