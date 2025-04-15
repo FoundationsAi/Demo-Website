@@ -129,6 +129,7 @@ export const PricingSection: React.FC = () => {
       }
       
       // Redirect to the payment page with the plan details
+      console.log(`Redirecting to payment page: plan=${tier.name.toLowerCase()}, amount=${amount}, cycle=${billingCycle}`);
       setLocation(`/payment?plan=${tier.name.toLowerCase()}&amount=${amount}&cycle=${billingCycle}`);
     } catch (error) {
       console.error("Error initiating payment:", error);
