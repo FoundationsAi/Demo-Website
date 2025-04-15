@@ -124,19 +124,19 @@ export const PricingSection: React.FC = () => {
             <AnimatedText
               text="FIND THE PERFECT PLAN FOR YOUR BUSINESS"
               as="h2"
-              className="text-4xl md:text-5xl font-bold mb-4 tracking-wider"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 tracking-wider px-4"
               animation="fade"
               stagger={0.03}
             />
-            <p className="text-xl text-blue-300 max-w-3xl mx-auto leading-relaxed mb-10">
+            <p className="text-base sm:text-lg md:text-xl text-blue-300 max-w-3xl mx-auto leading-relaxed px-4 mb-6 sm:mb-8 md:mb-10">
               Automate tasks with our specialized AI agents—unlimited agents, flexible plans, and no limits on your potential. From customer service to creative consulting, our AI handles it all. Try risk-free with our 7-day trial on Essential and Basic, or contact us for custom Enterprise solutions.
             </p>
           </ScrollReveal>
           
           {/* Billing toggle */}
-          <div className="inline-flex items-center bg-blue-900/20 p-1 rounded-full mb-16">
+          <div className="inline-flex items-center bg-blue-900/20 p-1 rounded-full mb-10 sm:mb-12 md:mb-16 text-xs sm:text-sm">
             <button
-              className={`px-6 py-2 rounded-full text-sm transition ${
+              className={`px-3 sm:px-4 md:px-6 py-2 rounded-full transition ${
                 billingCycle === 'monthly' ? 'bg-blue-600 text-white' : 'text-blue-300'
               }`}
               onClick={() => setBillingCycle('monthly')}
@@ -144,12 +144,12 @@ export const PricingSection: React.FC = () => {
               Monthly
             </button>
             <button
-              className={`px-6 py-2 rounded-full text-sm transition ${
+              className={`px-3 sm:px-4 md:px-6 py-2 rounded-full transition ${
                 billingCycle === 'yearly' ? 'bg-blue-600 text-white' : 'text-blue-300'
               }`}
               onClick={() => setBillingCycle('yearly')}
             >
-              Yearly <span className="text-xs font-medium text-emerald-400">Save 10%</span>
+              Yearly <span className="text-xs font-medium text-emerald-400 hidden xs:inline">Save 10%</span>
             </button>
           </div>
         </div>
@@ -368,22 +368,22 @@ export const PricingSection: React.FC = () => {
         </div>
         
         {/* FAQ Section */}
-        <div className="mt-24 text-center">
-          <h3 className="text-3xl font-bold mb-12">Frequently Asked Questions</h3>
-          <div className="max-w-3xl mx-auto grid gap-6">
+        <div className="mt-16 md:mt-24 text-center px-4">
+          <h3 className="text-2xl md:text-3xl font-bold mb-8 md:mb-12">Frequently Asked Questions</h3>
+          <div className="max-w-3xl mx-auto grid gap-4 md:gap-6">
             <ScrollReveal>
-              <div className="bg-blue-900/20 rounded-lg p-6 backdrop-blur-sm border border-blue-800/30 text-left">
-                <h4 className="text-xl font-semibold mb-3">Can I try before I buy?</h4>
-                <p className="text-blue-200">
+              <div className="bg-blue-900/20 rounded-lg p-4 md:p-6 backdrop-blur-sm border border-blue-800/30 text-left">
+                <h4 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">Can I try before I buy?</h4>
+                <p className="text-sm md:text-base text-blue-200">
                   Yes, we offer a 7-day free trial with the Essential and Basic plans. No credit card required to get started.
                 </p>
               </div>
             </ScrollReveal>
             
             <ScrollReveal delay={0.1}>
-              <div className="bg-blue-900/20 rounded-lg p-6 backdrop-blur-sm border border-blue-800/30 text-left">
-                <h4 className="text-xl font-semibold mb-3">How does billing work?</h4>
-                <p className="text-blue-200">
+              <div className="bg-blue-900/20 rounded-lg p-4 md:p-6 backdrop-blur-sm border border-blue-800/30 text-left">
+                <h4 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">How does billing work?</h4>
+                <p className="text-sm md:text-base text-blue-200">
                   Choose between monthly or annual billing. Annual plans include a 10% discount.
                   You can upgrade or downgrade your plan at any time. Setup fee of $3,000 is waived for annual contracts.
                 </p>
@@ -391,9 +391,9 @@ export const PricingSection: React.FC = () => {
             </ScrollReveal>
             
             <ScrollReveal delay={0.2}>
-              <div className="bg-blue-900/20 rounded-lg p-6 backdrop-blur-sm border border-blue-800/30 text-left">
-                <h4 className="text-xl font-semibold mb-3">Can I integrate this with my existing systems?</h4>
-                <p className="text-blue-200">
+              <div className="bg-blue-900/20 rounded-lg p-4 md:p-6 backdrop-blur-sm border border-blue-800/30 text-left">
+                <h4 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">Can I integrate this with my existing systems?</h4>
+                <p className="text-sm md:text-base text-blue-200">
                   Yes, all plans include API integrations. Our Pro and Enterprise plans feature more advanced integration options
                   with custom support available for Enterprise customers.
                 </p>
@@ -401,9 +401,9 @@ export const PricingSection: React.FC = () => {
             </ScrollReveal>
             
             <ScrollReveal delay={0.3}>
-              <div className="bg-blue-900/20 rounded-lg p-6 backdrop-blur-sm border border-blue-800/30 text-left">
-                <h4 className="text-xl font-semibold mb-3">Do you have a risk-free guarantee?</h4>
-                <p className="text-blue-200">
+              <div className="bg-blue-900/20 rounded-lg p-4 md:p-6 backdrop-blur-sm border border-blue-800/30 text-left">
+                <h4 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">Do you have a risk-free guarantee?</h4>
+                <p className="text-sm md:text-base text-blue-200">
                   Yes, we offer a risk-free guarantee. Try any plan for 3 months—if your business metrics don't improve by at least 5%, we'll refund you. 
                   We're confident our AI agents will deliver measurable value.
                 </p>
@@ -413,13 +413,13 @@ export const PricingSection: React.FC = () => {
         </div>
         
         {/* CTA section */}
-        <div className="mt-32 text-center pb-12">
+        <div className="mt-20 md:mt-32 text-center pb-12 px-4">
           <ScrollReveal>
-            <h3 className="text-3xl font-bold mb-6">Ready to transform your voice AI experience?</h3>
-            <p className="text-xl text-blue-300 mb-10 max-w-3xl mx-auto">
+            <h3 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Ready to transform your voice AI experience?</h3>
+            <p className="text-base md:text-xl text-blue-300 mb-8 md:mb-10 max-w-3xl mx-auto">
               Join thousands of businesses already using Foundations AI to enhance their customer interactions.
             </p>
-            <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white text-lg font-medium rounded-full transition transform hover:scale-105 shadow-lg shadow-blue-600/30">
+            <button className="px-6 py-3 md:px-8 md:py-4 bg-blue-600 hover:bg-blue-700 text-white text-base md:text-lg font-medium rounded-full transition transform hover:scale-105 shadow-lg shadow-blue-600/30">
               Get Started Now
             </button>
           </ScrollReveal>
