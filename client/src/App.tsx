@@ -43,8 +43,8 @@ function App() {
             <AnimatedRoute path="/payment" component={Payment} animation="slideUp" />
             <AnimatedRoute path="/calendar" component={Calendar} animation="zoom" />
             <AnimatedRoute path="/agent-chat" component={AgentChat} animation="fade" />
-            <AnimatedRoute path="/login" component={Login} animation="fadeInUp" />
-            <AnimatedRoute path="/get-started" component={GetStarted} animation="fadeInUp" />
+            <AnimatedRoute path="/login" component={Login} animation="slideUp" />
+            <AnimatedRoute path="/get-started" component={GetStarted} animation="slideUp" />
             <AnimatedRoute component={NotFound} animation="fade" />
           </Switch>
         </div>

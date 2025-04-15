@@ -68,14 +68,14 @@ export const Header: React.FC = () => {
         </nav>
         
         <div className="flex items-center gap-4">
-          <Link href="/login" className="hidden md:flex">
+          <Link href="/login" className="flex">
             <Button variant="ghost" className="text-white hover:text-blue-200 hover:bg-blue-900/20">
               <LogIn className="mr-2 h-4 w-4" />
               Login
             </Button>
           </Link>
           
-          <Link href="/get-started" className="hidden md:flex">
+          <Link href="/get-started" className="flex">
             <Button className="gradient-button">
               Get Started
             </Button>
