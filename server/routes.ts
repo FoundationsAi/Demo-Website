@@ -33,7 +33,442 @@ const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID || "placeholder_sid";
 const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN || "placeholder_token";
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER || "+1234567890";
 
+// Define middleware to check if user is authenticated
+const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
+  // @ts-ignore
+  const userId = req.session?.userId;
+  
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized. Please log in." });
+  }
+  
+  const user = await storage.getUser(userId);
+  if (!user) {
+    // @ts-ignore
+    req.session.destroy();
+    return res.status(401).json({ error: "User not found. Please log in again." });
+  }
+  
+  // @ts-ignore
+  req.user = user;
+  next();
+};
+
+// Define middleware to check if user has active subscription
+const hasActiveSubscription = async (req: Request, res: Response, next: NextFunction) => {
+  // First check if authenticated
+  // @ts-ignore
+  const userId = req.session?.userId;
+  
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized. Please log in." });
+  }
+  
+  const user = await storage.getUser(userId);
+  if (!user) {
+    return res.status(401).json({ error: "User not found. Please log in again." });
+  }
+  
+  // Check if user has an active subscription
+  if (user.subscriptionStatus !== 'active') {
+    return res.status(403).json({ error: "Subscription required. Please upgrade your account." });
+  }
+  
+  // @ts-ignore
+  req.user = user;
+  next();
+};
+
+// Configure multer for file uploads
+const uploadsDir = path.join(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const storage_multer = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadsDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ 
+  storage: storage_multer,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB max file size
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept PDF, DOCX, TXT files
+    const allowedMimes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only PDF, DOCX, and TXT files are allowed.') as any);
+    }
+  }
+});
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Authentication routes
+  app.post("/api/auth/signup", async (req, res) => {
+    try {
+      // Extend the user schema with additional validation
+      const signupSchema = insertUserSchema.extend({
+        password: z.string().min(8, "Password must be at least 8 characters"),
+        email: z.string().email("Invalid email format"),
+      });
+      
+      // Validate the request body
+      const validatedData = signupSchema.parse(req.body);
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByUsername(validatedData.username);
+      if (existingUser) {
+        return res.status(400).json({ error: "Username already exists" });
+      }
+      
+      const existingEmail = await storage.getUserByEmail(validatedData.email);
+      if (existingEmail) {
+        return res.status(400).json({ error: "Email already exists" });
+      }
+      
+      // Hash the password
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(validatedData.password, saltRounds);
+      
+      // Create Stripe customer
+      const customer = await stripe.customers.create({
+        email: validatedData.email,
+        name: validatedData.fullName || validatedData.username,
+      });
+      
+      // Create user with hashed password
+      const user = await storage.createUser({
+        ...validatedData,
+        password: hashedPassword,
+        stripeCustomerId: customer.id,
+        subscriptionStatus: "inactive",
+      });
+      
+      // Set user session
+      // @ts-ignore
+      req.session.userId = user.id;
+      
+      // Return user data (excluding password)
+      const { password, ...userData } = user;
+      res.status(201).json({ 
+        user: userData,
+        message: "User registered successfully" 
+      });
+    } catch (error: any) {
+      console.error("Sign up error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      if (!username || !password) {
+        return res.status(400).json({ error: "Username and password are required" });
+      }
+      
+      // Find user by username
+      const user = await storage.getUserByUsername(username);
+      if (!user) {
+        return res.status(401).json({ error: "Invalid username or password" });
+      }
+      
+      // Compare password
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) {
+        return res.status(401).json({ error: "Invalid username or password" });
+      }
+      
+      // Set user session
+      // @ts-ignore
+      req.session.userId = user.id;
+      
+      // Return user data (excluding password)
+      const { password: _, ...userData } = user;
+      res.json({ 
+        user: userData,
+        message: "Login successful" 
+      });
+    } catch (error: any) {
+      console.error("Login error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.post("/api/auth/logout", (req, res) => {
+    // @ts-ignore
+    req.session.destroy((err: any) => {
+      if (err) {
+        return res.status(500).json({ error: "Failed to logout" });
+      }
+      res.json({ message: "Logout successful" });
+    });
+  });
+  
+  app.get("/api/auth/me", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      // Return user data (excluding password)
+      const { password, ...userData } = user;
+      res.json({ user: userData });
+    } catch (error: any) {
+      console.error("Get user error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  // Stripe subscription routes
+  app.post("/api/subscriptions/create", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      const { priceId } = req.body;
+      
+      if (!priceId) {
+        return res.status(400).json({ error: "Price ID is required" });
+      }
+      
+      // Map product IDs to price IDs
+      // In a real app, you'd store these in the database or environment variables
+      const priceMap: Record<string, string> = {
+        'prod_S8QWDRCVcz07An': 'price_starter', // Starter plan
+        'prod_S8QXUopH7dXHrJ': 'price_essential', // Essential plan
+        'prod_S8QYxTHNgV2Dmr': 'price_basic',     // Basic plan
+        'prod_S8QZE7hzuMcjru': 'price_pro',       // Pro plan
+      };
+      
+      // Create the subscription
+      const subscription = await stripe.subscriptions.create({
+        customer: user.stripeCustomerId,
+        items: [{ price: priceId }],
+        payment_behavior: 'default_incomplete',
+        payment_settings: { save_default_payment_method: 'on_subscription' },
+        expand: ['latest_invoice.payment_intent'],
+      });
+      
+      // Find the plan name from the price ID
+      let planName = 'unknown';
+      for (const [productId, price] of Object.entries(priceMap)) {
+        if (price === priceId) {
+          planName = productId === 'prod_S8QWDRCVcz07An' ? 'starter' : 
+                     productId === 'prod_S8QXUopH7dXHrJ' ? 'essential' :
+                     productId === 'prod_S8QYxTHNgV2Dmr' ? 'basic' : 'pro';
+          break;
+        }
+      }
+      
+      // Store subscription in database
+      await storage.createSubscription({
+        userId: user.id,
+        stripeSubscriptionId: subscription.id,
+        plan: planName,
+        status: subscription.status,
+        currentPeriodStart: new Date(), // Current time as start
+        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+      });
+      
+      // Update user subscription status
+      await storage.updateUser(user.id, {
+        subscriptionStatus: subscription.status,
+        subscriptionPlan: planName,
+      });
+      
+      // @ts-ignore
+      const clientSecret = subscription.latest_invoice.payment_intent.client_secret;
+      
+      res.json({
+        subscriptionId: subscription.id,
+        clientSecret,
+      });
+    } catch (error: any) {
+      console.error("Create subscription error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.get("/api/subscriptions/plans", async (req, res) => {
+    try {
+      // Define subscription plans with product IDs from the requirements
+      const plans = [
+        {
+          id: 'prod_S8QWDRCVcz07An',
+          name: 'Starter',
+          price: 19.99,
+          interval: 'month',
+          currency: 'usd',
+          features: [
+            'Basic Voice AI Integration',
+            'Up to 100 calls/month',
+            '24/7 Customer Support',
+            '1 AI Agent Type',
+          ]
+        },
+        {
+          id: 'prod_S8QXUopH7dXHrJ',
+          name: 'Essential',
+          price: 49.99,
+          interval: 'month',
+          currency: 'usd',
+          features: [
+            'Advanced Voice AI Integration',
+            'Up to 500 calls/month',
+            'Priority Support',
+            '2 AI Agent Types',
+            'Call Analytics',
+          ]
+        },
+        {
+          id: 'prod_S8QYxTHNgV2Dmr',
+          name: 'Basic',
+          price: 99.99,
+          interval: 'month',
+          currency: 'usd',
+          features: [
+            'Premium Voice AI Integration',
+            'Up to 1,000 calls/month',
+            '24/7 Priority Support',
+            'All AI Agent Types',
+            'Advanced Analytics',
+            'Custom Integration Support',
+          ]
+        },
+        {
+          id: 'prod_S8QZE7hzuMcjru',
+          name: 'Pro',
+          price: 199.99,
+          interval: 'month',
+          currency: 'usd',
+          features: [
+            'Enterprise Voice AI Integration',
+            'Unlimited calls',
+            'Dedicated Account Manager',
+            'Custom AI Agent Development',
+            'Full API Access',
+            'White Labeling',
+            'Custom Reporting',
+          ]
+        }
+      ];
+      
+      res.json({ plans });
+    } catch (error: any) {
+      console.error("Get plans error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.get("/api/subscriptions/current", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      
+      // Get user's subscriptions
+      const subscriptions = await storage.getSubscriptionsByUserId(user.id);
+      
+      // Find active subscription
+      const activeSubscription = subscriptions.find(sub => sub.status === 'active');
+      
+      res.json({ subscription: activeSubscription || null });
+    } catch (error: any) {
+      console.error("Get current subscription error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  // Webhook to handle Stripe events
+  app.post("/api/webhooks/stripe", async (req, res) => {
+    try {
+      const sig = req.headers['stripe-signature'] as string;
+      const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+      
+      let event;
+      
+      // Verify webhook signature
+      if (endpointSecret) {
+        try {
+          event = stripe.webhooks.constructEvent(
+            // @ts-ignore - In production, you would use raw body parser for Stripe webhooks
+            req.body,
+            sig,
+            endpointSecret
+          );
+        } catch (err: any) {
+          console.error(`Webhook signature verification failed: ${err.message}`);
+          return res.status(400).send(`Webhook Error: ${err.message}`);
+        }
+      } else {
+        // For development without signature validation
+        event = req.body;
+      }
+      
+      // Handle the event
+      switch (event.type) {
+        case 'invoice.payment_succeeded':
+          const invoicePaymentSucceeded = event.data.object;
+          // Handle successful invoice payment
+          await handleSubscriptionUpdated(invoicePaymentSucceeded.subscription, 'active');
+          break;
+        case 'invoice.payment_failed':
+          const invoicePaymentFailed = event.data.object;
+          // Handle failed invoice payment
+          await handleSubscriptionUpdated(invoicePaymentFailed.subscription, 'past_due');
+          break;
+        case 'customer.subscription.deleted':
+          const subscriptionDeleted = event.data.object;
+          // Handle subscription cancellation
+          await handleSubscriptionUpdated(subscriptionDeleted.id, 'canceled');
+          break;
+        case 'customer.subscription.updated':
+          const subscriptionUpdated = event.data.object;
+          // Handle subscription update
+          await handleSubscriptionUpdated(subscriptionUpdated.id, subscriptionUpdated.status);
+          break;
+        default:
+          console.log(`Unhandled event type ${event.type}`);
+      }
+      
+      // Return a response to acknowledge receipt of the event
+      res.json({ received: true });
+    } catch (error: any) {
+      console.error("Stripe webhook error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  // Helper function to handle subscription updates
+  async function handleSubscriptionUpdated(subscriptionId: string, status: string) {
+    try {
+      // Get subscription from database
+      const subscription = await storage.getSubscriptionByStripeId(subscriptionId);
+      if (!subscription) {
+        console.error(`Subscription not found: ${subscriptionId}`);
+        return;
+      }
+      
+      // Update subscription status
+      await storage.updateSubscription(subscription.id, { status });
+      
+      // Update user subscription status
+      await storage.updateUser(subscription.userId, { 
+        subscriptionStatus: status 
+      });
+      
+      console.log(`Subscription ${subscriptionId} updated to ${status}`);
+    } catch (error) {
+      console.error("Error updating subscription:", error);
+    }
+  }
   // 11Labs Conversational AI agent endpoint
   app.post("/api/conversational-agent", async (req, res) => {
     try {
@@ -416,6 +851,410 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Document management routes
+  app.post("/api/documents/upload", isAuthenticated, upload.single('file'), async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      const file = req.file;
+      const { title, description } = req.body;
+      
+      if (!file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+      
+      // Save document metadata to database
+      const document = await storage.createDocument({
+        userId: user.id,
+        title: title || file.originalname,
+        fileName: file.originalname,
+        filePath: file.path,
+        fileType: file.mimetype,
+        fileSize: file.size,
+        description: description || "",
+      });
+      
+      res.status(201).json({ 
+        document,
+        message: "Document uploaded successfully" 
+      });
+    } catch (error: any) {
+      console.error("Document upload error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.get("/api/documents", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      
+      // Get user's documents
+      const documents = await storage.getDocumentsByUserId(user.id);
+      
+      res.json({ documents });
+    } catch (error: any) {
+      console.error("Get documents error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.get("/api/documents/:id", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      const documentId = parseInt(req.params.id);
+      
+      if (isNaN(documentId)) {
+        return res.status(400).json({ error: "Invalid document ID" });
+      }
+      
+      // Get document
+      const document = await storage.getDocument(documentId);
+      
+      if (!document) {
+        return res.status(404).json({ error: "Document not found" });
+      }
+      
+      // Check if user owns document
+      if (document.userId !== user.id) {
+        return res.status(403).json({ error: "Unauthorized access to document" });
+      }
+      
+      res.json({ document });
+    } catch (error: any) {
+      console.error("Get document error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.delete("/api/documents/:id", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      const documentId = parseInt(req.params.id);
+      
+      if (isNaN(documentId)) {
+        return res.status(400).json({ error: "Invalid document ID" });
+      }
+      
+      // Get document
+      const document = await storage.getDocument(documentId);
+      
+      if (!document) {
+        return res.status(404).json({ error: "Document not found" });
+      }
+      
+      // Check if user owns document
+      if (document.userId !== user.id) {
+        return res.status(403).json({ error: "Unauthorized access to document" });
+      }
+      
+      // Delete document file
+      if (fs.existsSync(document.filePath)) {
+        fs.unlinkSync(document.filePath);
+      }
+      
+      // Delete document from database
+      await storage.deleteDocument(documentId);
+      
+      res.json({ 
+        message: "Document deleted successfully"
+      });
+    } catch (error: any) {
+      console.error("Delete document error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  // Custom AI Agent routes
+  app.post("/api/custom-agents", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      
+      // Extend the custom agent schema with validation
+      const customAgentSchema = insertCustomAgentSchema.extend({
+        name: z.string().min(1, "Name is required"),
+        type: z.string().min(1, "Type is required"),
+      });
+      
+      // Validate the request body
+      const validatedData = customAgentSchema.parse(req.body);
+      
+      // Create custom agent
+      const customAgent = await storage.createCustomAgent({
+        ...validatedData,
+        userId: user.id,
+      });
+      
+      res.status(201).json({ 
+        customAgent,
+        message: "Custom agent created successfully" 
+      });
+    } catch (error: any) {
+      console.error("Create custom agent error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.get("/api/custom-agents", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      
+      // Get user's custom agents
+      const customAgents = await storage.getCustomAgentsByUserId(user.id);
+      
+      res.json({ customAgents });
+    } catch (error: any) {
+      console.error("Get custom agents error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.get("/api/custom-agents/:id", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      const agentId = parseInt(req.params.id);
+      
+      if (isNaN(agentId)) {
+        return res.status(400).json({ error: "Invalid agent ID" });
+      }
+      
+      // Get custom agent
+      const customAgent = await storage.getCustomAgent(agentId);
+      
+      if (!customAgent) {
+        return res.status(404).json({ error: "Custom agent not found" });
+      }
+      
+      // Check if user owns custom agent
+      if (customAgent.userId !== user.id) {
+        return res.status(403).json({ error: "Unauthorized access to custom agent" });
+      }
+      
+      res.json({ customAgent });
+    } catch (error: any) {
+      console.error("Get custom agent error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.put("/api/custom-agents/:id", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      const agentId = parseInt(req.params.id);
+      
+      if (isNaN(agentId)) {
+        return res.status(400).json({ error: "Invalid agent ID" });
+      }
+      
+      // Get custom agent
+      const customAgent = await storage.getCustomAgent(agentId);
+      
+      if (!customAgent) {
+        return res.status(404).json({ error: "Custom agent not found" });
+      }
+      
+      // Check if user owns custom agent
+      if (customAgent.userId !== user.id) {
+        return res.status(403).json({ error: "Unauthorized access to custom agent" });
+      }
+      
+      // Update custom agent
+      const updatedCustomAgent = await storage.updateCustomAgent(agentId, req.body);
+      
+      res.json({ 
+        customAgent: updatedCustomAgent,
+        message: "Custom agent updated successfully" 
+      });
+    } catch (error: any) {
+      console.error("Update custom agent error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.delete("/api/custom-agents/:id", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      const agentId = parseInt(req.params.id);
+      
+      if (isNaN(agentId)) {
+        return res.status(400).json({ error: "Invalid agent ID" });
+      }
+      
+      // Get custom agent
+      const customAgent = await storage.getCustomAgent(agentId);
+      
+      if (!customAgent) {
+        return res.status(404).json({ error: "Custom agent not found" });
+      }
+      
+      // Check if user owns custom agent
+      if (customAgent.userId !== user.id) {
+        return res.status(403).json({ error: "Unauthorized access to custom agent" });
+      }
+      
+      // Delete custom agent
+      await storage.deleteCustomAgent(agentId);
+      
+      res.json({ 
+        message: "Custom agent deleted successfully"
+      });
+    } catch (error: any) {
+      console.error("Delete custom agent error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  // Lead management routes
+  app.post("/api/leads", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      
+      // Extend the lead schema with validation
+      const leadSchema = insertLeadSchema.extend({
+        name: z.string().min(1, "Name is required"),
+        email: z.string().email("Invalid email format"),
+      });
+      
+      // Validate the request body
+      const validatedData = leadSchema.parse(req.body);
+      
+      // Create lead
+      const lead = await storage.createLead({
+        ...validatedData,
+        userId: user.id,
+      });
+      
+      res.status(201).json({ 
+        lead,
+        message: "Lead created successfully" 
+      });
+    } catch (error: any) {
+      console.error("Create lead error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.get("/api/leads", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      
+      // Get user's leads
+      const leads = await storage.getLeadsByUserId(user.id);
+      
+      res.json({ leads });
+    } catch (error: any) {
+      console.error("Get leads error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.get("/api/leads/:id", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      const leadId = parseInt(req.params.id);
+      
+      if (isNaN(leadId)) {
+        return res.status(400).json({ error: "Invalid lead ID" });
+      }
+      
+      // Get lead
+      const lead = await storage.getLead(leadId);
+      
+      if (!lead) {
+        return res.status(404).json({ error: "Lead not found" });
+      }
+      
+      // Check if user owns lead
+      if (lead.userId !== user.id) {
+        return res.status(403).json({ error: "Unauthorized access to lead" });
+      }
+      
+      res.json({ lead });
+    } catch (error: any) {
+      console.error("Get lead error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.put("/api/leads/:id", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      const leadId = parseInt(req.params.id);
+      
+      if (isNaN(leadId)) {
+        return res.status(400).json({ error: "Invalid lead ID" });
+      }
+      
+      // Get lead
+      const lead = await storage.getLead(leadId);
+      
+      if (!lead) {
+        return res.status(404).json({ error: "Lead not found" });
+      }
+      
+      // Check if user owns lead
+      if (lead.userId !== user.id) {
+        return res.status(403).json({ error: "Unauthorized access to lead" });
+      }
+      
+      // Update lead
+      const updatedLead = await storage.updateLead(leadId, req.body);
+      
+      res.json({ 
+        lead: updatedLead,
+        message: "Lead updated successfully" 
+      });
+    } catch (error: any) {
+      console.error("Update lead error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  app.delete("/api/leads/:id", isAuthenticated, async (req, res) => {
+    try {
+      // @ts-ignore
+      const user = req.user;
+      const leadId = parseInt(req.params.id);
+      
+      if (isNaN(leadId)) {
+        return res.status(400).json({ error: "Invalid lead ID" });
+      }
+      
+      // Get lead
+      const lead = await storage.getLead(leadId);
+      
+      if (!lead) {
+        return res.status(404).json({ error: "Lead not found" });
+      }
+      
+      // Check if user owns lead
+      if (lead.userId !== user.id) {
+        return res.status(403).json({ error: "Unauthorized access to lead" });
+      }
+      
+      // Delete lead
+      await storage.deleteLead(leadId);
+      
+      res.json({ 
+        message: "Lead deleted successfully"
+      });
+    } catch (error: any) {
+      console.error("Delete lead error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
   // Create HTTP server
   const httpServer = createServer(app);
 
