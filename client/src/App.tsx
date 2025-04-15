@@ -4,8 +4,6 @@ import { Switch, useLocation } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { AnimatedRoute } from "@/components/animated-route";
 import NotFound from "@/pages/not-found";
-// Import the more advanced Home component
-import Home from "@/pages/home";
 import ImmersiveHome from "@/pages/immersive-home";
 import Chat from "@/pages/chat";
 import Payment from "@/pages/payment";
@@ -38,8 +36,7 @@ function App() {
         {/* We need to provide a key to the immediate child of AnimatePresence */}
         <div key={location} className="page-wrapper">
           <Switch location={location}>
-            <AnimatedRoute path="/" component={Home} animation="fade" />
-            <AnimatedRoute path="/immersive" component={ImmersiveHome} animation="fade" />
+            <AnimatedRoute path="/" component={ImmersiveHome} animation="fade" />
             <AnimatedRoute path="/chat/:agentId" component={Chat} animation="slideHorizontal" />
             <AnimatedRoute path="/payment" component={Payment} animation="slideUp" />
             <AnimatedRoute path="/calendar" component={Calendar} animation="zoom" />
