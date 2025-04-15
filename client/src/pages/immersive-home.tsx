@@ -62,12 +62,20 @@ export const ImmersiveHome: React.FC = () => {
         <MountainTextOverlaySection />
         
         {/* Space and Mountain sections with seamless transition */}
-        <div className="relative" style={{ marginBottom: '-2px' }}>
+        <div className="relative">
           <SpaceIntroSection />
         </div>
         
-        {/* Mountain section directly connected to space section */}
-        <div ref={mountainSectionRef} style={{ marginTop: '-1px' }}>
+        {/* Mountain section directly connected to space section - no gaps */}
+        <div 
+          ref={mountainSectionRef} 
+          className="relative" 
+          style={{ 
+            marginTop: '-2px',
+            borderTop: 'none',
+            zIndex: 10
+          }}
+        >
           <FullscreenMountainSection
             title="" // Empty title is required by the component props
             backgroundImage={mountainBg1}
@@ -83,16 +91,16 @@ export const ImmersiveHome: React.FC = () => {
               </div>
               
               <div className="relative z-10">
-                <div className="mb-10 md:mb-12">
-                  <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-widest text-white drop-shadow-[0_0_20px_rgba(100,200,255,0.7)] whitespace-nowrap sm:whitespace-normal">
+                <div className="mb-10 md:mb-12 animate-fade-in-down">
+                  <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-widest text-white drop-shadow-[0_0_25px_rgba(100,200,255,0.8)] whitespace-nowrap sm:whitespace-normal animate-pulse">
                     WHERE TECHNOLOGY MEETS
                   </h2>
-                  <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-widest text-white drop-shadow-[0_0_20px_rgba(100,200,255,0.7)]">
+                  <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-widest text-white drop-shadow-[0_0_25px_rgba(100,200,255,0.8)] animate-pulse">
                     EMOTION
                   </h2>
                 </div>
                 
-                <div className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20 backdrop-blur-md p-8 md:p-10 rounded-xl border border-blue-500/30 shadow-[0_4px_30px_rgba(0,100,255,0.3)]">
+                <div className="bg-gradient-to-r from-blue-900/15 to-indigo-900/15 backdrop-blur-lg p-8 md:p-10 rounded-xl border border-blue-500/30 shadow-[0_4px_30px_rgba(0,100,255,0.3)]">
                   <ScrollReveal animation="fadeInUp">
                     <p className="text-xl md:text-2xl leading-relaxed mb-8 text-white">
                       Our revolutionary approach to voice AI transcends mere functionality.
@@ -101,19 +109,28 @@ export const ImmersiveHome: React.FC = () => {
                       feel genuinely human.
                     </p>
                     
-                    <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mt-10 max-w-4xl mx-auto">
-                      <div className="w-full sm:w-64 md:w-72 lg:w-80 xl:w-96 bg-blue-900/30 p-8 rounded-lg border border-blue-400/30 backdrop-blur-md shadow-[0_0_25px_rgba(59,130,246,0.15)]">
+                    <div className="flex flex-col md:flex-row justify-center gap-6 md:gap-4 lg:gap-6 mt-10">
+                      <div 
+                        className="w-full sm:w-64 md:w-60 lg:w-72 bg-blue-900/25 p-6 lg:p-8 rounded-lg border border-blue-400/30 backdrop-blur-md shadow-[0_0_25px_rgba(59,130,246,0.2)] hover:shadow-[0_0_35px_rgba(59,130,246,0.3)] transition-all duration-300 hover:scale-[1.03]"
+                      >
                         <div className="flex justify-center">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/40 to-blue-600/40 flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+                          <div 
+                            className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/40 to-blue-600/40 flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(59,130,246,0.4)] animate-pulse"
+                          >
                             <div className="text-blue-200 text-2xl">🧠</div>
                           </div>
                         </div>
                         <h3 className="text-xl font-semibold text-blue-100 mb-3 text-center">Contextual Understanding</h3>
                         <p className="text-blue-200 text-center leading-relaxed">Breaks language barriers by looking beyond simple words</p>
                       </div>
-                      <div className="w-full sm:w-64 md:w-72 lg:w-80 xl:w-96 bg-purple-900/30 p-8 rounded-lg border border-purple-400/30 backdrop-blur-md shadow-[0_0_25px_rgba(147,51,234,0.15)]">
+                      
+                      <div 
+                        className="w-full sm:w-64 md:w-60 lg:w-72 bg-purple-900/25 p-6 lg:p-8 rounded-lg border border-purple-400/30 backdrop-blur-md shadow-[0_0_25px_rgba(147,51,234,0.2)] hover:shadow-[0_0_35px_rgba(147,51,234,0.3)] transition-all duration-300 hover:scale-[1.03]"
+                      >
                         <div className="flex justify-center">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/40 to-purple-600/40 flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(147,51,234,0.4)]">
+                          <div 
+                            className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/40 to-purple-600/40 flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(147,51,234,0.4)] animate-pulse"
+                          >
                             <div className="text-purple-200 text-2xl">💫</div>
                           </div>
                         </div>
