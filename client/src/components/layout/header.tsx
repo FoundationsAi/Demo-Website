@@ -2,7 +2,6 @@ import React from "react";
 import { Link, useLocation } from "wouter";
 import { useScroll } from "@/hooks/use-scroll";
 import { Button } from "@/components/ui/button";
-import { MountainLogoCustom } from "@/components/mountain-logo-custom";
 import { LogIn } from "lucide-react";
 
 export const Header: React.FC = () => {
@@ -22,7 +21,11 @@ export const Header: React.FC = () => {
         <div className="flex items-center">
           <Link href="/">
             <div className="flex items-center cursor-pointer">
-              <MountainLogoCustom className="w-12 h-8" />
+              <img 
+                src="/images/mountain-logo.png" 
+                alt="Foundations AI Logo" 
+                className="w-12 h-10 object-contain" 
+              />
               <div className="ml-2 flex flex-col">
                 <span className="text-xl font-bold text-[#6366F1]">
                   Foundations
