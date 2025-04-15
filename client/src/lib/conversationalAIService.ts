@@ -1,9 +1,36 @@
 import { Conversation } from '@11labs/client';
 
-// Agent IDs for different personalities
+// Agent IDs for different personalities and types
 const AGENTS = {
-  STEVE: '0Ako2MORgNjlSpGTU75E',
-  SARAH: 'Jw7iQ8oXMG3MZeuyLfmH'
+  // Gender-specific generic agents (used as fallbacks)
+  MALE: '0Ako2MORgNjlSpGTU75E',   // Generic male agent
+  FEMALE: 'Jw7iQ8oXMG3MZeuyLfmH', // Generic female agent
+  
+  // Agent-specific IDs - male voices
+  "customer-service-male": '0Ako2MORgNjlSpGTU75E',
+  "sales-male": 'c8UawUiaIKSJ25P2KQjt',
+  "receptionist-male": 'MVAGQozmD71EKoB1TPJi',
+  "mortgage-male": 'YZNqaCO82lhGhCLEXokM',
+  "healthcare-male": 'eU8MDiHC5Q0rUK5lwVYW',
+  "concierge-male": 'gkgMXkogkBQYuaVj4HBW',
+  "technical-support-male": 'YudASBrJGqEOLwx9RboI',
+  "travel-male": 'pNdIxkzXzwhD5R8Y9LdA',
+  "educator-male": 'wDcQTnpzTBXuI8V2lO7N',
+  "personal-assistant-male": 'gWjKjfHsiwfFg0jZ8L3v',
+  "creative-male": 'TJzMqDx0qwJyUAtS4mQN',
+  
+  // Agent-specific IDs - female voices
+  "customer-service-female": 'Jw7iQ8oXMG3MZeuyLfmH',
+  "sales-female": 'h45JDYWQZs6GZfPgmIhV',
+  "receptionist-female": 'kVKQO2JPuSsGgfjBZZbI',
+  "mortgage-female": 'FRoFvpmE5NRNtZVoUh0i',
+  "healthcare-female": 'zKKMZOzmfsJLfdfTy30j',
+  "concierge-female": 'BlfvAYV3irWBXCWkVdm7',
+  "technical-support-female": 's1Bm25LQEdjB0RpobLYK',
+  "travel-female": 'aMBgpXRNtGEHKYLsvcSK',
+  "educator-female": 'WTFTxIHGwtdbCcbtKCAY',
+  "personal-assistant-female": 'uUAEwCZgpPKHQ9YubPNc',
+  "creative-female": 'bORuKJHkTfUvXtSQNlYV'
 };
 
 type AgentType = keyof typeof AGENTS;
