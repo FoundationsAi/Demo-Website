@@ -118,16 +118,16 @@ const GetStarted = () => {
                   <AnimatedText 
                     text="Join Foundations AI" 
                     as="h1" 
-                    className="text-4xl md:text-5xl font-bold mb-4"
+                    className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4"
                     animation="slide"
                     stagger={0.05}
                   />
-                  <p className="text-lg text-blue-300">
+                  <p className="text-base sm:text-lg text-blue-300 px-1">
                     Create your account to start your immersive AI experience
                   </p>
                 </div>
                 
-                <div className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20 backdrop-blur-lg p-8 rounded-xl border border-blue-500/30 shadow-[0_4px_30px_rgba(0,100,255,0.3)]">
+                <div className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20 backdrop-blur-lg p-5 sm:p-6 md:p-8 rounded-xl border border-blue-500/30 shadow-[0_4px_30px_rgba(0,100,255,0.3)]">
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                       <FormField
@@ -256,27 +256,27 @@ const GetStarted = () => {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 <div className="bg-gradient-to-b from-blue-900/15 to-indigo-900/15 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl border border-blue-500/30 shadow-[0_4px_15px_rgba(0,100,255,0.2)] hover:shadow-[0_4px_25px_rgba(0,100,255,0.3)] transition-all duration-300 hover:scale-[1.03]">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/40 to-blue-600/40 flex items-center justify-center mb-4 mx-auto shadow-[0_0_15px_rgba(59,130,246,0.4)]">
-                    <div className="text-blue-200 text-2xl">💬</div>
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-blue-500/40 to-blue-600/40 flex items-center justify-center mb-3 sm:mb-4 mx-auto shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+                    <div className="text-blue-200 text-xl sm:text-2xl">💬</div>
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-3 text-center">Personalized Agents</h3>
-                  <p className="text-blue-200 text-center">Create and customize your own voice AI agents tailored to your specific needs</p>
+                  <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3 text-center">Personalized Agents</h3>
+                  <p className="text-sm sm:text-base text-blue-200 text-center">Create and customize your own voice AI agents tailored to your specific needs</p>
                 </div>
                 
-                <div className="bg-gradient-to-b from-purple-900/15 to-indigo-900/15 backdrop-blur-lg p-6 rounded-xl border border-purple-500/30 shadow-[0_4px_15px_rgba(147,51,234,0.2)] hover:shadow-[0_4px_25px_rgba(147,51,234,0.3)] transition-all duration-300 hover:scale-[1.03]">
+                <div className="bg-gradient-to-b from-purple-900/15 to-indigo-900/15 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl border border-purple-500/30 shadow-[0_4px_15px_rgba(147,51,234,0.2)] hover:shadow-[0_4px_25px_rgba(147,51,234,0.3)] transition-all duration-300 hover:scale-[1.03]">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/40 to-purple-600/40 flex items-center justify-center mb-4 mx-auto shadow-[0_0_15px_rgba(147,51,234,0.4)]">
                     <div className="text-purple-200 text-2xl">🔐</div>
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-3 text-center">Secure Conversations</h3>
-                  <p className="text-purple-200 text-center">Store and manage your conversations securely in your private account dashboard</p>
+                  <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3 text-center">Secure Conversations</h3>
+                  <p className="text-sm sm:text-base text-purple-200 text-center">Store and manage your conversations securely in your private account dashboard</p>
                 </div>
                 
-                <div className="bg-gradient-to-b from-indigo-900/15 to-blue-900/15 backdrop-blur-lg p-6 rounded-xl border border-indigo-500/30 shadow-[0_4px_15px_rgba(99,102,241,0.2)] hover:shadow-[0_4px_25px_rgba(99,102,241,0.3)] transition-all duration-300 hover:scale-[1.03]">
+                <div className="bg-gradient-to-b from-indigo-900/15 to-blue-900/15 backdrop-blur-lg p-4 sm:p-5 md:p-6 rounded-xl border border-indigo-500/30 shadow-[0_4px_15px_rgba(99,102,241,0.2)] hover:shadow-[0_4px_25px_rgba(99,102,241,0.3)] transition-all duration-300 hover:scale-[1.03]">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500/40 to-indigo-600/40 flex items-center justify-center mb-4 mx-auto shadow-[0_0_15px_rgba(99,102,241,0.4)]">
                     <div className="text-indigo-200 text-2xl">⚡</div>
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-3 text-center">Premium Features</h3>
-                  <p className="text-indigo-200 text-center">Access exclusive features like voice customization, longer conversations, and priority support</p>
+                  <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-3 text-center">Premium Features</h3>
+                  <p className="text-sm sm:text-base text-indigo-200 text-center">Access exclusive features like voice customization, longer conversations, and priority support</p>
                 </div>
               </div>
             </ScrollReveal>

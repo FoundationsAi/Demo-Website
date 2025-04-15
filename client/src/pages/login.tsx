@@ -111,16 +111,16 @@ const Login = () => {
                   <AnimatedText 
                     text="Welcome Back" 
                     as="h1" 
-                    className="text-4xl md:text-5xl font-bold mb-4"
+                    className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4"
                     animation="slide"
                     stagger={0.05}
                   />
-                  <p className="text-lg text-blue-300">
+                  <p className="text-base sm:text-lg text-blue-300 px-1">
                     Sign in to access your Foundations AI experience
                   </p>
                 </div>
                 
-                <div className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20 backdrop-blur-lg p-8 rounded-xl border border-blue-500/30 shadow-[0_4px_30px_rgba(0,100,255,0.3)]">
+                <div className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20 backdrop-blur-lg p-5 sm:p-6 md:p-8 rounded-xl border border-blue-500/30 shadow-[0_4px_30px_rgba(0,100,255,0.3)]">
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                       <FormField
