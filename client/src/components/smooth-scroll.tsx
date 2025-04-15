@@ -44,15 +44,15 @@ export const useSmoothScroll = () => {
 
 export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children, options }) => {
   const [mounted, setMounted] = useState(false);
-  
+
   // Only enable on client side
   useEffect(() => {
     setMounted(true);
-    
+
     // Make background black to prevent white flashes between sections
     document.body.style.background = '#000';
     document.documentElement.style.background = '#000';
-    
+
     // Ensure all sections flow seamlessly together and optimize performance
     const style = document.createElement('style');
     style.innerHTML = `
@@ -63,7 +63,7 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children, options })
         overflow-x: hidden !important;
         background-color: #000 !important;
       }
-      
+
       section {
         margin: 0 !important;
         padding-top: 0 !important;
@@ -73,7 +73,7 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children, options })
         position: relative;
         z-index: 1;
       }
-      
+
       /* Fix for full-page sections to eliminate any gaps */
       .section-wrapper {
         margin: 0 !important;
@@ -84,38 +84,38 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children, options })
         overflow: hidden;
         background-color: #000;
       }
-      
+
       /* Optimize for better performance - apply hardware acceleration only where needed */
       .parallax-element, .animated-element, .motion-div {
         will-change: transform, opacity;
         transform: translateZ(0);
         backface-visibility: hidden;
       }
-      
+
       /* Optimize images and heavy elements */
       img, video, canvas, iframe {
         will-change: transform;
         backface-visibility: hidden;
         filter: translateZ(0);
       }
-      
+
       /* Ensure mouse cursor remains visible */
       * {
         cursor: auto !important;
       }
-      
+
       /* Prevent scrollbar jumps */
       html {
         scrollbar-gutter: stable;
         overflow-x: hidden;
       }
-      
+
       /* Better touch scrolling for mobile */
       body {
         -webkit-overflow-scrolling: touch;
         overflow-x: hidden;
       }
-      
+
       /* Reduce animation workload */
       @media (prefers-reduced-motion: reduce) {
         *, ::before, ::after {
@@ -125,21 +125,23 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children, options })
       }
     `;
     document.head.appendChild(style);
-    
+
     return () => {
       document.body.style.background = '';
       document.documentElement.style.background = '';
       document.head.removeChild(style);
     };
   }, []);
-  
+
   if (!mounted) {
     // Return children without smooth scrolling on server or before mount
     return <>{children}</>;
   }
-  
+
   // Simple smooth scrolling for better performance
-  return <>{children}</>;
+  return (
+    <div className="smooth-scroll relative" style={{position: 'relative', height: '100vh'}}> {children} </div>
+  );
 };
 
 // Scroll trigger component that performs actions when scrolled into view
@@ -166,10 +168,10 @@ export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
 }) => {
   const [ref, setRef] = useState<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
-  
+
   useEffect(() => {
     if (!ref) return;
-    
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -188,19 +190,20 @@ export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
         rootMargin
       }
     );
-    
+
     observer.observe(ref);
-    
+
     return () => {
       if (ref) observer.unobserve(ref);
     };
   }, [ref, onEnter, onExit, threshold, rootMargin, once]);
-  
+
   return (
     <div 
       ref={setRef} 
       className={`scroll-trigger ${isVisible ? 'is-visible' : ''} ${className}`}
       id={id}
+      style={{ position: 'relative' }} // Added for proper positioning
     >
       {children}
     </div>

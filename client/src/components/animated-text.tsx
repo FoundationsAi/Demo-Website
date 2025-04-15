@@ -152,14 +152,14 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
       {/* Original text for SEO (hidden visually) */}
       <span className="sr-only">{text}</span>
 
-      {/* Animated text */}
-      <div ref={textRef} aria-hidden="true" className="animated-text">
+      {/* Container for animated text */}
+      <span ref={textRef} aria-hidden="true" className="animated-text">
         {text}
-      </div>
+      </span>
 
       {/* Animated characters will be created by SplitType and animated by Framer Motion */}
       {splitText && splitText.chars && (
-        <div className="absolute inset-0" aria-hidden="true">
+        <span className="absolute inset-0" aria-hidden="true">
           {splitText.chars.map((char, index) => (
             <motion.span
               key={index}
@@ -180,7 +180,7 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
               {char.textContent}
             </motion.span>
           ))}
-        </div>
+        </span>
       )}
     </Component>
   );
