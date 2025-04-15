@@ -13,7 +13,7 @@ interface CheckoutFormProps {
   onProcessing?: () => void;
 }
 
-const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, clientSecret }) => {
+const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, clientSecret, onProcessing }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
@@ -27,6 +27,13 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, clientSecret }) 
       console.warn('No client secret provided to CheckoutForm');
     }
   }, [clientSecret]);
+  
+  // Update parent component about processing state
+  useEffect(() => {
+    if (paymentStage === 'processing' && onProcessing) {
+      onProcessing();
+    }
+  }, [paymentStage, onProcessing]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();

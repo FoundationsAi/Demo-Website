@@ -317,7 +317,8 @@ export default function SubscribePage() {
                   <Elements stripe={stripePromise} options={{ clientSecret }}>
                     <CheckoutForm 
                       clientSecret={clientSecret}
-                      onSuccess={() => setPaymentSuccess(true)} 
+                      onSuccess={() => setPaymentSuccess(true)}
+                      onProcessing={() => setCurrentStep("processing")}
                     />
                   </Elements>
                 </div>
