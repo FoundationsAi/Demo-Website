@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { AnimatedRoute } from "@/components/animated-route";
 import { AuthProvider, ProtectedRoute } from "@/lib/auth";
 import NotFound from "@/pages/not-found";
-import ImmersiveHome from "@/pages/immersive-home";
+import Home from "@/pages/home";
 import Chat from "@/pages/chat";
 import Payment from "@/pages/payment";
 import Calendar from "@/pages/calendar";
@@ -46,7 +46,7 @@ function App() {
                 window.location.href = '/home';
                 return null;
               }} animation="fade" />
-              <AnimatedRoute path="/home" component={ImmersiveHome} animation="fade" />
+              <AnimatedRoute path="/home" component={Home} animation="fade" />
               <AnimatedRoute path="/login" component={Login} animation="fade" />
               <AnimatedRoute path="/register" component={Register} animation="fade" />
               <AnimatedRoute path="/chat/:agentId" component={Chat} animation="slideHorizontal" />
