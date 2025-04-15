@@ -2,7 +2,8 @@ import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import Stripe from "stripe";
-import { insertDemoRequestSchema, insertAppointmentSchema } from "@shared/schema";
+import bcrypt from "bcryptjs";
+import { insertDemoRequestSchema, insertAppointmentSchema, insertUserSchema } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 // Initialize Stripe with fallback key for development
@@ -281,7 +282,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe subscription API endpoint
   app.post("/api/create-subscription", async (req, res) => {
     try {
-      const { amount, plan, cycle, email, name } = req.body;
+      const { amount, plan, cycle, email, name, userId } = req.body;
       
       if (!amount || !plan || !email) {
         return res.status(400).json({ 
@@ -289,7 +290,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      console.log("Creating subscription:", { plan, cycle, amount, email });
+      console.log("Creating subscription:", { plan, cycle, amount, email, userId });
       
       // Format amount for Stripe (ensure it's an integer in cents)
       const formattedAmount = Math.round(Number(amount));
@@ -313,7 +314,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           name,
           metadata: {
             plan,
-            cycle: cycle || "monthly"
+            cycle: cycle || "monthly",
+            userId: userId ? userId.toString() : undefined
           }
         });
         console.log("Created new customer:", customer.id);
@@ -345,7 +347,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         metadata: {
           plan,
           cycle: cycle || "monthly",
-          amount: formattedAmount.toString()
+          amount: formattedAmount.toString(),
+          userId: userId ? userId.toString() : undefined
         }
       });
       
@@ -354,7 +357,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         stripePaymentIntentId: session.id,
         amount: formattedAmount,
         status: 'created',
-        email: email
+        email: email,
+        userId: userId
       });
       
       // Return checkout URL to the frontend
@@ -459,6 +463,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: 'Attempted to terminate conversation but encountered an error',
         error: error.message
       });
+    }
+  });
+
+  // Create user API endpoint
+  app.post("/api/users", async (req, res) => {
+    try {
+      const { name, email, username, password } = req.body;
+      
+      if (!name || !email || !username || !password) {
+        return res.status(400).json({ 
+          error: "Missing required fields: name, email, username, and password are required" 
+        });
+      }
+      
+      // Check if user with email or username already exists
+      const existingUser = await storage.getUserByUsername(username);
+      if (existingUser) {
+        return res.status(409).json({ error: "Username already exists" });
+      }
+      
+      // Hash the password
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      
+      // Create user
+      const user = await storage.createUser({
+        name,
+        email,
+        username,
+        password: hashedPassword,
+      });
+      
+      // Return user data (excluding password)
+      const { password: _, ...userWithoutPassword } = user;
+      res.status(201).json(userWithoutPassword);
+    } catch (error: any) {
+      console.error("Create user error:", error);
+      res.status(500).json({ error: error.message });
     }
   });
 
