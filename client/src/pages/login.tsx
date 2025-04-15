@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocation } from "wouter";
+import { motion } from "framer-motion";
 import { 
   Card,
   CardContent,
@@ -16,7 +17,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollReveal } from "@/components/scroll-reveal";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
+import { Header } from "@/components/layout/header";
+import { AnimatedText } from "@/components/animated-text";
 
 // Form validation schema
 const loginSchema = z.object({
@@ -26,6 +29,30 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 15
+    }
+  }
+};
+
 export default function LoginPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -34,6 +61,14 @@ export default function LoginPage() {
   // Get plan ID from URL query parameter
   const urlParams = new URLSearchParams(window.location.search);
   const planId = urlParams.get('plan');
+  
+  // Ensure black background
+  useEffect(() => {
+    document.body.style.background = '#000';
+    return () => {
+      document.body.style.background = '';
+    };
+  }, []);
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -85,75 +120,136 @@ export default function LoginPage() {
   };
   
   return (
-    <div className="min-h-screen bg-primary flex flex-col">
-      <div className="flex-grow flex items-center justify-center p-4">
-        <ScrollReveal>
-          <Card className="w-full max-w-md">
-            <CardHeader>
-              <CardTitle className="text-2xl">Welcome Back</CardTitle>
-              <CardDescription>
-                Sign in to access your AI voice agents
-              </CardDescription>
-            </CardHeader>
-            
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <CardContent className="space-y-4">                
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="john.doe@example.com"
-                    {...form.register("email")}
-                  />
-                  {form.formState.errors.email && (
-                    <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
-                  )}
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    {...form.register("password")}
-                  />
-                  {form.formState.errors.password && (
-                    <p className="text-sm text-red-500">{form.formState.errors.password.message}</p>
-                  )}
-                </div>
-              </CardContent>
+    <div className="min-h-screen bg-black text-white flex flex-col">
+      <Header />
+      
+      {/* Background with subtle animated gradient */}
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-900/20 to-black"></div>
+      
+      {/* Animated particles/stars */}
+      <div className="fixed inset-0 -z-5">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              opacity: Math.random() * 0.5 + 0.3
+            }}
+            animate={{
+              opacity: [0.3, 0.8, 0.3],
+              scale: [1, 1.5, 1]
+            }}
+            transition={{
+              duration: Math.random() * 3 + 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+        ))}
+      </div>
+      
+      <div className="flex-grow flex items-center justify-center p-4 pt-24">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="w-full max-w-md"
+        >
+          <motion.div variants={itemVariants} className="mb-8 text-center">
+            <Button 
+              variant="ghost" 
+              className="mb-6 text-white/70 hover:text-white"
+              onClick={() => setLocation("/")}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Home
+            </Button>
+            <AnimatedText 
+              text="Welcome Back" 
+              as="h1" 
+              className="text-3xl md:text-4xl font-bold mb-2 text-white" 
+              animation="gradient"
+              color="#6366F1"
+            />
+            <p className="text-white/70">Sign in to access your AI voice agents</p>
+          </motion.div>
+          
+          <motion.div variants={itemVariants}>
+            <Card className="bg-slate-900/50 border border-white/10 backdrop-blur-md text-white shadow-xl">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold text-white">Sign In</CardTitle>
+                <CardDescription className="text-white/70">
+                  Enter your credentials to continue
+                </CardDescription>
+              </CardHeader>
               
-              <CardFooter className="flex flex-col space-y-2">
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Signing in...
-                    </>
-                  ) : (
-                    "Sign In"
-                  )}
-                </Button>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <CardContent className="space-y-4">                
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-white/90">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="john.doe@example.com"
+                      className="bg-slate-800/50 border-slate-700 text-white placeholder:text-white/50 focus:border-indigo-500"
+                      {...form.register("email")}
+                    />
+                    {form.formState.errors.email && (
+                      <p className="text-sm text-red-400">{form.formState.errors.email.message}</p>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-white/90">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      className="bg-slate-800/50 border-slate-700 text-white placeholder:text-white/50 focus:border-indigo-500"
+                      {...form.register("password")}
+                    />
+                    {form.formState.errors.password && (
+                      <p className="text-sm text-red-400">{form.formState.errors.password.message}</p>
+                    )}
+                  </div>
+                </CardContent>
                 
-                <div className="text-center text-sm mt-4">
-                  Don't have an account?{" "}
-                  <a
-                    href="/signup"
-                    className="text-blue-600 hover:underline"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setLocation("/signup" + (planId ? `?plan=${planId}` : ""));
-                    }}
+                <CardFooter className="flex flex-col space-y-4 border-t border-white/10 bg-slate-900/20">
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-[#5D5FEF] hover:bg-[#4B4DDC] text-white font-medium rounded-full py-5 h-auto" 
+                    disabled={isLoading}
                   >
-                    Sign up
-                  </a>
-                </div>
-              </CardFooter>
-            </form>
-          </Card>
-        </ScrollReveal>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Signing in...
+                      </>
+                    ) : (
+                      "Sign In"
+                    )}
+                  </Button>
+                  
+                  <div className="text-center text-sm mt-2 text-white/70">
+                    Don't have an account?{" "}
+                    <a
+                      href="/signup"
+                      className="text-indigo-400 hover:text-indigo-300 font-medium"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setLocation("/signup" + (planId ? `?plan=${planId}` : ""));
+                      }}
+                    >
+                      Create Account
+                    </a>
+                  </div>
+                </CardFooter>
+              </form>
+            </Card>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );
