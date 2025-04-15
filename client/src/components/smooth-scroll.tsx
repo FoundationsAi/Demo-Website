@@ -140,7 +140,13 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children, options })
 
   // Simple smooth scrolling for better performance
   return (
-    <div className="smooth-scroll relative" style={{position: 'relative', height: '100vh'}}> {children} </div>
+    <div className="smooth-scroll" style={{
+      position: 'relative', // Ensure position is explicitly set to relative
+      height: '100vh',
+      zIndex: 1 // Add z-index to create a stacking context
+    }}> 
+      {children} 
+    </div>
   );
 };
 
