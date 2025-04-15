@@ -236,13 +236,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         payment_settings: {
           save_default_payment_method: 'on_subscription',
         },
-        expand: ['latest_invoice.payment_intent'],
+        expand: ['latest_invoice'],
       });
       
-      // Get payment intent client secret - handle type issues with Stripe expansion
+      // Get payment intent client secret
       const invoice = subscription.latest_invoice as any;
-      // Since we're using expand, the payment_intent will be the full object, not just an ID
-      const paymentIntent = invoice.payment_intent as any;
+      
+      // Get the payment intent - we need to retrieve it separately
+      const paymentIntentId = invoice.payment_intent as string;
+      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
       
       // Create subscription record in our database
       await storage.createSubscription({
@@ -253,7 +255,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Convert Unix timestamps to JavaScript Date objects
         currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
         currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
-        cancelAtPeriodEnd: subscription.cancel_at_period_end,
+        // cancelAtPeriodEnd field removed as it doesn't exist in our schema
       });
       
       // Update user's subscription plan status
@@ -352,9 +354,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cancel_at_period_end: true,
       });
       
-      // Update subscription in our database
+      // Update subscription status in our database
       await storage.updateSubscription(subscription.id, {
-        cancelAtPeriodEnd: true,
+        status: "cancelling",
       });
       
       // Update user's subscription status
