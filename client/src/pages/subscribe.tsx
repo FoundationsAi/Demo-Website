@@ -26,7 +26,7 @@ import { Label } from "@/components/ui/label";
 import CheckoutForm from "../components/checkout-form";
 
 // Initialize Stripe with public key from environment variables
-const stripePromise = loadStripe(import.meta.env.STRIPE_PUBLIC_KEY);
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 interface PlanData {
   id: string;

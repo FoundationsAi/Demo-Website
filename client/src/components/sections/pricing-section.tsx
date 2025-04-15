@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollReveal } from '@/components/scroll-reveal';
 import { AnimatedText } from '@/components/animated-text';
 import { HoverableCard } from '@/components/hoverable-card';
+import { useLocation } from 'wouter';
 
 interface PricingTier {
   name: string;
@@ -98,11 +99,20 @@ const pricingTiers: PricingTier[] = [
   }
 ];
 
+// Map tier names to Stripe product IDs
+const PLAN_PRODUCT_IDS = {
+  "Starter": "prod_S8QWDRCVcz07An",
+  "Essential": "prod_S8QXUopH7dXHrJ",
+  "Basic": "prod_S8QYxTHNgV2Dmr",
+  "Pro": "prod_S8QZE7hzuMcjru"
+};
+
 /**
  * PricingSection - Displays pricing tiers with interactive elements
  */
 export const PricingSection: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [, setLocation] = useLocation();
   
   return (
     <section id="pricing" className="relative min-h-screen py-32 pb-48 pt-48 bg-gradient-to-b from-[#0a1528] to-[#061022] text-white overflow-hidden">
@@ -212,6 +222,16 @@ export const PricingSection: React.FC = () => {
                         {/* Button */}
                         <div className="px-6 pb-6">
                           <button
+                            onClick={() => {
+                              if (tier.name === "Enterprise") {
+                                // For Enterprise, just link to contact page or show modal
+                                window.location.href = "mailto:sales@foundationsai.com";
+                              } else {
+                                // For other plans, redirect to signup with the plan ID
+                                const planId = PLAN_PRODUCT_IDS[tier.name as keyof typeof PLAN_PRODUCT_IDS];
+                                setLocation(`/signup?plan=${planId}`);
+                              }
+                            }}
                             className={`w-full py-3 rounded-lg font-medium text-lg ${
                               tier.isPopular
                                 ? 'bg-blue-600 hover:bg-blue-700 text-white'
@@ -291,6 +311,16 @@ export const PricingSection: React.FC = () => {
                     {/* Button */}
                     <div className="px-6 pb-6">
                       <button 
+                        onClick={() => {
+                          if (tier.name === "Enterprise") {
+                            // For Enterprise, just link to contact page or show modal
+                            window.location.href = "mailto:sales@foundationsai.com";
+                          } else {
+                            // For other plans, redirect to signup with the plan ID
+                            const planId = PLAN_PRODUCT_IDS[tier.name as keyof typeof PLAN_PRODUCT_IDS];
+                            setLocation(`/signup?plan=${planId}`);
+                          }
+                        }}
                         className={`w-full py-3 rounded-lg font-medium text-lg ${
                           tier.isPopular
                             ? 'bg-blue-600 hover:bg-blue-700 text-white'
@@ -319,7 +349,10 @@ export const PricingSection: React.FC = () => {
                 </p>
               </div>
               <div className="md:w-1/3 flex justify-center">
-                <button className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+                <button 
+                  onClick={() => window.location.href = "mailto:sales@foundationsai.com"}
+                  className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
+                >
                   Schedule a Demo
                 </button>
               </div>
@@ -379,7 +412,10 @@ export const PricingSection: React.FC = () => {
             <p className="text-base md:text-xl text-blue-300 mb-8 md:mb-10 max-w-3xl mx-auto">
               Join thousands of businesses already using Foundations AI to enhance their customer interactions.
             </p>
-            <button className="px-6 py-3 md:px-8 md:py-4 bg-blue-600 hover:bg-blue-700 text-white text-base md:text-lg font-medium rounded-full transition transform hover:scale-105 shadow-lg shadow-blue-600/30">
+            <button 
+              onClick={() => setLocation(`/signup?plan=${PLAN_PRODUCT_IDS.Starter}`)} 
+              className="px-6 py-3 md:px-8 md:py-4 bg-blue-600 hover:bg-blue-700 text-white text-base md:text-lg font-medium rounded-full transition transform hover:scale-105 shadow-lg shadow-blue-600/30"
+            >
               Join Foundations AI
             </button>
           </ScrollReveal>

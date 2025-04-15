@@ -35,7 +35,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess }) => {
 
     try {
       // Use the client secret provided by the server to confirm payment
-      const { error, paymentIntent } = await stripe.confirmCardPayment(undefined, {
+      const { error, paymentIntent } = await stripe.confirmCardPayment("", {
         payment_method: {
           card: cardElement,
           billing_details: {
