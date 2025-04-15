@@ -4,9 +4,8 @@ import { storage } from "./storage";
 import Stripe from "stripe";
 import { insertDemoRequestSchema, insertAppointmentSchema } from "@shared/schema";
 import { randomUUID } from "crypto";
-import stripeService, { PlanKey } from './stripeService';
 
-// Initialize Stripe with secret key
+// Initialize Stripe with fallback key for development
 const stripeKey = process.env.STRIPE_SECRET_KEY || "sk_test_placeholder";
 const stripe = new Stripe(stripeKey, {
   apiVersion: "2025-03-31.basil" as any,
@@ -400,85 +399,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: true, 
         message: 'Attempted to terminate conversation but encountered an error',
         error: error.message
-      });
-    }
-  });
-
-  // Stripe Pricing Plans API endpoint
-  app.get("/api/pricing-plans", async (_req, res) => {
-    try {
-      // Initialize Stripe plans if not already initialized
-      await stripeService.initializeStripePlans();
-      res.json(stripeService.PRICING_PLANS);
-    } catch (error: any) {
-      console.error("Error retrieving pricing plans:", error);
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  // Stripe config API endpoint
-  app.get("/api/stripe-config", (_req, res) => {
-    try {
-      res.json({ 
-        publishableKey: stripeService.getPublishableKey() 
-      });
-    } catch (error: any) {
-      console.error("Error retrieving Stripe config:", error);
-      res.status(500).json({ error: error.message });
-    }
-  });
-  
-  // Record subscription usage for metered billing
-  app.post("/api/record-usage", async (req, res) => {
-    try {
-      const { subscriptionId, priceId, minutes } = req.body;
-      
-      if (!subscriptionId || !priceId || !minutes) {
-        return res.status(400).json({ 
-          error: "Missing required fields. Please provide subscriptionId, priceId, and minutes." 
-        });
-      }
-      
-      const usageRecord = await stripeService.recordUsage(
-        subscriptionId,
-        priceId,
-        Number(minutes)
-      );
-      
-      res.json({
-        success: true,
-        usageRecord
-      });
-    } catch (error: any) {
-      console.error("Error recording usage:", error);
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  // Create Stripe checkout session API endpoint
-  app.post("/api/create-checkout-session", async (req, res) => {
-    try {
-      const { planKey, successUrl, cancelUrl } = req.body;
-
-      if (!planKey || !successUrl || !cancelUrl) {
-        return res.status(400).json({ 
-          error: "Missing required parameters: planKey, successUrl, cancelUrl" 
-        });
-      }
-
-      // Create checkout session
-      const session = await stripeService.createCheckoutSession(
-        planKey as PlanKey,
-        successUrl,
-        cancelUrl
-      );
-
-      res.json({ sessionId: session.id, url: session.url });
-    } catch (error: any) {
-      console.error('Error creating checkout session:', error);
-      res.status(500).json({ 
-        error: "Failed to create checkout session",
-        details: error.message
       });
     }
   });

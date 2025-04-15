@@ -21,12 +21,6 @@ type MessageCallback = (message: Record<string, any>) => void;
 const statusListeners: StatusCallback[] = [];
 const messageListeners: MessageCallback[] = [];
 
-// Usage tracking for voice minutes
-let conversationStartTime: number | null = null;
-let totalConversationTimeMs: number = 0;
-let activeSubscriptionId: string | null = null;
-let activeMeteredPriceId: string | null = null;
-
 // Register listeners
 export const onConnectionStatusChange = (callback: StatusCallback) => {
   statusListeners.push(callback);
@@ -136,60 +130,6 @@ const getSignedUrl = async (agentId: string): Promise<string> => {
   }
 };
 
-/**
- * Set the subscription and price IDs for usage tracking
- * Call this before starting a conversation to enable metered billing
- */
-export const setActiveSubscription = (subscriptionId: string, meteredPriceId: string) => {
-  activeSubscriptionId = subscriptionId;
-  activeMeteredPriceId = meteredPriceId;
-  console.log(`Usage tracking enabled for subscription: ${subscriptionId}, price: ${meteredPriceId}`);
-};
-
-/**
- * Record the current conversation's usage to Stripe metered billing
- * This converts milliseconds to minutes (rounded up to nearest minute)
- */
-const recordConversationUsage = async () => {
-  if (!activeSubscriptionId || !activeMeteredPriceId || totalConversationTimeMs === 0) {
-    console.log('No usage to record or subscription not set');
-    return;
-  }
-  
-  try {
-    // Convert ms to minutes, round up to nearest minute (minimum 1 minute)
-    const minutes = Math.max(1, Math.ceil(totalConversationTimeMs / (1000 * 60)));
-    
-    console.log(`Recording usage: ${minutes} minutes for subscription ${activeSubscriptionId}`);
-    
-    // Call our API endpoint to record usage
-    const response = await fetch('/api/record-usage', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        subscriptionId: activeSubscriptionId,
-        priceId: activeMeteredPriceId,
-        minutes: minutes
-      }),
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to record usage');
-    }
-    
-    const data = await response.json();
-    console.log('Usage recorded successfully:', data);
-    
-    // Reset the conversation time after recording
-    totalConversationTimeMs = 0;
-  } catch (error) {
-    console.error('Error recording usage:', error);
-  }
-};
-
 // Start a conversation with the given agent
 export const startConversation = async (agentType: AgentType): Promise<boolean> => {
   try {
@@ -203,10 +143,6 @@ export const startConversation = async (agentType: AgentType): Promise<boolean> 
     if (!hasMicrophonePermission) {
       throw new Error('Microphone permission is required for voice conversation');
     }
-    
-    // Start tracking conversation time
-    conversationStartTime = Date.now();
-    totalConversationTimeMs = 0;
 
     updateConnectionStatus('connecting');
 
@@ -251,20 +187,6 @@ export const startConversation = async (agentType: AgentType): Promise<boolean> 
 // Stop the active conversation and clean up all resources
 export const stopConversation = async (): Promise<void> => {
   console.log('Attempting to stop conversation and clean up resources');
-  
-  // Calculate conversation duration if a conversation was active
-  if (conversationStartTime !== null) {
-    const endTime = Date.now();
-    const duration = endTime - conversationStartTime;
-    totalConversationTimeMs += duration;
-    console.log(`Conversation lasted for ${duration / 1000} seconds`);
-    
-    // Record usage to the Stripe metered billing API
-    await recordConversationUsage();
-    
-    // Reset time tracking
-    conversationStartTime = null;
-  }
   
   // Stop microphone analysis interval first
   if (microphoneAnalysisInterval) {

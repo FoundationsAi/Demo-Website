@@ -9,7 +9,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useUser } from '@/contexts/user-context';
 import { X, Mic, MicOff, Send, Volume2, ExternalLink } from 'lucide-react';
 import * as conversationalAIService from '@/lib/conversationalAIService';
 
