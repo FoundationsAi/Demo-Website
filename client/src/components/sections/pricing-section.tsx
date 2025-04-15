@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollReveal } from '@/components/scroll-reveal';
 import { AnimatedText } from '@/components/animated-text';
 import { HoverableCard } from '@/components/hoverable-card';
+import { useLocation } from 'wouter';
+import { apiRequest } from '@/lib/queryClient';
 
 interface PricingTier {
   name: string;
