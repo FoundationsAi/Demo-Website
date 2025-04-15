@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useScroll } from 'framer-motion';
-import { Link } from 'wouter';
 import { SmoothScroll } from '@/components/smooth-scroll';
 import { SectionWrapper } from '@/components/section-wrapper';
 import { SpaceIntroSection } from '@/components/sections/space-intro-section';
@@ -58,20 +57,6 @@ export const ImmersiveHome: React.FC = () => {
           className="fixed z-50 top-0 left-0 h-1 bg-blue-500"
           style={{ scaleX: scrollYProgress, transformOrigin: "0%" }}
         />
-        
-        {/* Header with Login/Register buttons */}
-        <div className="fixed top-0 right-0 z-50 p-4 flex gap-3">
-          <Link href="/login">
-            <a className="px-4 py-2 text-sm bg-transparent border border-blue-500 text-blue-400 rounded-lg hover:bg-blue-900/30 transition-colors">
-              Login
-            </a>
-          </Link>
-          <Link href="/register">
-            <a className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              Get Started
-            </a>
-          </Link>
-        </div>
         
         {/* Fixed text overlay that appears during mountain section */}
         <MountainTextOverlaySection />
@@ -234,18 +219,6 @@ export const ImmersiveHome: React.FC = () => {
                 </div>
                 
                 <div className="mt-16 pt-8 border-t border-blue-900/30 text-center">
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-                    <Link href="/login">
-                      <a className="px-6 py-2 text-sm bg-transparent border border-blue-500 text-blue-400 rounded-lg hover:bg-blue-900/30 transition-colors">
-                        Login
-                      </a>
-                    </Link>
-                    <Link href="/register">
-                      <a className="px-6 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                        Get Started
-                      </a>
-                    </Link>
-                  </div>
                   <p className="text-blue-400 text-sm">
                     © {new Date().getFullYear()} Foundations AI. All rights reserved.
                   </p>

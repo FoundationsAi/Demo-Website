@@ -12,6 +12,8 @@ interface PricingTier {
   isPopular?: boolean;
   buttonText: string;
   overageFee?: string;
+  hasTrial?: boolean;
+  trialDays?: number;
   icon?: string;
 }
 
@@ -30,7 +32,7 @@ const pricingTiers: PricingTier[] = [
       "Human transfer",
       "Community support"
     ],
-    buttonText: "Join Foundations AI",
+    buttonText: "Start Testing Now",
     overageFee: "$0.35/minute",
     icon: "🚀"
   },
@@ -44,8 +46,10 @@ const pricingTiers: PricingTier[] = [
       "10 concurrent calls",
       "All Starter features"
     ],
-    buttonText: "Join Foundations AI",
+    buttonText: "Try Essential Free",
     overageFee: "$0.30/minute",
+    hasTrial: true,
+    trialDays: 7,
     isPopular: true,
     icon: "⭐"
   },
@@ -61,8 +65,10 @@ const pricingTiers: PricingTier[] = [
       "Team access",
       "Support via ticketing"
     ],
-    buttonText: "Join Foundations AI",
+    buttonText: "Try Basic Free",
     overageFee: "$0.25/minute",
+    hasTrial: true,
+    trialDays: 7,
     isPopular: true,
     icon: "📈"
   },
@@ -76,7 +82,7 @@ const pricingTiers: PricingTier[] = [
       "50 concurrent calls",
       "All Basic features"
     ],
-    buttonText: "Join Foundations AI",
+    buttonText: "Get Pro Now",
     overageFee: "$0.20/minute",
     icon: "💎"
   },
@@ -120,7 +126,7 @@ export const PricingSection: React.FC = () => {
               FIND THE PERFECT PLAN FOR YOUR BUSINESS
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-blue-300 max-w-3xl mx-auto leading-relaxed px-4 mb-6 sm:mb-8 md:mb-10">
-              Automate tasks with our specialized AI agents—unlimited agents, flexible plans, and no limits on your potential. From customer service to creative consulting, our AI handles it all. Select the plan that fits your business needs, or contact us for custom Enterprise solutions.
+              Automate tasks with our specialized AI agents—unlimited agents, flexible plans, and no limits on your potential. From customer service to creative consulting, our AI handles it all. Try risk-free with our 7-day trial on Essential and Basic, or contact us for custom Enterprise solutions.
             </p>
           </ScrollReveal>
           
@@ -163,7 +169,12 @@ export const PricingSection: React.FC = () => {
                       <div className="h-full flex flex-col bg-[#0e1c35] rounded-xl overflow-hidden relative">
                         {/* Badge area at top */}
                         <div className="flex justify-between">
-                          <div></div>
+                          {tier.hasTrial && (
+                            <div className="bg-emerald-600 text-white font-bold py-2 px-4 text-sm rounded-br-lg">
+                              7-DAY FREE TRIAL
+                            </div>
+                          )}
+                          {!tier.hasTrial && <div></div>}
                           
                           {tier.isPopular && (
                             <div className="bg-blue-600 text-white font-bold py-2 px-4 text-sm rounded-bl-lg ml-auto">
@@ -214,7 +225,7 @@ export const PricingSection: React.FC = () => {
                         <div className="px-6 pb-6">
                           <button
                             className={`w-full py-3 rounded-lg font-medium text-lg ${
-                              tier.isPopular
+                              tier.isPopular || tier.hasTrial
                                 ? 'bg-blue-600 hover:bg-blue-700 text-white'
                                 : 'bg-transparent hover:bg-blue-900/50 text-white border border-blue-500'
                             }`}
@@ -243,7 +254,12 @@ export const PricingSection: React.FC = () => {
                   <div className="h-full flex flex-col bg-[#0e1c35] rounded-xl overflow-hidden relative">
                     {/* Badge area at top */}
                     <div className="flex justify-between">
-                      <div></div>
+                      {tier.hasTrial && (
+                        <div className="bg-emerald-600 text-white font-bold py-2 px-4 text-sm rounded-br-lg">
+                          7-DAY FREE TRIAL
+                        </div>
+                      )}
+                      {!tier.hasTrial && <div></div>}
                       
                       {tier.isPopular && (
                         <div className="bg-blue-600 text-white font-bold py-2 px-4 text-sm rounded-bl-lg ml-auto">
@@ -294,7 +310,7 @@ export const PricingSection: React.FC = () => {
                     <div className="px-6 pb-6">
                       <button 
                         className={`w-full py-3 rounded-lg font-medium text-lg ${
-                          tier.isPopular
+                          tier.isPopular || tier.hasTrial
                             ? 'bg-blue-600 hover:bg-blue-700 text-white'
                             : 'bg-transparent hover:bg-blue-900/50 text-white border border-blue-500'
                         }`}
@@ -335,9 +351,9 @@ export const PricingSection: React.FC = () => {
           <div className="max-w-3xl mx-auto grid gap-4 md:gap-6">
             <ScrollReveal>
               <div className="bg-blue-900/20 rounded-lg p-4 md:p-6 backdrop-blur-sm border border-blue-800/30 text-left">
-                <h4 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">What happens after I subscribe?</h4>
+                <h4 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">Can I try before I buy?</h4>
                 <p className="text-sm md:text-base text-blue-200">
-                  After subscribing, you'll immediately gain access to your chosen plan's features including AI agents setup, voice customization, and all available integrations. Our team will also provide onboarding assistance to help you get started quickly.
+                  Yes, we offer a 7-day free trial with the Essential and Basic plans. No credit card required to get started.
                 </p>
               </div>
             </ScrollReveal>
