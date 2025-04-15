@@ -32,7 +32,8 @@ export const ImmersiveHome = () => {
   
   // Set up smooth scrolling
   const { scrollYProgress } = useScroll({
-    container: containerRef
+    target: containerRef, // Changed from container to target
+    offset: ["start end", "end start"]
   });
   
   // Scroll progress indicator
@@ -51,6 +52,7 @@ export const ImmersiveHome = () => {
       <div 
         ref={containerRef}
         className="immersive-experience relative overflow-hidden bg-black"
+        style={{ position: 'relative' }} // Added explicit positioning for scroll animations
       >
         {/* Progress indicator */}
         <motion.div
