@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
-import { AnimatePresence } from "framer-motion";
-import { Switch, useLocation } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
-import { AnimatedRoute } from "@/components/animated-route";
 import NotFound from "@/pages/not-found";
 import { ImmersiveHome } from "@/pages/immersive-home";
 import Chat from "@/pages/chat";
@@ -37,21 +35,18 @@ function App() {
 
   return (
     <div className="app">
-      <AnimatePresence mode="wait" initial={false}>
-        {/* We need to provide a key to the immediate child of AnimatePresence */}
-        <div key={location} className="page-wrapper">
-          <Switch location={location}>
-            <AnimatedRoute path="/" component={ImmersiveHome} animation="fade" />
-            <AnimatedRoute path="/chat/:agentId" component={Chat} animation="slideHorizontal" />
-            <AnimatedRoute path="/payment" component={Payment} animation="slideUp" />
-            <AnimatedRoute path="/calendar" component={Calendar} animation="zoom" />
-            <AnimatedRoute path="/agent-chat" component={AgentChat} animation="fade" />
-            <AnimatedRoute path="/login" component={Login} animation="slideUp" />
-            <AnimatedRoute path="/get-started" component={GetStarted} animation="slideUp" />
-            <AnimatedRoute component={NotFound} animation="fade" />
-          </Switch>
-        </div>
-      </AnimatePresence>
+      <div className="page-wrapper fade-transition">
+        <Switch>
+          <Route path="/" component={ImmersiveHome} />
+          <Route path="/login" component={Login} />
+          <Route path="/get-started" component={GetStarted} />
+          <Route path="/calendar" component={Calendar} />
+          <Route path="/payment" component={Payment} />
+          <Route path="/agent-chat" component={AgentChat} />
+          <Route path="/chat/:agentId" component={Chat} />
+          <Route component={NotFound} />
+        </Switch>
+      </div>
       <Toaster />
     </div>
   );
