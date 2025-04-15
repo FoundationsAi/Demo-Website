@@ -265,8 +265,8 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
         femaleName = "Sarah";
         break;
       case "receptionist":
-        maleName = "Alex";
-        femaleName = "Jade";
+        maleName = "Robert";
+        femaleName = "Jessica";
         break;
       case "mortgage":
         maleName = "Thomas";

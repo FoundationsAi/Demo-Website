@@ -3,23 +3,7 @@ import { Conversation } from '@11labs/client';
 // Agent IDs for different personalities
 const AGENTS = {
   STEVE: 'Gmuxt2yDLn9NBNacnqpD', // Mark voice ID (previously Steve)
-  SARAH: '6pX54eIEuD2LMkCW1TsJ', // Emily voice ID
-  ALEX: 'hBgdG6LBM8kibonEH5Z2',  // Alex voice ID
-  JADE: 'QvsJlPVuXKVwEEOc9Vub'   // Jade voice ID
-};
-
-// Get the appropriate agent ID based on agent type and gender
-export const getAgentIdByTypeAndGender = (agentType: string, gender: string): string => {
-  // For customer service agent type
-  if (agentType === 'customer-service') {
-    return gender === 'male' ? AGENTS.STEVE : AGENTS.SARAH;
-  }
-  // For receptionist agent type
-  else if (agentType === 'receptionist') {
-    return gender === 'male' ? AGENTS.ALEX : AGENTS.JADE;
-  }
-  // Default fallback
-  return gender === 'male' ? AGENTS.STEVE : AGENTS.SARAH;
+  SARAH: '6pX54eIEuD2LMkCW1TsJ'  // Emily voice ID
 };
 
 type AgentType = keyof typeof AGENTS;
@@ -333,7 +317,7 @@ export const sendMessageToAgent = async (
       },
       body: JSON.stringify({
         message,
-        agentId: getAgentIdByTypeAndGender(agentType, gender),
+        agentId: gender === 'male' ? AGENTS.STEVE : AGENTS.SARAH,
         history
       }),
     });
