@@ -427,6 +427,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: error.message });
     }
   });
+  
+  // Record subscription usage for metered billing
+  app.post("/api/record-usage", async (req, res) => {
+    try {
+      const { subscriptionId, priceId, minutes } = req.body;
+      
+      if (!subscriptionId || !priceId || !minutes) {
+        return res.status(400).json({ 
+          error: "Missing required fields. Please provide subscriptionId, priceId, and minutes." 
+        });
+      }
+      
+      const usageRecord = await stripeService.recordUsage(
+        subscriptionId,
+        priceId,
+        Number(minutes)
+      );
+      
+      res.json({
+        success: true,
+        usageRecord
+      });
+    } catch (error: any) {
+      console.error("Error recording usage:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
 
   // Create Stripe checkout session API endpoint
   app.post("/api/create-checkout-session", async (req, res) => {

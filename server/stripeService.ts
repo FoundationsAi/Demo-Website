@@ -3,11 +3,24 @@ import { log } from './vite';
 
 // Initialize Stripe with the secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-03-31.basil' as any
+  apiVersion: '2023-10-16' as any // Use a supported version for metered billing
 });
 
+// Create an interface for the pricing plans
+interface PlanDetails {
+  name: string;
+  price: number;
+  minutes: number;
+  overagePerMinute: number;
+  features: string[];
+  popular: boolean;
+  priceId: string;
+  meteredPriceId?: string;
+  productId?: string;
+}
+
 // Constants for pricing tiers
-export const PRICING_PLANS = {
+export const PRICING_PLANS: Record<string, PlanDetails> = {
   ESSENTIAL: {
     name: 'Essential',
     price: 49,
@@ -72,32 +85,7 @@ export async function initializeStripePlans() {
     for (const [key, plan] of Object.entries(PRICING_PLANS)) {
       const productName = `Foundations AI - ${plan.name}`;
       
-      // First, create or find the meter for voice minutes tracking
-      const meterName = `${productName} - Voice Minutes`;
-      const meterDescription = `Usage meter for voice minutes consumed in the ${plan.name} plan`;
-      
-      // Check if meter already exists
-      let meter;
-      const existingMeters = await stripe.meters.list({
-        limit: 100
-      });
-      
-      meter = existingMeters.data.find(m => m.display_name === meterName);
-      
-      // Create meter if it doesn't exist
-      if (!meter) {
-        log(`Creating meter: ${meterName}`, 'stripe');
-        meter = await stripe.meters.create({
-          display_name: meterName,
-          description: meterDescription,
-          metadata: {
-            planType: key,
-            overageRate: plan.overagePerMinute.toString()
-          }
-        });
-      }
-      
-      // Now check if product exists
+      // Check if product exists
       const existingProducts = await stripe.products.list({
         active: true
       });
@@ -113,16 +101,7 @@ export async function initializeStripePlans() {
           metadata: {
             planType: key,
             baseMinutes: plan.minutes.toString(),
-            overageRate: plan.overagePerMinute.toString(),
-            meterId: meter.id
-          }
-        });
-      } else if (!product.metadata.meterId) {
-        // Update product with meter ID if not already set
-        product = await stripe.products.update(product.id, {
-          metadata: {
-            ...product.metadata,
-            meterId: meter.id
+            overageRate: plan.overagePerMinute.toString()
           }
         });
       }
@@ -163,7 +142,7 @@ export async function initializeStripePlans() {
         p.unit_amount === Math.round(plan.overagePerMinute * 100)
       );
       
-      // Create metered price with meter if it doesn't exist
+      // Create metered price if it doesn't exist
       if (!meteredPrice) {
         log(`Creating metered price for ${productName} overages: $${plan.overagePerMinute}/minute`, 'stripe');
         meteredPrice = await stripe.prices.create({
@@ -172,29 +151,24 @@ export async function initializeStripePlans() {
           currency: 'usd',
           recurring: {
             interval: 'month',
-            usage_type: 'metered',
-            meter: meter.id  // Link to the meter
-          },
+            usage_type: 'metered'
+          } as any, // Using 'as any' to handle aggregate_usage property for TypeScript
           metadata: {
             planType: key,
-            type: 'overage'
+            type: 'overage',
+            aggregateUsage: 'sum' // Store as metadata instead since TS definition doesn't include it
           }
         });
       }
       
-      // Update the plan object with the price ID
-      PRICING_PLANS[key as PlanKey].priceId = basePrice.id;
-      
-      // Also store the metered price ID, meter ID and other relevant info
-      PRICING_PLANS[key as PlanKey] = {
-        ...PRICING_PLANS[key as PlanKey],
-        meteredPriceId: meteredPrice.id,
-        meterId: meter.id,
-        productId: product.id
-      };
+      // Update the plan object with the price IDs
+      const updatedPlan = PRICING_PLANS[key as PlanKey];
+      updatedPlan.priceId = basePrice.id;
+      updatedPlan.meteredPriceId = meteredPrice.id;
+      updatedPlan.productId = product.id;
     }
     
-    log('Stripe products, prices and meters initialized successfully', 'stripe');
+    log('Stripe products and prices initialized successfully', 'stripe');
     return PRICING_PLANS;
   } catch (error) {
     log(`Error initializing Stripe plans: ${error}`, 'stripe');
@@ -229,8 +203,8 @@ export async function createCheckoutSession(planKey: PlanKey, successUrl: string
       });
     }
 
-    // Create a checkout session for the subscription
-    const session = await stripe.checkout.sessions.create({
+    // Construct params for the checkout session
+    const params: any = {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'subscription',
@@ -245,15 +219,54 @@ export async function createCheckoutSession(planKey: PlanKey, successUrl: string
         metadata: {
           planType: planKey,
           baseMinutes: plan.minutes.toString(),
-          overageRate: plan.overagePerMinute.toString(),
-          meterId: plan.meterId
+          overageRate: plan.overagePerMinute.toString()
         }
       }
-    });
+    };
+
+    // Create a checkout session for the subscription
+    const session = await stripe.checkout.sessions.create(params);
 
     return session;
   } catch (error) {
     console.error('Error creating checkout session:', error);
+    throw error;
+  }
+}
+
+/**
+ * Record usage for a subscription with metered pricing
+ * @param subscriptionId The Stripe subscription ID
+ * @param priceId The metered price ID to report usage against
+ * @param quantity The amount of usage to report (in minutes)
+ */
+export async function recordUsage(subscriptionId: string, priceId: string, quantity: number) {
+  try {
+    log(`Recording usage: ${quantity} minutes for subscription ${subscriptionId}`, 'stripe');
+    
+    // Create a usage record for the subscription item
+    // First find the subscription item ID for this price
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+    const item = subscription.items.data.find(item => item.price.id === priceId);
+    
+    if (!item) {
+      throw new Error(`No subscription item found for price ID: ${priceId}`);
+    }
+    
+    // Create the usage record
+    const usageRecord = await stripe.subscriptionItems.createUsageRecord(
+      item.id,
+      {
+        quantity: quantity,
+        timestamp: Math.floor(Date.now() / 1000),
+        action: 'increment'
+      }
+    );
+    
+    log(`Usage record created: ${usageRecord.id}`, 'stripe');
+    return usageRecord;
+  } catch (error) {
+    console.error('Error recording usage:', error);
     throw error;
   }
 }
@@ -268,6 +281,7 @@ export function getPublishableKey() {
 export default {
   initializeStripePlans,
   createCheckoutSession,
+  recordUsage,
   getPublishableKey,
   PRICING_PLANS
 };
