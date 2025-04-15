@@ -181,10 +181,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Map product IDs to price IDs
       const planProductMap = {
-        "prod_S8QWDRCVcz07An": { name: "Starter", monthlyPrice: 2999, yearlyPrice: 29990 },
-        "prod_S8QXUopH7dXHrJ": { name: "Essential", monthlyPrice: 4999, yearlyPrice: 49990 },
-        "prod_S8QYxTHNgV2Dmr": { name: "Basic", monthlyPrice: 9999, yearlyPrice: 99990 },
-        "prod_S8QZE7hzuMcjru": { name: "Pro", monthlyPrice: 19999, yearlyPrice: 199990 }
+        "prod_S8QWDRCVcz07An": { name: "Starter", monthlyPrice: 4999, yearlyPrice: 49990 },
+        "prod_S8QXUopH7dXHrJ": { name: "Essential", monthlyPrice: 29999, yearlyPrice: 299990 },
+        "prod_S8QYxTHNgV2Dmr": { name: "Basic", monthlyPrice: 74999, yearlyPrice: 749990 },
+        "prod_S8QZE7hzuMcjru": { name: "Pro", monthlyPrice: 149999, yearlyPrice: 1499990 }
       };
       
       // Get Stripe customer ID or create one
