@@ -150,7 +150,7 @@ export default function SubscribePage() {
   
   return (
     <div className="min-h-screen bg-[#4F9BFF]/10">
-      <div className="container mx-auto px-4 py-12 max-w-3xl">
+      <div className="container mx-auto px-4 py-12 max-w-xl">
         <Button 
           variant="ghost" 
           className="mb-6 text-[#4F9BFF]"
@@ -183,18 +183,69 @@ export default function SubscribePage() {
                         if (plan) setSelectedPlan(plan);
                       }}
                     >
-                      <SelectTrigger className="border-slate-300 bg-white text-slate-800">
+                      <SelectTrigger className="border-slate-200 bg-white text-slate-800">
                         <SelectValue placeholder="Select a plan" />
                       </SelectTrigger>
                       <SelectContent>
                         {plans.map((plan) => (
-                          <SelectItem key={plan.id} value={plan.id}>
-                            {plan.name} - ${billingPeriod === 'monthly' ? plan.monthlyPrice.toFixed(2) : plan.yearlyPrice.toFixed(2)}/
-                            {billingPeriod === 'monthly' ? 'month' : 'year'}
+                          <SelectItem key={plan.id} value={plan.id} className="py-2 px-4">
+                            <div className="flex items-center">
+                              <div className="w-5 h-5 mr-2 bg-slate-100 rounded-sm flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                </svg>
+                              </div>
+                              <div>
+                                <span className="font-medium">{plan.name}</span>
+                                <div className="text-sm text-slate-500">
+                                  ${billingPeriod === 'monthly' ? plan.monthlyPrice.toFixed(2) : plan.yearlyPrice.toFixed(2)} {billingPeriod === 'monthly' ? 'Per month' : 'Per year'}
+                                </div>
+                              </div>
+                            </div>
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
+                  </div>
+                  
+                  <div className="border border-slate-200 rounded-lg p-6">
+                    {selectedPlan ? (
+                      <>
+                        <div className="flex items-start">
+                          <div className="w-10 h-10 mr-4 bg-slate-100 rounded-md flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            </svg>
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-medium text-slate-800">{selectedPlan.name}</h3>
+                            <div className="flex items-center mt-1">
+                              <div className="text-2xl font-bold text-slate-800">
+                                ${billingPeriod === 'monthly' ? selectedPlan.monthlyPrice.toFixed(2) : selectedPlan.yearlyPrice.toFixed(2)}
+                              </div>
+                              <div className="text-slate-500 ml-2">
+                                Per {billingPeriod === 'monthly' ? 'month' : 'year'}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-6 border-t border-slate-200 pt-4">
+                          <div className="space-y-2">
+                            {selectedPlan.features.map((feature, index) => (
+                              <div key={index} className="flex items-center">
+                                <CheckCircle className="h-5 w-5 text-[#4F9BFF] flex-shrink-0 mr-2" />
+                                <span className="text-slate-700">{feature}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-8 text-slate-500">
+                        Please select a plan to view details
+                      </div>
+                    )}
                   </div>
                   
                   <div className="space-y-2">
@@ -210,32 +261,10 @@ export default function SubscribePage() {
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="yearly" id="yearly" className="text-[#4F9BFF]" />
-                        <Label htmlFor="yearly" className="text-slate-700">Yearly <span className="text-xs text-green-500 font-medium">(Save 15%)</span></Label>
+                        <Label htmlFor="yearly" className="text-slate-700">Yearly <span className="text-xs text-green-500 font-medium">(Save 10%)</span></Label>
                       </div>
                     </RadioGroup>
                   </div>
-                  
-                  {selectedPlan && (
-                    <div className="border border-slate-200 rounded-lg p-6 mt-4 bg-slate-50">
-                      <div className="text-4xl font-semibold text-slate-800 mb-1">
-                        ${billingPeriod === 'monthly' ? selectedPlan.monthlyPrice.toFixed(2) : selectedPlan.yearlyPrice.toFixed(2)}
-                      </div>
-                      <div className="text-slate-500 mb-4">
-                        /{billingPeriod === 'monthly' ? 'month' : 'year'}
-                      </div>
-                      
-                      <div className="mt-4">
-                        <ul className="space-y-3">
-                          {selectedPlan.features.map((feature, index) => (
-                            <li key={index} className="flex items-center gap-2">
-                              <CheckCircle className="h-5 w-5 text-[#4F9BFF] flex-shrink-0" />
-                              <span className="text-slate-700">{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  )}
                   
                   <Button
                     className="w-full mt-6 bg-[#4F9BFF] hover:bg-[#3E7DD5] text-white font-medium py-6"

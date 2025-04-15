@@ -288,49 +288,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const plans = [
         {
           id: "prod_S8QWDRCVcz07An",
-          name: "Starter",
-          monthlyPrice: 29.99,
-          yearlyPrice: 299.90,
+          name: "Starter Plan",
+          monthlyPrice: 49.99,
+          yearlyPrice: 539.89,
           features: [
             "Access to AI voice agents",
-            "Up to 1,000 minutes/month",
-            "Email support"
+            "Basic voice customization",
+            "Standard support",
+            "Web integration"
           ]
         },
         {
           id: "prod_S8QXUopH7dXHrJ",
-          name: "Essential",
-          monthlyPrice: 49.99,
-          yearlyPrice: 499.90,
+          name: "Essential Plan",
+          monthlyPrice: 299.99,
+          yearlyPrice: 3239.89,
           features: [
             "All Starter features",
-            "Up to 5,000 minutes/month",
-            "Priority support",
-            "Basic analytics"
+            "Priority email support",
+            "Analytics dashboard",
+            "Multiple voice options"
           ]
         },
         {
           id: "prod_S8QYxTHNgV2Dmr",
-          name: "Basic",
-          monthlyPrice: 99.99,
-          yearlyPrice: 999.90,
+          name: "Basic Plan",
+          monthlyPrice: 749.99,
+          yearlyPrice: 8099.89,
           features: [
             "All Essential features",
-            "Up to 15,000 minutes/month",
-            "Advanced analytics",
+            "Advanced integrations",
+            "Custom voice training",
             "API access"
           ]
         },
         {
           id: "prod_S8QZE7hzuMcjru",
-          name: "Pro",
-          monthlyPrice: 199.99,
-          yearlyPrice: 1999.90,
+          name: "Pro Plan",
+          monthlyPrice: 1499.99,
+          yearlyPrice: 16199.89,
           features: [
             "All Basic features",
-            "Unlimited minutes",
-            "24/7 priority support",
-            "Custom voice training",
+            "Dedicated account manager",
+            "Enterprise-level support",
             "White-label solution"
           ]
         }
