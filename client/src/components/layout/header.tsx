@@ -42,7 +42,7 @@ export const Header: React.FC = () => {
         scrolled ? "bg-primary/90 backdrop-blur-sm shadow-lg" : "bg-transparent"
       } border-b border-white/10`}
     >
-      <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-center">
+      <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-start">
         <div className="flex items-center gap-4">
           <Link href="/login" className="flex">
             <Button variant="ghost" className="text-white hover:text-blue-200 hover:bg-blue-900/20">
