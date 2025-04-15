@@ -19,7 +19,7 @@ interface PricingTier {
 const pricingTiers: PricingTier[] = [
   {
     name: "Starter",
-    price: "$29.99",
+    price: "$49.99",
     description: "Perfect for startups and small businesses exploring AI automation",
     features: [
       "Access to AI voice agents",
@@ -37,7 +37,7 @@ const pricingTiers: PricingTier[] = [
   },
   {
     name: "Essential",
-    price: "$49.99",
+    price: "$299.99",
     description: "Ideal for growing businesses with customer service needs",
     features: [
       "All Starter features",
@@ -56,7 +56,7 @@ const pricingTiers: PricingTier[] = [
   },
   {
     name: "Basic",
-    price: "$99.99",
+    price: "$749.99",
     description: "Designed for businesses with moderate voice AI needs",
     features: [
       "All Essential features",
@@ -75,7 +75,7 @@ const pricingTiers: PricingTier[] = [
   },
   {
     name: "Pro",
-    price: "$199.99",
+    price: "$1499.99",
     description: "Complete solution for businesses with high-volume requirements",
     features: [
       "All Basic features",
