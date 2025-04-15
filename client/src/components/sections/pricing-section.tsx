@@ -12,8 +12,6 @@ interface PricingTier {
   isPopular?: boolean;
   buttonText: string;
   overageFee?: string;
-  hasTrial?: boolean;
-  trialDays?: number;
   icon?: string;
 }
 

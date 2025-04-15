@@ -45,7 +45,7 @@ export const CTASection: React.FC = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link href="/payment">
               <Button className="gradient-button">
-                Start Free Trial
+                Join Foundations AI
               </Button>
             </Link>
             <Link href="#demo">
