@@ -257,7 +257,7 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
     // Customize based on agent type
     switch (agent?.id) {
       case "customer-service":
-        maleName = "Chris";
+        maleName = "Mark";
         femaleName = "Emily";
         break;
       case "sales":

@@ -17,13 +17,13 @@ interface VoiceMap {
 export const DEFAULT_VOICES: VoiceMap = {
   // Default fallback voices
   default: {
-    male: "21m00Tcm4TlvDq8ikWAM", // Example voice ID - Josh
-    female: "EXAVITQu4vr4xnSDxMaL" // Example voice ID - Nicole
+    male: "Gmuxt2yDLn9NBNacnqpD", // Mark voice ID
+    female: "6pX54eIEuD2LMkCW1TsJ" // Emily voice ID
   },
   // Custom voices for each agent type
   "customer-service": {
-    male: "21m00Tcm4TlvDq8ikWAM", // Chris voice ID
-    female: "EXAVITQu4vr4xnSDxMaL" // Emily voice ID
+    male: "Gmuxt2yDLn9NBNacnqpD", // Mark voice ID (previously Chris)
+    female: "6pX54eIEuD2LMkCW1TsJ" // Emily voice ID
   },
   "sales": {
     male: "pNInz6obpgDQGcFmaJgB", // Steve voice ID
