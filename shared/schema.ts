@@ -144,13 +144,11 @@ export const subscriptions = pgTable("subscriptions", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
   stripeSubscriptionId: text("stripe_subscription_id").notNull().unique(),
-  planId: text("plan_id").notNull(), // Stripe product ID
+  planId: text("plan").notNull(), // Stripe product ID
   status: text("status").notNull(), // active, canceled, past_due, etc.
   currentPeriodStart: timestamp("current_period_start").notNull(),
   currentPeriodEnd: timestamp("current_period_end").notNull(),
-  cancelAtPeriodEnd: boolean("cancel_at_period_end").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const insertSubscriptionSchema = createInsertSchema(subscriptions).pick({
@@ -160,7 +158,6 @@ export const insertSubscriptionSchema = createInsertSchema(subscriptions).pick({
   status: true,
   currentPeriodStart: true,
   currentPeriodEnd: true,
-  cancelAtPeriodEnd: true,
 });
 
 export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
