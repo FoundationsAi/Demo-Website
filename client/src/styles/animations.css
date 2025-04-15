@@ -9,14 +9,24 @@
   flex-direction: column;
 }
 
-/* Ensure proper positioning for scrolling effects */
+/* Global fixes for Framer Motion scroll containers */
+/* This ensures all animation containers have proper positioning to prevent warnings */
+.framer-motion-container,
+[data-framer-motion-container="true"],
 .parallax-effect, 
 .parallax-container,
 .scrollable-section,
 .scroll-reveal,
 .animated-text-container,
-.floating-card {
-  position: relative;
+.floating-card,
+section, /* All section elements */
+.motion-container,
+*[style*="parallax"],
+*[style*="animation"],
+*[style*="transform"],
+.section-transition,
+.smooth-scroll > div {
+  position: relative !important; /* Force relative positioning */
 }
 
 /* Ensure text fragments position correctly */
