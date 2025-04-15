@@ -163,13 +163,7 @@ export const PricingSection: React.FC = () => {
                       <div className="h-full flex flex-col bg-[#0e1c35] rounded-xl overflow-hidden relative">
                         {/* Badge area at top */}
                         <div className="flex justify-between">
-                          {tier.hasTrial && (
-                            <div className="bg-emerald-600 text-white font-bold py-2 px-4 text-sm rounded-br-lg">
-                              7-DAY FREE TRIAL
-                            </div>
-                          )}
-                          {!tier.hasTrial && <div></div>}
-                          
+                          <div></div>
                           {tier.isPopular && (
                             <div className="bg-blue-600 text-white font-bold py-2 px-4 text-sm rounded-bl-lg ml-auto">
                               {tier.name === 'Essential' ? 'POPULAR' : 'MOST POPULAR'}
@@ -219,7 +213,7 @@ export const PricingSection: React.FC = () => {
                         <div className="px-6 pb-6">
                           <button
                             className={`w-full py-3 rounded-lg font-medium text-lg ${
-                              tier.isPopular || tier.hasTrial
+                              tier.isPopular
                                 ? 'bg-blue-600 hover:bg-blue-700 text-white'
                                 : 'bg-transparent hover:bg-blue-900/50 text-white border border-blue-500'
                             }`}
@@ -248,13 +242,7 @@ export const PricingSection: React.FC = () => {
                   <div className="h-full flex flex-col bg-[#0e1c35] rounded-xl overflow-hidden relative">
                     {/* Badge area at top */}
                     <div className="flex justify-between">
-                      {tier.hasTrial && (
-                        <div className="bg-emerald-600 text-white font-bold py-2 px-4 text-sm rounded-br-lg">
-                          7-DAY FREE TRIAL
-                        </div>
-                      )}
-                      {!tier.hasTrial && <div></div>}
-                      
+                      <div></div>
                       {tier.isPopular && (
                         <div className="bg-blue-600 text-white font-bold py-2 px-4 text-sm rounded-bl-lg ml-auto">
                           {tier.name === 'Essential' ? 'POPULAR' : 'MOST POPULAR'}
@@ -304,7 +292,7 @@ export const PricingSection: React.FC = () => {
                     <div className="px-6 pb-6">
                       <button 
                         className={`w-full py-3 rounded-lg font-medium text-lg ${
-                          tier.isPopular || tier.hasTrial
+                          tier.isPopular
                             ? 'bg-blue-600 hover:bg-blue-700 text-white'
                             : 'bg-transparent hover:bg-blue-900/50 text-white border border-blue-500'
                         }`}
