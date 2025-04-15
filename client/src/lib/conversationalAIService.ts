@@ -2,8 +2,8 @@ import { Conversation } from '@11labs/client';
 
 // Agent IDs for different personalities
 const AGENTS = {
-  STEVE: 'Gmuxt2yDLn9NBNacnqpD', // Mark voice ID (previously Steve)
-  SARAH: '6pX54eIEuD2LMkCW1TsJ'  // Emily voice ID
+  STEVE: '0Ako2MORgNjlSpGTU75E',
+  SARAH: 'Jw7iQ8oXMG3MZeuyLfmH'
 };
 
 type AgentType = keyof typeof AGENTS;

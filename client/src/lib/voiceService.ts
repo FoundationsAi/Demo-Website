@@ -17,21 +17,21 @@ interface VoiceMap {
 export const DEFAULT_VOICES: VoiceMap = {
   // Default fallback voices
   default: {
-    male: "Gmuxt2yDLn9NBNacnqpD", // Mark voice ID
-    female: "6pX54eIEuD2LMkCW1TsJ" // Emily voice ID
+    male: "21m00Tcm4TlvDq8ikWAM", // Example voice ID - Josh
+    female: "EXAVITQu4vr4xnSDxMaL" // Example voice ID - Nicole
   },
   // Custom voices for each agent type
   "customer-service": {
-    male: "Gmuxt2yDLn9NBNacnqpD", // Mark voice ID (previously Chris)
-    female: "6pX54eIEuD2LMkCW1TsJ" // Emily voice ID
+    male: "21m00Tcm4TlvDq8ikWAM", // Chris voice ID
+    female: "EXAVITQu4vr4xnSDxMaL" // Emily voice ID
   },
   "sales": {
     male: "pNInz6obpgDQGcFmaJgB", // Steve voice ID
     female: "2EiwWnXFnvU5JabPnv8n" // Rachel voice ID
   },
   "receptionist": {
-    male: "hBgdG6LBM8kibonEH5Z2", // Alex voice ID (previously Robert)
-    female: "QvsJlPVuXKVwEEOc9Vub" // Jade voice ID (previously Jessica)
+    male: "SOYHLrjzK2X1ezoPC6cr", // Robert voice ID
+    female: "jBpfuIE2acCO8z3wKNLl" // Jessica voice ID
   },
   "mortgage": {
     male: "TxGEqnHWrfWFTfGW9XjX", // Thomas voice ID
