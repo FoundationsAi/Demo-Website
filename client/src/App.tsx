@@ -9,6 +9,10 @@ import Chat from "@/pages/chat";
 import Payment from "@/pages/payment";
 import Calendar from "@/pages/calendar";
 import AgentChat from "@/pages/agent-chat";
+import Signup from "@/pages/signup";
+import Login from "@/pages/login"; 
+import Dashboard from "@/pages/dashboard";
+import Subscribe from "@/pages/subscribe";
 
 function App() {
   const [location] = useLocation();
@@ -41,6 +45,10 @@ function App() {
             <AnimatedRoute path="/payment" component={Payment} animation="slideUp" />
             <AnimatedRoute path="/calendar" component={Calendar} animation="zoom" />
             <AnimatedRoute path="/agent-chat" component={AgentChat} animation="fade" />
+            <AnimatedRoute path="/signup" component={Signup} animation="slideUp" />
+            <AnimatedRoute path="/login" component={Login} animation="slideUp" />
+            <AnimatedRoute path="/dashboard" component={Dashboard} animation="fade" />
+            <AnimatedRoute path="/subscribe" component={Subscribe} animation="slideUp" />
             <AnimatedRoute component={NotFound} animation="fade" />
           </Switch>
         </div>
