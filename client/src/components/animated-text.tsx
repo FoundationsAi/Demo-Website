@@ -124,7 +124,7 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
       const split = new SplitType(textRef.current, { types: "chars", wordClass: "word" });
       setSplitText(split);
     }
-    
+
     return () => {
       if (splitText) {
         splitText.revert();
@@ -151,12 +151,12 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
     >
       {/* Original text for SEO (hidden visually) */}
       <span className="sr-only">{text}</span>
-      
+
       {/* Animated text */}
       <div ref={textRef} aria-hidden="true" className="animated-text">
         {text}
       </div>
-      
+
       {/* Animated characters will be created by SplitType and animated by Framer Motion */}
       {splitText && splitText.chars && (
         <div className="absolute inset-0" aria-hidden="true">

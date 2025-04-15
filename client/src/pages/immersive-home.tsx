@@ -16,7 +16,7 @@ const mountainBg1 = "https://images.unsplash.com/photo-1519681393784-d120267933b
 const mountainBg2 = "https://images.unsplash.com/photo-1579802063117-308a7cb5d140?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80";
 const mountainBg3 = "https://images.unsplash.com/photo-1455156218388-5e61b526818b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80";
 
-export const ImmersiveHome: React.FC = () => {
+export const ImmersiveHome = () => {
   // Reference for scroll progress indicator
   const containerRef = useRef<HTMLDivElement>(null);
   const mountainSectionRef = useRef<HTMLDivElement>(null);
