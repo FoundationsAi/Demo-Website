@@ -51,7 +51,18 @@ export const Header: React.FC = () => {
 
           <Button 
             className="bg-[#4F9BFF] hover:bg-[#3E7DD5] text-white font-medium rounded-full px-8 py-5 h-auto"
-            onClick={() => handleNavigate("/signup")}
+            onClick={() => {
+              // Scroll to pricing section if on homepage
+              if (window.location.pathname === '/') {
+                const pricingSection = document.getElementById('pricing-section');
+                if (pricingSection) {
+                  pricingSection.scrollIntoView({ behavior: 'smooth' });
+                  return;
+                }
+              }
+              // Otherwise navigate to homepage with pricing anchor
+              window.location.href = '/#pricing-section';
+            }}
           >
             Get Started
           </Button>
