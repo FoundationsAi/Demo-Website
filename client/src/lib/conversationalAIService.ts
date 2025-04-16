@@ -7,7 +7,7 @@ const AGENTS = {
   FEMALE: 'Jw7iQ8oXMG3MZeuyLfmH', // Generic female agent
   
   // Agent-specific IDs - male voices
-  "customer-service-male": '0Ako2MORgNjlSpGTU75E',
+  "customer-service-male": 'Gmuxt2yDLn9NBNacnqpD',
   "sales-male": 'c8UawUiaIKSJ25P2KQjt',
   "receptionist-male": 'MVAGQozmD71EKoB1TPJi',
   "mortgage-male": 'YZNqaCO82lhGhCLEXokM',
@@ -20,7 +20,7 @@ const AGENTS = {
   "creative-male": 'TJzMqDx0qwJyUAtS4mQN',
   
   // Agent-specific IDs - female voices
-  "customer-service-female": 'Jw7iQ8oXMG3MZeuyLfmH',
+  "customer-service-female": '6pX54eIEuD2LMkCW1TsJ',
   "sales-female": 'h45JDYWQZs6GZfPgmIhV',
   "receptionist-female": 'kVKQO2JPuSsGgfjBZZbI',
   "mortgage-female": 'FRoFvpmE5NRNtZVoUh0i',
