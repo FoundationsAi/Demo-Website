@@ -291,48 +291,48 @@ export const AgentDialog: React.FC<AgentDialogProps> = ({
     // Customize based on agent type
     switch (agent?.id) {
       case "customer-service":
-        maleName = "Mark";
-        femaleName = "Emily";
+        maleName = "Blaze";
+        femaleName = "Maya";
         break;
       case "sales":
-        maleName = "Steve";
-        femaleName = "Sarah";
+        maleName = "Colton";
+        femaleName = "Ava";
         break;
       case "receptionist":
         maleName = "Alex";
-        femaleName = "Jade";
+        femaleName = "Whitney";
         break;
       case "mortgage":
-        maleName = "Archer";
-        femaleName = "Amanda";
+        maleName = "Sam";
+        femaleName = "Hillary";
         break;
       case "healthcare":
-        maleName = "Tim";
+        maleName = "Colin";
         femaleName = "Savana";
         break;
       case "concierge":
-        maleName = "James";
-        femaleName = "Victoria";
+        maleName = "Tzion";
+        femaleName = "Taylor";
         break;
       case "technical-support":
-        maleName = "Alex";
-        femaleName = "Nicole";
+        maleName = "Zac";
+        femaleName = "Eden";
         break;
       case "travel":
-        maleName = "Daniel";
-        femaleName = "Olivia";
+        maleName = "Ryan";
+        femaleName = "Ashlyn";
         break;
       case "educator":
-        maleName = "Mark";
-        femaleName = "Julia";
+        maleName = "Jacob";
+        femaleName = "Allison";
         break;
       case "personal-assistant":
-        maleName = "Paul";
-        femaleName = "Emma";
+        maleName = "Kappes";
+        femaleName = "Joy";
         break;
       case "creative":
-        maleName = "Ryan";
-        femaleName = "Lily";
+        maleName = "Luke";
+        femaleName = "Delaney";
         break;
     }
 
