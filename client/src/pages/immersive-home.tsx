@@ -154,19 +154,8 @@ export const ImmersiveHome = () => {
           <AgentSelectionSection />
         </SectionWrapper>
         
-        {/* Spacer/separator between agent selection and pricing */}
-        <div className="h-64 w-full bg-gradient-to-b from-[#091324] to-[#0a1528] relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/30"></div>
-          <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-[#0a1528] via-[#0a1528] to-transparent"></div>
-          <div className="absolute bottom-0 left-0 w-full">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full">
-              <path fill="#061022" d="M0,256L48,266.7C96,277,192,299,288,282.7C384,267,480,213,576,202.7C672,192,768,224,864,245.3C960,267,1056,277,1152,261.3C1248,245,1344,203,1392,181.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-            </svg>
-          </div>
-        </div>
-        
         {/* 4. Pricing section */}
-        <SectionWrapper zIndex={50}>
+        <SectionWrapper>
           <PricingSection />
         </SectionWrapper>
         
