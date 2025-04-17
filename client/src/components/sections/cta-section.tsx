@@ -43,7 +43,7 @@ export const CTASection: React.FC = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/payment">
+            <Link href="/get-started">
               <Button className="gradient-button">
                 Join Foundations AI
               </Button>
