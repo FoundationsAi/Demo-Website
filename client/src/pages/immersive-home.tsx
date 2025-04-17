@@ -155,7 +155,7 @@ export const ImmersiveHome = () => {
         </SectionWrapper>
         
         {/* 4. Pricing section */}
-        <SectionWrapper>
+        <SectionWrapper className="mt-64">
           <PricingSection />
         </SectionWrapper>
         

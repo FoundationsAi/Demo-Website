@@ -4,6 +4,7 @@ interface SectionWrapperProps {
   children: React.ReactNode;
   id?: string;
   className?: string;
+  zIndex?: number;
 }
 
 /**
@@ -13,7 +14,8 @@ interface SectionWrapperProps {
 export const SectionWrapper: React.FC<SectionWrapperProps> = ({ 
   children,
   id,
-  className = ''
+  className = '',
+  zIndex = 0
 }) => {
   return (
     <div 
@@ -24,7 +26,7 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = ({
         padding: 0,
         backgroundColor: '#000', // Maintain black background throughout
         position: 'relative',
-        zIndex: 0
+        zIndex: zIndex
       }}
     >
       {children}

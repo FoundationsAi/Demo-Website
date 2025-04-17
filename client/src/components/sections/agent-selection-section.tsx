@@ -177,7 +177,7 @@ export const AgentSelectionSection: React.FC = () => {
         margin: 0,
         padding: 0,
         paddingTop: '10vh',
-        paddingBottom: '30vh',
+        paddingBottom: '50vh',
         marginTop: '-2px',
         marginBottom: '-2px',
         position: 'relative',
@@ -420,7 +420,7 @@ export const AgentSelectionSection: React.FC = () => {
                             delay: 0.5 + index * 0.1 + skillIndex * 0.1,
                             duration: 0.3
                           }}
-                          className={`px-3 py-1 ${getSkillColor(skill)} rounded-full text-xs sm:text-sm backdrop-blur-sm border border-blue-500/30 font-medium`}
+                          className={`px-3 py-1 ${getSkillColor(skill)} rounded-full text-xs sm:text-sm backdrop-blur-sm border border-blue-500/30 font-medium relative z-10`}
                         >
                           {skill}
                         </motion.span>
