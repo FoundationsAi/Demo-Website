@@ -172,7 +172,7 @@ export const AgentSelectionSection: React.FC = () => {
   return (
     <section 
       ref={sectionRef}
-      className="relative bg-gradient-to-b from-[#142448] via-[#0c1a36] to-[#091324] text-white py-16 md:py-32 min-h-screen flex flex-col justify-center overflow-hidden section-wrapper"
+      className="agent-selection-section relative bg-gradient-to-b from-[#142448] via-[#0c1a36] to-[#091324] text-white py-16 md:py-32 min-h-screen flex flex-col justify-center overflow-hidden section-wrapper"
       style={{ 
         margin: 0,
         padding: 0,
@@ -620,40 +620,7 @@ export const AgentSelectionSection: React.FC = () => {
           )}
         </AnimatePresence>
         
-        {/* Enhanced CTA Button */}
-        <motion.div 
-          className="text-center mt-16 mb-32 relative"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
-        >
-          <Button
-            onClick={() => {
-              // Just open the dialog with a random agent if none selected
-              if (!selectedAgentForDialog) {
-                const randomAgent = agents[Math.floor(Math.random() * agents.length)];
-                setSelectedAgentForDialog(randomAgent);
-              }
-              setIsDialogOpen(true);
-            }}
-            className="px-8 py-6 relative group overflow-hidden rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium transition-colors duration-300 shadow-lg text-lg"
-            style={{ boxShadow: '0 4px 20px -5px rgba(59, 130, 246, 0.6)' }}
-          >
-            {/* Background glow */}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-blue-400/50 to-blue-400/0 opacity-0 group-hover:opacity-100 -skew-x-30 transition-opacity duration-500" />
-            
-            {/* Button content */}
-            <span className="relative flex items-center gap-2">
-              <span>Try Full Conversation</span>
-              <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-              </svg>
-            </span>
-          </Button>
-          
-          {/* Button glow effect */}
-          <div className="absolute -inset-10 rounded-full opacity-30 blur-xl bg-blue-500/20 animate-pulse-slow pointer-events-none" />
-        </motion.div>
+        {/* CTA Button removed as requested */}
       </div>
       
       {/* Agent Dialog */}
