@@ -177,7 +177,7 @@ export const AgentSelectionSection: React.FC = () => {
         margin: 0,
         padding: 0,
         paddingTop: '10vh',
-        paddingBottom: '50vh',
+        paddingBottom: '15vh',
         marginTop: '-2px',
         marginBottom: '-2px',
         position: 'relative',
