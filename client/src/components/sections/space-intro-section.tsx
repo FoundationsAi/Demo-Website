@@ -376,6 +376,13 @@ export const SpaceIntroSection: React.FC = () => {
               }}
               whileTap={{ scale: 0.98 }}
               aria-label="Begin your journey"
+              onClick={() => {
+                // Scroll to the agent selection section smoothly
+                const agentSection = document.querySelector('.agent-selection-section');
+                if (agentSection) {
+                  agentSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
             >
               <span className="relative z-10 flex items-center justify-center gap-2 whitespace-nowrap">
                 <span className="tracking-wide">Begin Your Journey</span>

@@ -5,7 +5,6 @@ import NotFound from "@/pages/not-found";
 import { ImmersiveHome } from "@/pages/immersive-home";
 import Chat from "@/pages/chat";
 import Payment from "@/pages/payment";
-import Calendar from "@/pages/calendar";
 import AgentChat from "@/pages/agent-chat";
 import Login from "@/pages/login";
 import GetStarted from "@/pages/get-started";
@@ -40,7 +39,6 @@ function App() {
           <Route path="/" component={ImmersiveHome} />
           <Route path="/login" component={Login} />
           <Route path="/get-started" component={GetStarted} />
-          <Route path="/calendar" component={Calendar} />
           <Route path="/payment" component={Payment} />
           <Route path="/agent-chat" component={AgentChat} />
           <Route path="/chat/:agentId" component={Chat} />
