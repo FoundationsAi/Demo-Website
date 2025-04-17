@@ -7,9 +7,8 @@ import Chat from "@/pages/chat";
 import Payment from "@/pages/payment";
 import Calendar from "@/pages/calendar";
 import AgentChat from "@/pages/agent-chat";
-import Pricing from "@/pages/pricing";
-import Account from "@/pages/account";
-import PaymentSuccess from "@/pages/payment-success";
+import Login from "@/pages/login";
+import GetStarted from "@/pages/get-started";
 
 function App() {
   const [location] = useLocation();
@@ -34,21 +33,17 @@ function App() {
     console.log('Current location:', location);
   }, [location]);
 
-  // Render app without authentication
   return (
     <div className="app">
       <div className="page-wrapper fade-transition">
         <Switch>
           <Route path="/" component={ImmersiveHome} />
-          <Route path="/login" component={ImmersiveHome} />
-          <Route path="/get-started" component={ImmersiveHome} />
-          <Route path="/pricing" component={Pricing} />
-          <Route path="/payment-success" component={PaymentSuccess} />
+          <Route path="/login" component={Login} />
+          <Route path="/get-started" component={GetStarted} />
           <Route path="/calendar" component={Calendar} />
           <Route path="/payment" component={Payment} />
           <Route path="/agent-chat" component={AgentChat} />
           <Route path="/chat/:agentId" component={Chat} />
-          <Route path="/account" component={ImmersiveHome} />
           <Route component={NotFound} />
         </Switch>
       </div>

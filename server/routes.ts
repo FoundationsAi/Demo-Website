@@ -4,7 +4,6 @@ import { storage } from "./storage";
 import Stripe from "stripe";
 import { insertDemoRequestSchema, insertAppointmentSchema } from "@shared/schema";
 import { randomUUID } from "crypto";
-import stripeRouter from "./stripe-routes";
 
 // Initialize Stripe with fallback key for development
 const stripeKey = process.env.STRIPE_SECRET_KEY || "sk_test_placeholder";
@@ -22,8 +21,6 @@ const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN || "placeholder_token";
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER || "+1234567890";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Register Stripe routes
-  app.use('/api', stripeRouter);
   // 11Labs Conversational AI agent endpoint
   app.post("/api/conversational-agent", async (req, res) => {
     try {

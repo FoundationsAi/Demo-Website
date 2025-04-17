@@ -1,82 +1,100 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'wouter';
-import { useAuth } from '@/contexts/auth-context';
+import { useLocation, Link } from 'wouter';
+import { motion } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { SmoothScroll } from '@/components/smooth-scroll';
 import { ParticleBackground } from '@/components/particle-background';
 import { ScrollReveal } from '@/components/scroll-reveal';
+import { AnimatedText } from '@/components/animated-text';
 import { Button } from '@/components/ui/button';
-import { Header } from '@/components/layout/header';
-import { ArrowLeft } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
+import { Header } from '@/components/layout/header';
 
-const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [, navigate] = useLocation();
-  const { login, isAuthenticated } = useAuth();
+// Login form schema
+const loginSchema = z.object({
+  username: z.string().min(3, 'Username must be at least 3 characters'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
+
+const Login = () => {
   const { toast } = useToast();
+  const [location, navigate] = useLocation();
+  const [isLoading, setIsLoading] = useState(false);
   
-  // Set background to black for consistency with the rest of the app
+  // Ensure that we're not accidentally mounting this component on a different route
+  useEffect(() => {
+    if (location !== '/login') {
+      console.log('Login component mounted but location is:', location);
+      navigate('/login', { replace: true });
+    }
+  }, [location, navigate]);
+
+  // Set background to black for consistency with home page
   useEffect(() => {
     document.body.style.background = '#000';
     return () => {
       document.body.style.background = '';
     };
   }, []);
-  
-  // Redirect to home if already authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/');
-    }
-  }, [isAuthenticated, navigate]);
-  
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!email || !password) {
-      toast({
-        title: "Missing fields",
-        description: "Please enter both email and password.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    setIsSubmitting(true);
+
+  // Form definition
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      username: '',
+      password: '',
+    },
+  });
+
+  // Handle form submission
+  const onSubmit = async (values: LoginFormValues) => {
+    setIsLoading(true);
     
     try {
-      const success = await login(email, password);
+      // In a real implementation, we would call an API endpoint here
+      // For now, just simulate a login attempt
+      console.log('Login attempt with:', values);
       
-      if (success) {
-        toast({
-          title: "Login successful",
-          description: "Welcome back!",
-          variant: "default"
-        });
-        navigate('/');
-      } else {
-        toast({
-          title: "Login failed",
-          description: "Please check your credentials and try again.",
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Show success toast message
       toast({
-        title: "Login error",
-        description: "An unexpected error occurred. Please try again.",
-        variant: "destructive"
+        title: "Login successful!",
+        description: "Welcome back to Foundations AI.",
+        variant: "default",
+      });
+      
+      // Navigate to home page after successful login
+      navigate('/');
+    } catch (error) {
+      console.error('Login error:', error);
+      
+      // Show error toast message
+      toast({
+        title: "Login failed",
+        description: "Invalid username or password. Please try again.",
+        variant: "destructive",
       });
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   };
-  
+
   return (
     <SmoothScroll options={{ lerp: 0.075 }}>
       <div className="min-h-screen bg-black text-white">
@@ -85,10 +103,10 @@ const Login: React.FC = () => {
         {/* Background effects */}
         <ParticleBackground variant="subtle" />
         
-        <div className="relative z-10 pt-24 md:pt-32 pb-16 md:pb-20">
+        <div className="relative z-10 pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20">
           <div className="container mx-auto px-4 md:px-6">
             <ScrollReveal>
-              <div className="w-full max-w-md mx-auto">
+              <div className="w-full max-w-[90%] sm:max-w-md mx-auto">
                 <div className="text-center mb-8">
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 text-white">
                     Welcome Back
@@ -98,58 +116,76 @@ const Login: React.FC = () => {
                   </p>
                 </div>
                 
-                <Card className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20 backdrop-blur-lg border border-blue-500/30 shadow-[0_4px_30px_rgba(0,100,255,0.3)]">
-                  <CardHeader>
-                    <CardTitle className="text-white text-xl">Sign In</CardTitle>
-                    <CardDescription className="text-blue-300">
-                      Enter your credentials below to continue
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="email" className="text-white">Email</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="you@example.com"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="bg-black/50 border-blue-500/50 text-white placeholder-blue-300/50"
-                        />
+                <div className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20 backdrop-blur-lg p-5 sm:p-6 md:p-8 rounded-xl border border-blue-500/30 shadow-[0_4px_30px_rgba(0,100,255,0.3)]">
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                      <FormField
+                        control={form.control}
+                        name="username"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-white">Username</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="Enter your username" 
+                                className="bg-black/50 border-blue-500/50 text-white" 
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-white">Password</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="password" 
+                                placeholder="Enter your password" 
+                                className="bg-black/50 border-blue-500/50 text-white" 
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <div className="pt-2">
+                        <Button 
+                          type="submit" 
+                          className="w-full gradient-button" 
+                          disabled={isLoading}
+                        >
+                          {isLoading ? 'Logging in...' : 'Login'}
+                        </Button>
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="password" className="text-white">Password</Label>
-                        <Input
-                          id="password"
-                          type="password"
-                          placeholder="••••••••"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="bg-black/50 border-blue-500/50 text-white"
-                        />
+                      
+                      <div className="text-center text-sm mt-4">
+                        <Link href="#" className="text-blue-400 hover:text-blue-300 transition">
+                          Forgot your password?
+                        </Link>
                       </div>
-                      <Button
-                        type="submit"
-                        className="gradient-button w-full"
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? 'Signing In...' : 'Sign In'}
-                      </Button>
                     </form>
-                  </CardContent>
-                  <CardFooter className="flex flex-col space-y-4">
-                    <div className="text-sm text-blue-300 text-center">
-                      Don't have an account?{' '}
-                      <a 
-                        href="/get-started" 
-                        className="text-blue-400 hover:text-blue-300 transition underline"
-                      >
-                        Create one
-                      </a>
-                    </div>
-                  </CardFooter>
-                </Card>
+                  </Form>
+                </div>
+                
+                <div className="text-center mt-8">
+                  <p className="text-blue-300">
+                    Don't have an account?{' '}
+                    <Link 
+                      href="/get-started" 
+                      className="text-blue-400 hover:text-blue-300 transition font-medium"
+                    >
+                      Get Started
+                    </Link>
+                  </p>
+                </div>
                 
                 <div className="text-center mt-6">
                   <Button
